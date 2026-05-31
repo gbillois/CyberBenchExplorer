@@ -473,7 +473,9 @@
       stroke: #222;
       stroke-width: 2.4;
     }
+    .bubble-point.dimmed { opacity: .22; }
     .bubble-label { fill: #6d747b; font-size: 13px; font-weight: 700; pointer-events: none; }
+    .card-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .drill-stack { display: grid; gap: 12px; }
     .crumbs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; }
     .crumbs button { min-height: 30px; padding: 0 9px; }
@@ -514,6 +516,23 @@
     .question-card .q-title { font-size: 13px; line-height: 1.35; font-weight: 750; }
     .question-card .q-meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
     .question-card .q-comment { color: #4c657a; font-size: 12px; margin-top: 8px; line-height: 1.4; }
+    .level-detail {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .level-detail-row {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 8px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .level-detail-row b { color: var(--text); font-size: 12px; }
+    .level-detail-row p { margin: 0; color: #4c657a; font-size: 12px; line-height: 1.35; }
     .level-strip {
       display: flex;
       flex-wrap: wrap;
@@ -538,6 +557,11 @@
       white-space: nowrap;
     }
     .level-chip span { color: var(--muted); font-weight: 800; }
+    .findings-filter {
+      display: grid;
+      grid-template-columns: minmax(220px, 360px);
+      margin-bottom: 14px;
+    }
 
     .toast {
       position: fixed;
@@ -675,9 +699,12 @@
             <div class="card scatter-card">
               <div class="card-head">
                 <h3 id="bubbleTitle">Maturity by theme</h3>
-                <div class="legend">
-                  <span id="legendMaturity"><i style="background:#4db8b4"></i>Maturity</span>
-                  <span id="legendLag"><i style="background:#f17778"></i>Lag</span>
+                <div class="card-actions">
+                  <button class="ghost hidden" id="dashboardBack">Back</button>
+                  <div class="legend">
+                    <span id="legendMaturity"><i style="background:#4db8b4"></i>Maturity</span>
+                    <span id="legendLag"><i style="background:#f17778"></i>Lag</span>
+                  </div>
                 </div>
               </div>
               <div class="card-body scatter-stage" id="bubbleChart"></div>
@@ -732,6 +759,10 @@
         </section>
 
         <section id="findings" class="tab-panel hidden">
+          <div class="findings-filter">
+            <label for="findingsDomainFilter">Domain</label>
+            <select id="findingsDomainFilter"><option value="">All</option></select>
+          </div>
           <div class="grid three">
             <div class="card">
               <div class="card-head"><h3 id="strengthsTitle">Strengths</h3></div>
@@ -957,6 +988,11 @@
         laggingMeasures: "Lagging measures",
         avgShort: "Avg.",
         minimumLag: "Minimum lag",
+        back: "Back",
+        chooseDomain: "Choose domain",
+        selectedQuestion: "Selected question",
+        questionDetails: "Question details",
+        levelDetails: "Level details",
         lagHelp: "Measures are available when the benchmark contains rows with the same ID as the questionnaire.",
         dashboardIntro: "Slide-style view: maturity by theme, benchmark gap, and drill-down to categories then questions.",
         overviewIntro: "Executive view of scores, coverage, and domains shaping the maturity profile.",
@@ -1081,6 +1117,11 @@
         laggingMeasures: "Mesures en retard",
         avgShort: "Moy.",
         minimumLag: "Retard minimum",
+        back: "Retour",
+        chooseDomain: "Choisir un domaine",
+        selectedQuestion: "Question sélectionnée",
+        questionDetails: "Détail question",
+        levelDetails: "Détail des niveaux",
         lagHelp: "Les mesures sont disponibles quand le benchmark contient des lignes avec le même ID que le questionnaire.",
         dashboardIntro: "Vue type slide : maturité par thème, écart au benchmark et drill-down vers catégories puis questions.",
         overviewIntro: "Vue exécutive des scores, de la couverture et des domaines qui structurent le profil de maturité.",
@@ -1157,7 +1198,8 @@
       tableSort: { key: "id", dir: "asc" },
       compareRef: "top",
       compareGap: 5,
-      drill: { domain: "", subtopic: "" },
+      drill: { domain: "", questionId: "" },
+      findingsDomain: "",
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
       dummyBenchmark: false
@@ -1195,7 +1237,8 @@
         typeFilter: "type",
         statusFilter: "status",
         scoreFilter: "overallMaturity",
-        gapFilter: "minimumLag"
+        gapFilter: "minimumLag",
+        findingsDomainFilter: "domain"
       };
       Object.entries(labelMap).forEach(([forId, key]) => {
         const label = document.querySelector(`label[for="${forId}"]`);
@@ -1233,6 +1276,7 @@
       }
       const scoreOptions = $("scoreFilter").options;
       if (scoreOptions.length >= 4) scoreOptions[0].text = t("all");
+      $("dashboardBack").textContent = t("back");
       document.querySelector('#compareRef [data-ref="all"]').textContent = t("avgShort");
       document.querySelector('#compareRef [data-ref="sector"]').textContent = t("sector");
 
@@ -1312,6 +1356,14 @@
 
     function levelStrip(question) {
       return `<div class="level-strip">${[0, 1, 2, 3, 4].map((index) => `<span class="level-chip"><span>N${index + 1}</span>${levelPct(question, index)}</span>`).join("")}</div>`;
+    }
+
+    function levelDetail(question) {
+      return `<div class="level-detail">${[0, 1, 2, 3, 4].map((index) => `
+        <div class="level-detail-row">
+          <b>N${index + 1}<br>${levelPct(question, index)}</b>
+          <p>${html(question.requirements?.[index] || "-")}</p>
+        </div>`).join("")}</div>`;
     }
 
     function maturityLevelFromScore(score) {
@@ -1593,13 +1645,13 @@
         type,
         subtopic,
         question,
-        evidence: "Exemple fictif : preuve simulée pour démonstration.",
+        evidence: "Synthetic example: simulated evidence for demonstration.",
         requirements: [
-          "Pratique informelle ou inexistante.",
-          "Pratique définie sur un périmètre limité.",
-          "Pratique documentée et partiellement déployée.",
-          "Pratique pilotée avec indicateurs.",
-          "Pratique optimisée et revue régulièrement."
+          "Initial practice: informal, incomplete, or not consistently evidenced.",
+          "Defined practice: documented on a limited scope with partial ownership.",
+          "Managed practice: documented, deployed on core scope, and regularly evidenced.",
+          "Measured practice: monitored with indicators, exceptions, and management review.",
+          "Optimized practice: continuously tested, improved, and benchmarked against leading practice."
         ],
         levels: normalizedLevels,
         score: status === "scored" && Number.isFinite(computedScore) ? computedScore : null,
@@ -1718,7 +1770,8 @@
           state.dummyBenchmark = false;
           refs.benchmarkMeta.innerHTML = "";
         }
-        state.drill = { domain: "", subtopic: "" };
+        state.drill = { domain: "", questionId: "" };
+        state.findingsDomain = "";
         state.filters = { search: "", domain: "", type: "", status: "", score: "" };
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
         refs.statusDot.className = "dot ready";
@@ -1827,9 +1880,9 @@
       return { ref, gap };
     }
 
-    function questionDashboardPoints(domainId, subtopic = "") {
+    function questionDashboardPoints(domainId) {
       const scored = state.assessment.questions
-        .filter((q) => q.domain === domainId && q.status === "scored" && (!subtopic || (q.subtopic || "Sans catégorie") === subtopic));
+        .filter((q) => q.domain === domainId && q.status === "scored");
       const internalAverage = average(scored.map((q) => q.score));
       return scored.map((q) => {
         const ref = questionReference(q);
@@ -1867,9 +1920,14 @@
         $("drillPanel").innerHTML = "";
         return;
       }
-      if (state.drill.domain && !domainPoints.some((d) => d.id === state.drill.domain)) state.drill = { domain: "", subtopic: "" };
+      if (state.drill.domain && !domainPoints.some((d) => d.id === state.drill.domain)) state.drill = { domain: "", questionId: "" };
       const selectedDomain = domainPoints.find((d) => d.id === state.drill.domain);
-      const points = selectedDomain ? questionDashboardPoints(selectedDomain.id, state.drill.subtopic) : domainPoints;
+      const points = selectedDomain ? questionDashboardPoints(selectedDomain.id) : domainPoints;
+      const selectedQuestion = selectedDomain && state.drill.questionId
+        ? points.find((q) => q.id === state.drill.questionId)
+        : null;
+      if (state.drill.questionId && !selectedQuestion) state.drill.questionId = "";
+      $("dashboardBack").classList.toggle("hidden", !selectedDomain);
       const refLabel = points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, "");
       $("bubbleTitle").textContent = selectedDomain
         ? t("questionsVs", { domain: selectedDomain.id, ref: refLabel })
@@ -1896,16 +1954,19 @@
         ...yTicks.map((tick) => `<line class="slide-grid" x1="${pad.left}" y1="${y(tick)}" x2="${w - pad.right}" y2="${y(tick)}"></line><text class="slide-label" x="${pad.left - 16}" y="${y(tick) + 4}" text-anchor="end">${tick} %</text>`)
       ].join("");
       const bubbles = points.map((d, i) => {
-        const active = selectedDomain ? "" : (state.drill.domain === d.id ? " active" : "");
+        const active = selectedDomain
+          ? (state.drill.questionId === d.id ? " active" : "")
+          : (state.drill.domain === d.id ? " active" : "");
+        const dimmed = selectedDomain && state.drill.questionId && state.drill.questionId !== d.id ? " dimmed" : "";
         const labelY = d.score > 45 ? y(d.score) - 14 : y(d.score) + 24;
         const display = selectedDomain ? d.id : (d.id === "CLOUD" ? "Cloud" : d.id);
         const dataAttr = selectedDomain
-          ? `data-drill-subtopic="${html(d.subtopic || "Sans catégorie")}"`
+          ? `data-drill-question="${html(d.id)}"`
           : `data-drill-domain="${html(d.id)}"`;
         const title = selectedDomain
           ? `${d.id} · ${d.question || d.subtopic} · maturité ${pct(d.score)} · ${d.gapLabel} ${signedPct(d.gap)}`
           : `${d.name} · maturité ${pct(d.score)} · ${d.gapLabel} ${signedPct(d.gap)}`;
-        return `<g class="bubble-point${active}" ${dataAttr} tabindex="0" role="button">
+        return `<g class="bubble-point${active}${dimmed}" ${dataAttr} tabindex="0" role="button">
           <circle cx="${x(d.gap)}" cy="${y(d.score)}" r="8.5" fill="${colors[i % colors.length]}"></circle>
           <text class="bubble-label" x="${x(d.gap)}" y="${labelY}" text-anchor="middle">${html(display)}</text>
           <title>${html(title)}</title>
@@ -1925,23 +1986,6 @@
       bindDashboardInteractions();
     }
 
-    function categoryStats(domainId) {
-      const grouped = new Map();
-      state.assessment.questions.filter((q) => q.domain === domainId).forEach((q) => {
-        const key = q.subtopic || "Sans catégorie";
-        if (!grouped.has(key)) grouped.set(key, { subtopic: key, total: 0, scored: 0, na: 0, missing: 0, sum: 0 });
-        const item = grouped.get(key);
-        item.total += 1;
-        if (q.status === "scored") { item.scored += 1; item.sum += q.score; }
-        else if (q.status === "na") item.na += 1;
-        else item.missing += 1;
-      });
-      return [...grouped.values()].map((item) => ({
-        ...item,
-        score: item.scored ? item.sum / item.scored : null
-      })).sort((a, b) => (a.score ?? 999) - (b.score ?? 999));
-    }
-
     function renderDrillPanel(points) {
       const domain = points.find((d) => d.id === state.drill.domain);
       if (!domain) {
@@ -1955,14 +1999,14 @@
         return;
       }
 
-      const categories = categoryStats(domain.id);
-      const selectedCategory = state.drill.subtopic;
-      $("drillTitle").textContent = selectedCategory ? t("questionsTitle") : t("categories");
+      const questions = questionDashboardPoints(domain.id).sort((a, b) => a.gap - b.gap || (a.score ?? 999) - (b.score ?? 999));
+      const selectedQuestion = state.drill.questionId ? questions.find((q) => q.id === state.drill.questionId) : null;
+      $("drillTitle").textContent = selectedQuestion ? t("questionDetails") : t("questionsTitle");
       const crumbs = `<div class="crumbs">
         <button class="ghost" data-drill-reset="all">${t("themes")}</button>
         <span>/</span>
         <button class="ghost" data-drill-domain="${html(domain.id)}">${html(domain.id)}</button>
-        ${selectedCategory ? `<span>/</span><span>${html(selectedCategory)}</span>` : ""}
+        ${selectedQuestion ? `<span>/</span><span>${html(selectedQuestion.id)}</span>` : ""}
       </div>`;
       const summary = `<div class="kpi" style="padding:0;">
         <div class="label">${html(domain.name)}</div>
@@ -1970,61 +2014,63 @@
         <div class="sub">${domain.gapLabel} ${signedPct(domain.gap)} · ${t("questionsScored", { scored: domain.scored, total: domain.total })}</div>
       </div>`;
 
-      if (!selectedCategory) {
-        $("drillPanel").innerHTML = `${crumbs}${summary}${categories.map((cat) => `<button class="metric-line" data-drill-subtopic="${html(cat.subtopic)}">
-          <span><strong>${html(cat.subtopic)}</strong><span>${t("scoredNa", { scored: cat.scored, total: cat.total, na: cat.na })}</span></span>
-          <b style="color:${scoreColor(cat.score)}">${pct(cat.score)}</b>
+      if (!selectedQuestion) {
+        $("drillPanel").innerHTML = `${crumbs}${summary}${questions.map((q) => `<button class="metric-line" data-drill-question="${html(q.id)}">
+          <span><strong>${html(q.id)} · ${html(q.subtopic || "-")}</strong><span>${html(q.question || "-")} · ${q.gapLabel} ${signedPct(q.gap)}</span></span>
+          <b style="color:${scoreColor(q.score)}">${pct(q.score)}</b>
         </button>`).join("")}`;
         return;
       }
 
-      const questions = state.assessment.questions
-        .filter((q) => q.domain === domain.id && (q.subtopic || "Sans catégorie") === selectedCategory)
-        .sort((a, b) => (a.score ?? 999) - (b.score ?? 999));
-      $("drillPanel").innerHTML = `${crumbs}${summary}${questions.map((q) => {
-        const top = questionGap(q, ["top"]);
-        return `<div class="question-card">
-          <div class="q-title">${html(q.question || q.subtopic || q.id)}</div>
-          <div class="q-meta">${html(q.id)} · ${html(q.type)} · ${html(q.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
-          ${levelStrip(q)}
-          ${q.comment ? `<div class="q-comment">${html(q.comment)}</div>` : ""}
-        </div>`;
-      }).join("")}`;
+      const top = questionGap(selectedQuestion, ["top"]);
+      $("drillPanel").innerHTML = `${crumbs}<div class="question-card">
+        <div class="q-title">${html(selectedQuestion.question || selectedQuestion.subtopic || selectedQuestion.id)}</div>
+        <div class="q-meta">${html(selectedQuestion.id)} · ${html(selectedQuestion.type)} · ${html(selectedQuestion.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
+        ${levelStrip(selectedQuestion)}
+        <div class="q-comment">${html(selectedQuestion.comment || "-")}</div>
+        <h4 style="margin:12px 0 0; font-size:12px; color:var(--muted);">${t("levelDetails")}</h4>
+        ${levelDetail(selectedQuestion)}
+      </div>`;
     }
 
     function bindDashboardInteractions() {
       document.querySelectorAll("[data-drill-domain]").forEach((el) => {
         el.addEventListener("click", () => {
-          state.drill = { domain: el.dataset.drillDomain, subtopic: "" };
+          state.drill = { domain: el.dataset.drillDomain, questionId: "" };
           renderDashboard();
         });
         el.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            state.drill = { domain: el.dataset.drillDomain, subtopic: "" };
+            state.drill = { domain: el.dataset.drillDomain, questionId: "" };
             renderDashboard();
           }
         });
       });
-      document.querySelectorAll("[data-drill-subtopic]").forEach((el) => {
+      document.querySelectorAll("[data-drill-question]").forEach((el) => {
         el.addEventListener("click", () => {
-          state.drill.subtopic = el.dataset.drillSubtopic;
+          state.drill.questionId = el.dataset.drillQuestion;
           renderDashboard();
         });
         el.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            state.drill.subtopic = el.dataset.drillSubtopic;
+            state.drill.questionId = el.dataset.drillQuestion;
             renderDashboard();
           }
         });
       });
       document.querySelectorAll("[data-drill-reset]").forEach((el) => {
         el.addEventListener("click", () => {
-          state.drill = { domain: "", subtopic: "" };
+          state.drill = { domain: "", questionId: "" };
           renderDashboard();
         });
       });
+      $("dashboardBack").onclick = () => {
+        if (state.drill.questionId) state.drill.questionId = "";
+        else state.drill = { domain: "", questionId: "" };
+        renderDashboard();
+      };
     }
 
     function renderOverview() {
@@ -2069,7 +2115,7 @@
         const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
         const x = center + Math.cos(a) * (radius + 26);
         const y = center + Math.sin(a) * (radius + 26);
-        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="axis-label" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${d.id}</text>`;
+        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="axis-label bubble-point" data-overview-domain="${html(d.id)}" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" tabindex="0" role="button">${d.id}</text>`;
       }).join("");
       const mainPoly = `<polygon class="chart-line" points="${points.map((p) => `${p.x},${p.y}`).join(" ")}"></polygon>`;
       let secondary = "";
@@ -2084,6 +2130,25 @@
         secondary = `<polygon class="chart-line secondary" points="${pts.join(" ")}"></polygon>`;
       }
       $("radarChart").innerHTML = `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="Radar des scores par domaine">${grid}${axes}${secondary}${mainPoly}</svg>`;
+      bindOverviewInteractions();
+    }
+
+    function openDashboardDomain(domainId) {
+      state.drill = { domain: domainId, questionId: "" };
+      state.tab = "dashboard";
+      render();
+    }
+
+    function bindOverviewInteractions() {
+      document.querySelectorAll("[data-overview-domain]").forEach((el) => {
+        el.addEventListener("click", () => openDashboardDomain(el.dataset.overviewDomain));
+        el.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openDashboardDomain(el.dataset.overviewDomain);
+          }
+        });
+      });
     }
 
     function renderDistribution() {
@@ -2172,20 +2237,18 @@
     function bindDomainInteractions() {
       document.querySelectorAll("[data-domain-focus]").forEach((el) => {
         el.addEventListener("click", () => {
-          state.drill = { domain: el.dataset.domainFocus, subtopic: "" };
-          renderDomains();
+          openDashboardDomain(el.dataset.domainFocus);
         });
         el.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            state.drill = { domain: el.dataset.domainFocus, subtopic: "" };
-            renderDomains();
+            openDashboardDomain(el.dataset.domainFocus);
           }
         });
       });
       document.querySelectorAll("[data-domain-reset]").forEach((el) => {
         el.addEventListener("click", () => {
-          state.drill = { domain: "", subtopic: "" };
+          state.drill = { domain: "", questionId: "" };
           renderDomains();
         });
       });
@@ -2201,13 +2264,27 @@
     }
 
     function renderFindings() {
-      const scored = state.assessment.questions.filter((q) => q.status === "scored");
+      renderFindingsFilter();
+      let scoped = state.assessment.questions;
+      if (state.findingsDomain) scoped = scoped.filter((q) => q.domain === state.findingsDomain);
+      const scored = scoped.filter((q) => q.status === "scored");
       const strengths = [...scored].sort((a, b) => b.score - a.score).slice(0, 8);
       const weaknesses = [...scored].sort((a, b) => a.score - b.score).slice(0, 8);
-      const blindspots = state.assessment.questions.filter((q) => q.status !== "scored").slice(0, 8);
+      const blindspots = scoped.filter((q) => q.status !== "scored").slice(0, 8);
       $("strengths").innerHTML = strengths.length ? strengths.map(findingItem).join("") : `<p class="muted">${t("noScoredQuestion")}</p>`;
       $("weaknesses").innerHTML = weaknesses.length ? weaknesses.map(findingItem).join("") : `<p class="muted">${t("noScoredQuestion")}</p>`;
       $("blindspots").innerHTML = blindspots.length ? blindspots.map(findingItem).join("") : `<p class="muted">${t("noBlindspot")}</p>`;
+    }
+
+    function renderFindingsFilter() {
+      const select = $("findingsDomainFilter");
+      const domains = state.assessment.domainStats.map((d) => d.id);
+      const current = state.findingsDomain;
+      select.innerHTML = "";
+      select.add(new Option(t("all"), ""));
+      domains.forEach((domain) => select.add(new Option(`${domain} · ${DOMAIN_NAMES[domain] || domain}`, domain)));
+      if (domains.includes(current)) select.value = current;
+      else state.findingsDomain = "";
     }
 
     function filteredQuestions() {
@@ -2377,6 +2454,10 @@
     $("gapFilter").addEventListener("input", (event) => {
       state.compareGap = Number(event.target.value) || 0;
       if (state.assessment && state.benchmark) renderLaggingMeasures();
+    });
+    $("findingsDomainFilter").addEventListener("input", (event) => {
+      state.findingsDomain = event.target.value;
+      if (state.assessment) renderFindings();
     });
     ["search", "domainFilter", "typeFilter", "statusFilter", "scoreFilter"].forEach((id) => {
       $(id).addEventListener("input", (event) => {
