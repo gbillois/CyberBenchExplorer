@@ -489,6 +489,13 @@
       stroke-width: 2.4;
     }
     .bubble-point.dimmed { opacity: .22; }
+    .radar-vertex { fill: var(--cyan); stroke: rgba(0,0,0,.25); stroke-width: 1; transition: r .14s ease, fill .14s ease; }
+    circle.radar-vertex.bubble-point { cursor: pointer; }
+    circle.radar-vertex.bubble-point:hover, circle.radar-vertex.bubble-point:focus-visible { fill: #fff; }
+    circle.radar-vertex.active { fill: #fff; stroke: var(--cyan); stroke-width: 2.4; }
+    text.axis-label.bubble-point { cursor: pointer; }
+    text.axis-label.bubble-point:hover, text.axis-label.bubble-point:focus-visible { fill: var(--text); }
+    text.axis-label.active { fill: var(--cyan); font-weight: 800; }
     .bubble-label { fill: #6d747b; font-size: 13px; font-weight: 700; pointer-events: none; }
     .card-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .drill-stack { display: grid; gap: 12px; }
@@ -748,6 +755,7 @@
                 </div>
               </div>
               <div class="card-body radar-wrap" id="radarChart"></div>
+              <div class="card-body hidden" id="radarDetail" style="padding-top:0;"></div>
             </div>
             <div class="card">
               <div class="card-head"><h3 id="distributionTitle">Maturity distribution</h3></div>
@@ -1222,6 +1230,7 @@
       compareGap: 5,
       drill: { domain: "", questionId: "" },
       overviewDomain: "",
+      overviewQuestion: "",
       findingsDomain: "",
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
@@ -1803,6 +1812,7 @@
         }
         state.drill = { domain: "", questionId: "" };
         state.overviewDomain = "";
+        state.overviewQuestion = "";
         state.findingsDomain = "";
         state.filters = { search: "", domain: "", type: "", status: "", score: "" };
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
@@ -2054,14 +2064,18 @@
         return;
       }
 
-      const top = questionGap(selectedQuestion, ["top"]);
-      $("drillPanel").innerHTML = `${crumbs}<div class="question-card">
-        <div class="q-title">${html(selectedQuestion.question || selectedQuestion.subtopic || selectedQuestion.id)}</div>
-        <div class="q-meta">${html(selectedQuestion.id)} · ${html(selectedQuestion.type)} · ${html(selectedQuestion.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
-        ${levelStrip(selectedQuestion)}
-        <div class="q-comment">${html(selectedQuestion.comment || "-")}</div>
+      $("drillPanel").innerHTML = `${crumbs}${questionDetailCard(selectedQuestion)}`;
+    }
+
+    function questionDetailCard(question) {
+      const top = questionGap(question, ["top"]);
+      return `<div class="question-card">
+        <div class="q-title">${html(question.question || question.subtopic || question.id)}</div>
+        <div class="q-meta">${html(question.id)} · ${html(question.type)} · ${html(question.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
+        ${levelStrip(question)}
+        <div class="q-comment">${html(question.comment || "-")}</div>
         <h4 style="margin:12px 0 0; font-size:12px; color:var(--muted);">${t("levelDetails")}</h4>
-        ${levelDetail(selectedQuestion)}
+        ${levelDetail(question)}
       </div>`;
     }
 
@@ -2128,34 +2142,41 @@
     function renderRadar() {
       const domains = state.assessment.domainStats;
       // Drop a stale drill-down if the selected theme no longer exists.
-      if (state.overviewDomain && !domains.some((d) => d.id === state.overviewDomain)) state.overviewDomain = "";
+      if (state.overviewDomain && !domains.some((d) => d.id === state.overviewDomain)) {
+        state.overviewDomain = "";
+        state.overviewQuestion = "";
+      }
       const hasBenchmark = Boolean(state.benchmark);
       $("radarBenchmarkLegend").classList.toggle("hidden", !hasBenchmark);
       if (hasBenchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
-      $("radarBack").classList.toggle("hidden", !state.overviewDomain);
-      $("radarBack").textContent = t("backToThemes");
 
-      let items, ariaLabel;
+      let items, ariaLabel, selectedQuestion = null;
       if (state.overviewDomain) {
         const benchMap = state.benchmark ? state.benchmark.recordMap : null;
         const name = DOMAIN_NAMES[state.overviewDomain] || state.overviewDomain;
+        const questions = state.assessment.questions.filter((q) => q.domain === state.overviewDomain);
+        // Drop a stale question selection that no longer belongs to the theme.
+        if (state.overviewQuestion && !questions.some((q) => q.id === state.overviewQuestion)) state.overviewQuestion = "";
+        selectedQuestion = state.overviewQuestion ? questions.find((q) => q.id === state.overviewQuestion) : null;
         $("radarTitle").textContent = t("questionRadarTitle", { name });
-        items = state.assessment.questions
-          .filter((q) => q.domain === state.overviewDomain)
-          .map((q) => {
-            const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
-            const refVal = ref ? (ref.top ?? ref.sector ?? ref.all ?? null) : null;
-            return {
-              label: q.id,
-              value: Number.isFinite(q.score) ? q.score : 0,
-              benchValue: Number.isFinite(refVal) ? refVal : null,
-              tooltip: `${q.id} · ${q.subtopic || q.question || ""} · ${pct(q.score)}`
-            };
-          });
+        $("radarBack").textContent = selectedQuestion ? `← ${name}` : t("backToThemes");
+        items = questions.map((q) => {
+          const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
+          const refVal = ref ? (ref.top ?? ref.sector ?? ref.all ?? null) : null;
+          return {
+            label: q.id,
+            value: Number.isFinite(q.score) ? q.score : 0,
+            benchValue: Number.isFinite(refVal) ? refVal : null,
+            tooltip: `${q.id} · ${q.subtopic || q.question || ""} · ${pct(q.score)}`,
+            overviewQuestion: q.id,
+            active: q.id === state.overviewQuestion
+          };
+        });
         ariaLabel = `Radar des questions du thème ${name}`;
       } else {
         const benchMap = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
         $("radarTitle").textContent = t("domainRadar");
+        $("radarBack").textContent = t("backToThemes");
         items = domains.map((d) => {
           const b = benchMap ? benchMap.get(d.id) : null;
           const refVal = b ? (b.top ?? b.sector ?? b.all ?? null) : null;
@@ -2170,7 +2191,11 @@
         ariaLabel = "Radar des scores par domaine";
       }
 
+      $("radarBack").classList.toggle("hidden", !state.overviewDomain);
       $("radarChart").innerHTML = radarSvg(items, ariaLabel);
+      const detail = $("radarDetail");
+      detail.classList.toggle("hidden", !selectedQuestion);
+      detail.innerHTML = selectedQuestion ? questionDetailCard(selectedQuestion) : "";
       bindOverviewInteractions();
     }
 
@@ -2178,6 +2203,11 @@
       const size = 390, center = size / 2, radius = 142;
       const n = Math.max(items.length, 1);
       const angleAt = (i) => -Math.PI / 2 + i * 2 * Math.PI / n;
+      const itemAttrs = (item) => {
+        if (item.drillDomain) return ` data-overview-domain="${html(item.drillDomain)}" tabindex="0" role="button"`;
+        if (item.overviewQuestion) return ` data-overview-question="${html(item.overviewQuestion)}" tabindex="0" role="button"`;
+        return "";
+      };
       const grid = [25, 50, 75, 100].map((level) => {
         const r = radius * level / 100;
         return `<polygon class="chart-grid" points="${items.map((_, i) => {
@@ -2189,10 +2219,16 @@
         const a = angleAt(i);
         const x = center + Math.cos(a) * (radius + 26);
         const y = center + Math.sin(a) * (radius + 26);
-        const interactive = item.drillDomain
-          ? ` class="axis-label bubble-point" data-overview-domain="${html(item.drillDomain)}" tabindex="0" role="button"`
-          : ` class="axis-label"`;
-        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text${interactive} x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${html(item.label)}<title>${html(item.tooltip || "")}</title></text>`;
+        const interactive = item.drillDomain || item.overviewQuestion;
+        const cls = interactive ? `axis-label bubble-point${item.active ? " active" : ""}` : "axis-label";
+        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="${cls}"${itemAttrs(item)} x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${html(item.label)}<title>${html(item.tooltip || "")}</title></text>`;
+      }).join("");
+      const vertices = items.map((item, i) => {
+        const a = angleAt(i), r = radius * (item.value || 0) / 100;
+        const cx = center + Math.cos(a) * r, cy = center + Math.sin(a) * r;
+        const interactive = item.drillDomain || item.overviewQuestion;
+        const cls = interactive ? `radar-vertex bubble-point${item.active ? " active" : ""}` : "radar-vertex";
+        return `<circle class="${cls}" cx="${cx}" cy="${cy}" r="${item.active ? 6 : 4}"${itemAttrs(item)}><title>${html(item.tooltip || "")}</title></circle>`;
       }).join("");
       const mainPoly = `<polygon class="chart-line" points="${items.map((item, i) => {
         const a = angleAt(i), r = radius * (item.value || 0) / 100;
@@ -2206,11 +2242,17 @@
         });
         secondary = `<polygon class="chart-line secondary" points="${pts.join(" ")}"></polygon>`;
       }
-      return `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="${html(ariaLabel)}">${grid}${axes}${secondary}${mainPoly}</svg>`;
+      return `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="${html(ariaLabel)}">${grid}${axes}${secondary}${mainPoly}${vertices}</svg>`;
     }
 
     function openOverviewDomain(domainId) {
       state.overviewDomain = domainId;
+      state.overviewQuestion = "";
+      renderOverview();
+    }
+
+    function openOverviewQuestion(questionId) {
+      state.overviewQuestion = questionId;
       renderOverview();
     }
 
@@ -2221,17 +2263,23 @@
     }
 
     function bindOverviewInteractions() {
-      document.querySelectorAll("[data-overview-domain]").forEach((el) => {
-        el.addEventListener("click", () => openOverviewDomain(el.dataset.overviewDomain));
+      const activate = (el) => {
+        if (el.dataset.overviewDomain) openOverviewDomain(el.dataset.overviewDomain);
+        else if (el.dataset.overviewQuestion) openOverviewQuestion(el.dataset.overviewQuestion);
+      };
+      document.querySelectorAll("[data-overview-domain], [data-overview-question]").forEach((el) => {
+        el.addEventListener("click", () => activate(el));
         el.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            openOverviewDomain(el.dataset.overviewDomain);
+            activate(el);
           }
         });
       });
       $("radarBack").onclick = () => {
-        state.overviewDomain = "";
+        // Step back one level: question detail -> theme radar -> domain radar.
+        if (state.overviewQuestion) state.overviewQuestion = "";
+        else state.overviewDomain = "";
         renderOverview();
       };
     }
