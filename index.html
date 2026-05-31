@@ -7,24 +7,29 @@
   <script src="vendor/xlsx.full.min.js"></script>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #0c1117;
-      --panel: #121923;
-      --panel-2: #17212d;
-      --panel-3: #1e2a38;
-      --line: #2a3747;
-      --line-soft: rgba(255,255,255,.08);
-      --text: #e9edf2;
-      --muted: #9aa7b5;
-      --muted-2: #6f7f90;
-      --blue: #4aa3ff;
-      --cyan: #36d6d0;
-      --green: #63d27c;
-      --amber: #f1b84b;
-      --red: #f46d75;
-      --violet: #a98cff;
-      --shadow: 0 18px 50px rgba(0,0,0,.28);
-      --radius: 8px;
+      color-scheme: light;
+      --bg: #eaf5f5;
+      --bg-soft: #f7fbfb;
+      --panel: #ffffff;
+      --panel-2: #f7fbfe;
+      --panel-3: #e5f8f5;
+      --line: #cfe2ea;
+      --line-soft: #e6f0f4;
+      --line-strong: #b8cbff;
+      --text: #112b43;
+      --muted: #64788b;
+      --muted-2: #8ea1b1;
+      --blue: #3679e6;
+      --cyan: #1699a8;
+      --green: #2ed39b;
+      --amber: #f0c84b;
+      --red: #d7282f;
+      --violet: #7a4ec9;
+      --nav-a: #0d3f61;
+      --nav-b: #0f8794;
+      --nav-c: #249b83;
+      --shadow: 0 14px 34px rgba(14, 65, 83, .14);
+      --radius: 14px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -34,48 +39,49 @@
 
     body {
       margin: 0;
-      background:
-        linear-gradient(180deg, rgba(32, 45, 58, .9) 0%, rgba(12, 17, 23, 0) 36rem),
-        radial-gradient(circle at 12% -8%, rgba(74, 163, 255, .18), transparent 23rem),
-        var(--bg);
+      background: linear-gradient(180deg, #d8ecef 0, var(--bg) 270px, #f8fbff 100%);
       color: var(--text);
     }
 
     button, input, select { font: inherit; }
 
     button {
-      border: 1px solid var(--line);
-      background: var(--panel-2);
+      border: 1px solid #c4d8e4;
+      background: #fff;
       color: var(--text);
-      border-radius: 6px;
-      min-height: 36px;
+      border-radius: 10px;
+      min-height: 40px;
       padding: 0 12px;
       cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 1px 2px rgba(15,70,90,.08);
     }
 
-    button:hover { border-color: rgba(74, 163, 255, .75); background: #1b2837; }
-    button.primary { background: linear-gradient(180deg, #246cb0, #195385); border-color: #317ec8; }
+    button:hover { border-color: #8fb5c6; background: #f7fbfe; }
+    button:focus-visible { outline: 2px solid rgba(46,211,155,.24); border-color: #54cdb2; }
+    button.primary { background: linear-gradient(135deg, #137f9a, #13a59e); color: white; border-color: transparent; box-shadow: 0 12px 24px rgba(14,126,148,.22); }
     button.ghost { background: transparent; }
     button.icon { width: 36px; padding: 0; display: inline-grid; place-items: center; }
-    button.active { background: #25374a; border-color: var(--blue); }
+    button.active { background: var(--panel-3); border-color: #54cdb2; color: #0b7582; }
     button:disabled { opacity: .45; cursor: not-allowed; }
 
     input, select {
       width: 100%;
       min-height: 36px;
       color: var(--text);
-      background: #0f1720;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #cbdde6;
+      border-radius: 10px;
       padding: 0 10px;
       outline: none;
     }
+    input:focus, select:focus { outline: 2px solid rgba(46,211,155,.24); border-color: #54cdb2; }
 
     input[type="file"] {
       height: auto;
       min-height: 42px;
       padding: 9px;
-      color: var(--muted);
+      color: var(--text);
     }
 
     label {
@@ -90,56 +96,94 @@
 
     .app {
       display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
+      grid-template-columns: 1fr;
       min-height: 100vh;
     }
 
     aside {
       position: sticky;
       top: 0;
-      height: 100vh;
-      border-right: 1px solid var(--line-soft);
-      background: rgba(11, 16, 23, .92);
-      backdrop-filter: blur(16px);
-      padding: 22px 18px;
-      overflow: auto;
+      z-index: 20;
+      min-height: 44px;
+      border: 0;
+      background: linear-gradient(110deg, var(--nav-a) 0%, var(--nav-b) 58%, var(--nav-c) 100%);
+      box-shadow: 0 10px 34px rgba(9, 53, 76, .24);
+      padding: 0;
+      overflow: visible;
+      display: grid;
+      grid-template-columns: minmax(220px, .72fr) minmax(240px, .82fr) minmax(240px, .82fr) minmax(460px, 1.55fr);
+      align-items: stretch;
     }
 
     main { min-width: 0; }
 
-    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 9px 14px; margin: 0; border-right: 1px solid rgba(255,255,255,.12); min-width: 0; }
     .mark {
-      width: 38px; height: 38px; border-radius: 8px;
-      background:
-        linear-gradient(135deg, rgba(54,214,208,.95), rgba(74,163,255,.95));
+      width: 34px; height: 34px; border-radius: 10px;
+      background: rgba(255,255,255,.14);
       display: grid; place-items: center;
-      box-shadow: 0 12px 30px rgba(54, 214, 208, .22);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: none;
+      flex: 0 0 auto;
     }
-    .mark svg { width: 23px; height: 23px; color: #061017; }
-    .brand h1 { font-size: 17px; line-height: 1.15; margin: 0; }
-    .brand p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .mark svg { width: 21px; height: 21px; color: #fff; }
+    .brand h1 { font-size: 14px; line-height: 1.05; margin: 0; font-weight: 850; letter-spacing: -0.01em; color: #fff; }
+    .brand p { margin: 3px 0 0; color: rgba(244,250,255,.78); font-size: 10px; letter-spacing: .16em; font-weight: 800; text-transform: uppercase; }
 
-    .side-section { border-top: 1px solid var(--line-soft); padding-top: 16px; margin-top: 16px; }
+    .side-section { border-top: 0; border-right: 1px solid rgba(255,255,255,.12); padding: 7px 10px; margin: 0; min-width: 0; }
     .side-section:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
-    .stack { display: grid; gap: 12px; }
-    .help { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
-    .file-meta { color: var(--muted); font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
-
-    .nav { display: grid; gap: 6px; }
-    .nav button {
-      display: grid;
-      grid-template-columns: 22px 1fr;
-      gap: 8px;
-      align-items: center;
-      text-align: left;
-      justify-content: start;
-      background: transparent;
-      border-color: transparent;
-      padding: 0 10px;
+    .side-section:first-of-type { padding: 7px 10px; }
+    .stack { display: grid; gap: 4px; align-content: center; }
+    .side-section label { color: rgba(237,251,255,.78); font-size: 10px; letter-spacing: .08em; margin: 0 0 3px; }
+    .side-section input[type="file"] {
+      min-height: 31px;
+      height: 31px;
+      padding: 4px 7px;
+      color: #fff;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 10px;
+      font-size: 11px;
     }
-    .nav button.active { background: #172435; border-color: var(--line); }
-    .nav svg { width: 17px; height: 17px; color: var(--muted); }
-    .nav button.active svg { color: var(--cyan); }
+    .help { color: rgba(237,251,255,.82); font-size: 11px; line-height: 1.25; margin: 4px 0 0; }
+    .file-meta { color: rgba(237,251,255,.86); font-size: 11px; line-height: 1.25; overflow-wrap: anywhere; max-height: 42px; overflow: hidden; }
+
+    .nav { display: flex; align-items: stretch; gap: 0; min-width: 0; height: 100%; }
+    .nav button {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      min-width: 76px;
+      min-height: 100%;
+      border: 0;
+      border-left: 1px solid rgba(255,255,255,.12);
+      border-radius: 0;
+      background: transparent;
+      color: rgba(237,251,255,.78);
+      padding: 6px 8px 5px;
+      box-shadow: none;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      position: relative;
+    }
+    .nav button:last-child { border-right: 1px solid rgba(255,255,255,.12); }
+    .nav button::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: transparent;
+    }
+    .nav button:hover, .nav button.active { background: rgba(255,255,255,.09); color: #fff; }
+    .nav button.active::after { background: var(--green); }
+    .nav svg { width: 17px; height: 17px; color: currentColor; }
 
     .content { padding: 28px clamp(18px, 3vw, 36px) 44px; }
     .topbar {
@@ -161,7 +205,8 @@
       border-radius: 999px;
       color: var(--muted);
       white-space: nowrap;
-      background: rgba(18, 25, 35, .8);
+      background: rgba(255,255,255,.84);
+      box-shadow: 0 1px 2px rgba(15,70,90,.08);
     }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
     .dot.ready { background: var(--green); box-shadow: 0 0 0 5px rgba(99,210,124,.1); }
@@ -173,7 +218,7 @@
     .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
     .card {
-      background: rgba(18, 25, 35, .9);
+      background: rgba(255,255,255,.92);
       border: 1px solid var(--line-soft);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -187,7 +232,7 @@
       padding: 15px 16px;
       border-bottom: 1px solid var(--line-soft);
     }
-    .card-head h3 { margin: 0; font-size: 14px; letter-spacing: .02em; }
+    .card-head h3 { margin: 0; font-size: 14px; letter-spacing: .02em; color: #12314a; }
     .card-body { padding: 16px; }
 
     .kpi { padding: 15px 16px; }
@@ -207,12 +252,12 @@
       display: inline-flex;
       gap: 4px;
       padding: 4px;
-      background: #0f1720;
+      background: #fff;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 12px;
     }
     .segmented button { min-height: 30px; padding: 0 9px; border-color: transparent; background: transparent; }
-    .segmented button.active { background: var(--panel-3); border-color: var(--line-soft); }
+    .segmented button.active { background: var(--panel-3); border-color: #54cdb2; color: #0b7582; }
 
     .bars { display: grid; gap: 10px; }
     .bar-row {
@@ -222,16 +267,16 @@
       align-items: center;
     }
     .bar-label { color: var(--text); font-weight: 700; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bar-track { height: 10px; border-radius: 999px; background: #0e151d; overflow: hidden; border: 1px solid rgba(255,255,255,.06); }
+    .bar-track { height: 10px; border-radius: 999px; background: #edf3f6; overflow: hidden; border: 1px solid #dceaf0; }
     .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--red), var(--amber), var(--green)); }
     .bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; }
 
     .radar-wrap, .scatter-wrap { min-height: 360px; display: grid; place-items: center; }
     svg.chart { width: 100%; height: auto; max-height: 410px; overflow: visible; }
     .axis-label { fill: var(--muted); font-size: 11px; }
-    .chart-grid { stroke: rgba(255,255,255,.12); fill: none; }
-    .chart-line { stroke: var(--cyan); stroke-width: 2.4; fill: rgba(54,214,208,.18); }
-    .chart-line.secondary { stroke: var(--amber); fill: rgba(241,184,75,.12); }
+    .chart-grid { stroke: #dfeaf0; fill: none; }
+    .chart-line { stroke: var(--cyan); stroke-width: 2.4; fill: rgba(22,153,168,.16); }
+    .chart-line.secondary { stroke: var(--amber); fill: rgba(240,200,75,.13); }
 
     .list { display: grid; gap: 10px; }
     .finding {
@@ -239,9 +284,9 @@
       grid-template-columns: 58px minmax(0, 1fr) 64px;
       gap: 12px;
       padding: 12px;
-      border: 1px solid var(--line-soft);
-      border-radius: 8px;
-      background: rgba(255,255,255,.025);
+      border: 1px solid #dfeaf0;
+      border-radius: 12px;
+      background: #fbfdfd;
     }
     .finding .id { color: var(--cyan); font-weight: 800; font-size: 12px; }
     .finding .q { color: var(--text); line-height: 1.35; font-size: 13px; }
@@ -258,13 +303,13 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .table-wrap { overflow: auto; border: 1px solid var(--line-soft); border-radius: 8px; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line-soft); border-radius: 12px; background: #fff; }
     table { width: 100%; border-collapse: collapse; min-width: 980px; }
     th, td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: top; }
     th {
       position: sticky;
       top: 0;
-      background: #111a25;
+      background: #f4fbfa;
       color: var(--muted);
       font-size: 11px;
       text-transform: uppercase;
@@ -272,7 +317,7 @@
       z-index: 1;
       cursor: pointer;
     }
-    td { color: #d9e0e8; font-size: 13px; line-height: 1.35; }
+    td { color: #23415b; font-size: 13px; line-height: 1.35; }
     td.small, th.small { width: 84px; white-space: nowrap; }
     .muted { color: var(--muted); }
     .hidden { display: none !important; }
@@ -284,7 +329,7 @@
       text-align: center;
       border: 1px dashed var(--line);
       border-radius: var(--radius);
-      background: rgba(18,25,35,.52);
+      background: rgba(255,255,255,.72);
       padding: 28px;
     }
     .empty h3 { margin: 0 0 8px; }
@@ -298,9 +343,9 @@
     }
     .quadrant {
       border: 1px solid var(--line-soft);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 12px;
-      background: rgba(255,255,255,.025);
+      background: #fbfdfd;
       min-height: 190px;
     }
     .quadrant h4 { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
@@ -314,7 +359,7 @@
       border: 1px solid var(--line);
       border-radius: 999px;
       color: var(--text);
-      background: #0f1720;
+      background: #f3fbfb;
       font-size: 12px;
     }
 
@@ -329,8 +374,8 @@
     .compare-track {
       position: relative;
       height: 42px;
-      border-radius: 8px;
-      background: #0e151d;
+      border-radius: 10px;
+      background: #edf3f6;
       border: 1px solid var(--line-soft);
       overflow: hidden;
     }
@@ -355,14 +400,82 @@
     .legend span { display: inline-flex; align-items: center; gap: 6px; }
     .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+      gap: 16px;
+      align-items: start;
+    }
+    .scatter-card {
+      background: #f8f8f6;
+      color: #5c6670;
+      border-color: #e6f0f4;
+    }
+    .scatter-card .card-head {
+      color: #333b44;
+      border-bottom-color: rgba(0,0,0,.08);
+    }
+    .scatter-card .card-body { padding: 10px 14px 14px; }
+    .scatter-stage { min-height: 560px; display: grid; place-items: center; }
+    .slide-chart { width: 100%; height: auto; min-height: 500px; overflow: visible; }
+    .slide-grid { stroke: #e2e2df; stroke-width: 1; }
+    .slide-axis { stroke: #bfc4c8; stroke-width: 1.2; }
+    .slide-label { fill: #6d747b; font-size: 12px; }
+    .bubble-point { cursor: pointer; outline: none; }
+    .bubble-point circle {
+      stroke: rgba(255,255,255,.72);
+      stroke-width: 2;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.12));
+      transition: r .14s ease, stroke-width .14s ease;
+    }
+    .bubble-point:hover circle,
+    .bubble-point.active circle,
+    .bubble-point:focus-visible circle {
+      r: 11;
+      stroke: #222;
+      stroke-width: 2.4;
+    }
+    .bubble-label { fill: #6d747b; font-size: 13px; font-weight: 700; pointer-events: none; }
+    .drill-stack { display: grid; gap: 12px; }
+    .crumbs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; }
+    .crumbs button { min-height: 30px; padding: 0 9px; }
+    .metric-line {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 58px;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      min-height: 48px;
+      text-align: left;
+      padding: 8px 10px;
+      background: #fbfdfd;
+    }
+    .metric-line strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+    .metric-line span { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .question-card {
+      padding: 11px;
+      border: 1px solid #dfeaf0;
+      border-radius: 12px;
+      background: #fbfdfd;
+    }
+    .question-card .q-title { font-size: 13px; line-height: 1.35; font-weight: 750; }
+    .question-card .q-meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .question-card .q-comment { color: #4c657a; font-size: 12px; margin-top: 8px; line-height: 1.4; }
+
     .toast {
       position: fixed;
       right: 18px;
       bottom: 18px;
       width: min(420px, calc(100vw - 36px));
-      background: #151f2b;
+      background: #fff;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 13px 14px;
       box-shadow: var(--shadow);
       color: var(--text);
@@ -371,8 +484,16 @@
 
     @media (max-width: 1100px) {
       .app { grid-template-columns: 1fr; }
-      aside { position: static; height: auto; }
+      aside {
+        position: static;
+        height: auto;
+        grid-template-columns: 1fr;
+      }
+      .brand, .side-section { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+      .nav { flex-wrap: wrap; }
+      .nav button { flex: 1 1 130px; min-height: 58px; border-bottom: 1px solid rgba(255,255,255,.12); }
       .grid.kpis, .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .dashboard-layout { grid-template-columns: 1fr; }
       .toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
@@ -384,7 +505,8 @@
       .finding { grid-template-columns: 1fr; }
       .score-badge { justify-self: start; }
       .bar-row, .compare-row { grid-template-columns: 1fr; gap: 7px; }
-      aside { padding: 18px 14px; }
+      aside { padding: 0; }
+      .nav button { flex-basis: 50%; }
     }
   </style>
 </head>
@@ -424,7 +546,11 @@
 
       <section class="side-section">
         <nav class="nav" id="nav">
-          <button data-tab="overview" class="active" title="Vue synthétique">
+          <button data-tab="dashboard" class="active" title="Dashboard interactif">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="14" r="2.5"></circle><circle cx="13" cy="9" r="2.5"></circle><circle cx="17" cy="15" r="2.5"></circle><path d="M3 3v18h18"></path></svg>
+            Dashboard
+          </button>
+          <button data-tab="overview" title="Vue synthétique">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             Synthèse
           </button>
@@ -462,6 +588,25 @@
           <div>
             <h3>Chargez un fichier d’évaluation</h3>
             <p>Le fichier est analysé côté navigateur. Les feuilles de domaines, les niveaux de maturité, les commentaires et la fiabilité des réponses sont extraits pour générer les vues.</p>
+          </div>
+        </section>
+
+        <section id="dashboard" class="tab-panel">
+          <div class="dashboard-layout">
+            <div class="card scatter-card">
+              <div class="card-head">
+                <h3 id="bubbleTitle">Maturité par thème</h3>
+                <div class="legend">
+                  <span><i style="background:#4db8b4"></i>Maturité</span>
+                  <span><i style="background:#f17778"></i>Retard</span>
+                </div>
+              </div>
+              <div class="card-body scatter-stage" id="bubbleChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3 id="drillTitle">Drill-down</h3></div>
+              <div class="card-body drill-stack" id="drillPanel"></div>
+            </div>
           </div>
         </section>
 
@@ -656,11 +801,12 @@
     const state = {
       assessment: null,
       benchmark: null,
-      tab: "overview",
+      tab: "dashboard",
       domainSort: "asc",
       tableSort: { key: "score", dir: "asc" },
       compareRef: "sector",
       compareGap: 5,
+      drill: { domain: "", subtopic: "" },
       filters: { search: "", domain: "", type: "", status: "", score: "" }
     };
 
@@ -670,6 +816,7 @@
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
     const clean = (value) => String(value ?? "").replace(/_x000D_/g, " ").replace(/\s+/g, " ").trim();
     const normalize = (value) => clean(value).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const html = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
 
     const refs = {
       nav: $("nav"),
@@ -875,7 +1022,7 @@
       }));
     }
 
-    function parseBenchmark(workbook) {
+    function parseBenchmark(workbook, fileName = "") {
       const rowsBySheet = workbook.SheetNames.map((name) => ({ name, rows: sheetRows(workbook, name) }))
         .filter((s) => s.rows.length >= 2);
       let best = null;
@@ -883,13 +1030,14 @@
         for (let headerRow = 0; headerRow < Math.min(10, sheet.rows.length - 1); headerRow++) {
           const headers = sheet.rows[headerRow].map(clean);
           const idIdx = headerIndex(headers, ["ID", "Question ID", "Assessment ID"]);
-          const domainIdx = headerIndex(headers, ["Domain", "Domaine", "Area", "Theme", "Thème"]);
+          const domainIdx = headerIndex(headers, ["Domain", "Domaine", "Area", "Theme", "Thème", "Category", "Categories", "Catégorie", "Catégories", "Functions", "Subcategories"]);
           const allIdx = headerIndex(headers, ["All companies", "Global average", "Average", "Moyenne globale", "Moyenne", "Benchmark"]);
           const sectorIdx = headerIndex(headers, ["Sector", "Secteur", "Sector average", "Moyenne secteur"]);
           const topIdx = headerIndex(headers, ["Top 10", "Top10", "Top performers", "Best performers"]);
-          const scoreLike = [allIdx, sectorIdx, topIdx].filter((i) => i >= 0).length;
+          const scoreIdx = headerIndex(headers, ["Score", "Scores"]);
+          const scoreLike = [allIdx, sectorIdx, topIdx, scoreIdx].filter((i) => i >= 0).length;
           if ((idIdx >= 0 || domainIdx >= 0) && scoreLike > 0) {
-            best = { sheet, headerRow, idx: { id: idIdx, domain: domainIdx, all: allIdx, sector: sectorIdx, top: topIdx } };
+            best = { sheet, headerRow, idx: { id: idIdx, domain: domainIdx, all: allIdx, sector: sectorIdx, top: topIdx, score: scoreIdx } };
             break;
           }
         }
@@ -899,17 +1047,19 @@
 
       const records = [];
       const rows = best.sheet.rows.slice(best.headerRow + 1);
+      const genericTarget = normalize(`${fileName} ${best.sheet.name}`).includes("top10") || normalize(`${fileName} ${best.sheet.name}`).includes("top 10") ? "top" : "all";
       rows.forEach((row) => {
         const rawId = best.idx.id >= 0 ? clean(row[best.idx.id]) : "";
         const rawDomain = best.idx.domain >= 0 ? clean(row[best.idx.domain]) : "";
         const domain = inferDomain(rawDomain || rawId);
+        const genericScore = best.idx.score >= 0 ? parseScore(row[best.idx.score]) : null;
         const id = rawId || domain;
         const rec = {
           id,
           domain,
-          all: best.idx.all >= 0 ? parseScore(row[best.idx.all]) : null,
+          all: best.idx.all >= 0 ? parseScore(row[best.idx.all]) : (genericTarget === "all" ? genericScore : null),
           sector: best.idx.sector >= 0 ? parseScore(row[best.idx.sector]) : null,
-          top: best.idx.top >= 0 ? parseScore(row[best.idx.top]) : null
+          top: best.idx.top >= 0 ? parseScore(row[best.idx.top]) : (genericTarget === "top" ? genericScore : null)
         };
         if ((rec.id || rec.domain) && [rec.all, rec.sector, rec.top].some(Number.isFinite)) records.push(rec);
       });
@@ -918,7 +1068,8 @@
         sourceSheet: best.sheet.name,
         records,
         recordMap: new Map(records.map((r) => [normalize(r.id), r])),
-        domainStats: aggregateBenchmark(records)
+        domainStats: aggregateBenchmark(records),
+        preferredRef: genericTarget
       };
     }
 
@@ -973,8 +1124,11 @@
       try {
         if (!state.assessment) toast("Le benchmark sera affiché après chargement de l’évaluation.");
         const workbook = await readWorkbook(file);
-        const benchmark = parseBenchmark(workbook);
+        const benchmark = parseBenchmark(workbook, file.name);
         state.benchmark = benchmark;
+        const hasRef = (key) => benchmark.domainStats.some((d) => Number.isFinite(d[key]));
+        if (benchmark.preferredRef === "top" && hasRef("top")) state.compareRef = "top";
+        else if (!hasRef(state.compareRef)) state.compareRef = ["sector", "all", "top"].find(hasRef) || "sector";
         refs.benchmarkMeta.innerHTML = `<strong>${file.name}</strong><br>${benchmark.records.length} lignes · feuille ${benchmark.sourceSheet}`;
         render();
       } catch (error) {
@@ -990,6 +1144,7 @@
       updateTitle();
       if (!ready) return;
       renderFilters();
+      renderDashboard();
       renderOverview();
       renderDomains();
       renderFindings();
@@ -999,6 +1154,7 @@
 
     function updateTitle() {
       const titles = {
+        dashboard: ["Dashboard", "Vue type slide 5 : maturité par thème, écart au benchmark et drill-down vers catégories puis questions."],
         overview: ["Synthèse", "Vue exécutive des scores, de la couverture et des domaines qui structurent le profil de maturité."],
         domains: ["Domaines", "Classement des domaines et visualisation croisée score / couverture."],
         findings: ["Forces / faiblesses", "Lecture rapide des meilleurs points, des priorités et des zones sans réponse."],
@@ -1023,6 +1179,171 @@
       if (typeSelect.options.length <= 1) {
         [...new Set(state.assessment.questions.map((q) => q.type).filter(Boolean))].sort().forEach((type) => typeSelect.add(new Option(type, type)));
       }
+    }
+
+    function benchmarkReference(domainId) {
+      if (!state.benchmark) return null;
+      const bench = state.benchmark.domainStats.find((d) => d.id === domainId);
+      if (!bench) return null;
+      const order = state.benchmark.preferredRef === "top" ? ["top", "sector", "all"] : ["sector", "all", "top"];
+      const key = order.find((candidate) => Number.isFinite(bench[candidate]));
+      if (!key) return null;
+      const labels = { all: "moyenne", sector: "secteur", top: "top 10" };
+      return { key, label: labels[key], value: bench[key] };
+    }
+
+    function dashboardPoints() {
+      const scored = state.assessment.domainStats.filter((d) => Number.isFinite(d.score));
+      const internalAverage = average(scored.map((d) => d.score));
+      return scored.map((d) => {
+        const ref = benchmarkReference(d.id);
+        const refValue = ref ? ref.value : internalAverage;
+        return {
+          ...d,
+          ref,
+          gap: Number.isFinite(refValue) ? d.score - refValue : 0,
+          gapLabel: ref ? `écart ${ref.label}` : "écart moyenne interne"
+        };
+      });
+    }
+
+    function renderDashboard() {
+      const points = dashboardPoints();
+      if (!points.length) {
+        $("bubbleChart").innerHTML = `<p class="muted">Aucun domaine scoré.</p>`;
+        $("drillPanel").innerHTML = "";
+        return;
+      }
+      if (state.drill.domain && !points.some((d) => d.id === state.drill.domain)) state.drill = { domain: "", subtopic: "" };
+      const refLabel = points.find((d) => d.ref)?.ref?.label || "moyenne interne";
+      $("bubbleTitle").textContent = `Maturité vs ${refLabel}`;
+
+      const w = 980, h = 560, pad = { top: 28, right: 34, bottom: 58, left: 72 };
+      const maxGap = Math.max(35, Math.ceil(Math.max(...points.map((d) => Math.abs(d.gap))) / 10) * 10);
+      const xMin = -maxGap, xMax = maxGap, yMin = 0, yMax = 100;
+      const x = (value) => pad.left + (w - pad.left - pad.right) * ((clamp(value, xMin, xMax) - xMin) / (xMax - xMin));
+      const y = (value) => h - pad.bottom - (h - pad.top - pad.bottom) * ((clamp(value, yMin, yMax) - yMin) / (yMax - yMin));
+      const xTicks = [];
+      for (let tick = xMin + 10; tick < xMax; tick += 10) xTicks.push(tick);
+      const yTicks = [0, 20, 40, 60, 80, 100];
+      const colors = ["#4db8b4", "#f17778", "#6f82a7", "#6e5a99", "#efcc62", "#9da0c8", "#c85c84", "#7a877a", "#d7a7aa", "#8a9799", "#5f78a0", "#63c9bf", "#f27d7d", "#788a8d", "#b9b7d5", "#8f9b75"];
+      const grid = [
+        ...xTicks.map((tick) => `<line class="slide-grid" x1="${x(tick)}" y1="${pad.top}" x2="${x(tick)}" y2="${h - pad.bottom}"></line><text class="slide-label" x="${x(tick)}" y="${h - 22}" text-anchor="middle">${tick} %</text>`),
+        ...yTicks.map((tick) => `<line class="slide-grid" x1="${pad.left}" y1="${y(tick)}" x2="${w - pad.right}" y2="${y(tick)}"></line><text class="slide-label" x="${pad.left - 16}" y="${y(tick) + 4}" text-anchor="end">${tick} %</text>`)
+      ].join("");
+      const bubbles = points.map((d, i) => {
+        const active = state.drill.domain === d.id ? " active" : "";
+        const labelY = d.score > 45 ? y(d.score) - 14 : y(d.score) + 24;
+        const display = d.id === "CLOUD" ? "Cloud" : d.id;
+        return `<g class="bubble-point${active}" data-drill-domain="${html(d.id)}" tabindex="0" role="button">
+          <circle cx="${x(d.gap)}" cy="${y(d.score)}" r="8.5" fill="${colors[i % colors.length]}"></circle>
+          <text class="bubble-label" x="${x(d.gap)}" y="${labelY}" text-anchor="middle">${html(display)}</text>
+          <title>${html(d.name)} · maturité ${pct(d.score)} · ${d.gapLabel} ${signedPct(d.gap)}</title>
+        </g>`;
+      }).join("");
+
+      $("bubbleChart").innerHTML = `<svg class="slide-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Maturité par thème et écart au référentiel">
+        <rect x="0" y="0" width="${w}" height="${h}" fill="#f8f8f6"></rect>
+        ${grid}
+        <line class="slide-axis" x1="${pad.left}" y1="${h - pad.bottom}" x2="${w - pad.right}" y2="${h - pad.bottom}"></line>
+        <line class="slide-axis" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${h - pad.bottom}"></line>
+        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">Gap with the ${refLabel}</text>
+        <text class="slide-label" x="18" y="${h / 2}" transform="rotate(-90 18 ${h / 2})" text-anchor="middle">Maturity of the enterprise</text>
+        ${bubbles}
+      </svg>`;
+      renderDrillPanel(points);
+      bindDashboardInteractions();
+    }
+
+    function categoryStats(domainId) {
+      const grouped = new Map();
+      state.assessment.questions.filter((q) => q.domain === domainId).forEach((q) => {
+        const key = q.subtopic || "Sans catégorie";
+        if (!grouped.has(key)) grouped.set(key, { subtopic: key, total: 0, scored: 0, na: 0, missing: 0, sum: 0 });
+        const item = grouped.get(key);
+        item.total += 1;
+        if (q.status === "scored") { item.scored += 1; item.sum += q.score; }
+        else if (q.status === "na") item.na += 1;
+        else item.missing += 1;
+      });
+      return [...grouped.values()].map((item) => ({
+        ...item,
+        score: item.scored ? item.sum / item.scored : null
+      })).sort((a, b) => (a.score ?? 999) - (b.score ?? 999));
+    }
+
+    function renderDrillPanel(points) {
+      const domain = points.find((d) => d.id === state.drill.domain);
+      if (!domain) {
+        $("drillTitle").textContent = "Thèmes";
+        $("drillPanel").innerHTML = points
+          .sort((a, b) => a.gap - b.gap || (a.score ?? 0) - (b.score ?? 0))
+          .map((d) => `<button class="metric-line" data-drill-domain="${html(d.id)}">
+            <span><strong>${html(d.id)} · ${html(d.name)}</strong><span>${d.gapLabel} ${signedPct(d.gap)} · ${d.scored}/${d.total} scorées</span></span>
+            <b style="color:${scoreColor(d.score)}">${pct(d.score)}</b>
+          </button>`).join("");
+        return;
+      }
+
+      const categories = categoryStats(domain.id);
+      const selectedCategory = state.drill.subtopic;
+      $("drillTitle").textContent = selectedCategory ? "Questions" : "Catégories";
+      const crumbs = `<div class="crumbs">
+        <button class="ghost" data-drill-reset="all">Thèmes</button>
+        <span>/</span>
+        <button class="ghost" data-drill-domain="${html(domain.id)}">${html(domain.id)}</button>
+        ${selectedCategory ? `<span>/</span><span>${html(selectedCategory)}</span>` : ""}
+      </div>`;
+      const summary = `<div class="kpi" style="padding:0;">
+        <div class="label">${html(domain.name)}</div>
+        <div class="value" style="font-size:34px; color:${scoreColor(domain.score)}">${pct(domain.score)}</div>
+        <div class="sub">${domain.gapLabel} ${signedPct(domain.gap)} · ${domain.scored}/${domain.total} questions scorées</div>
+      </div>`;
+
+      if (!selectedCategory) {
+        $("drillPanel").innerHTML = `${crumbs}${summary}${categories.map((cat) => `<button class="metric-line" data-drill-subtopic="${html(cat.subtopic)}">
+          <span><strong>${html(cat.subtopic)}</strong><span>${cat.scored}/${cat.total} scorées · ${cat.na} N/A</span></span>
+          <b style="color:${scoreColor(cat.score)}">${pct(cat.score)}</b>
+        </button>`).join("")}`;
+        return;
+      }
+
+      const questions = state.assessment.questions
+        .filter((q) => q.domain === domain.id && (q.subtopic || "Sans catégorie") === selectedCategory)
+        .sort((a, b) => (a.score ?? 999) - (b.score ?? 999));
+      $("drillPanel").innerHTML = `${crumbs}${summary}${questions.map((q) => `<div class="question-card">
+        <div class="q-title">${html(q.question || q.subtopic || q.id)}</div>
+        <div class="q-meta">${html(q.id)} · ${html(q.type)} · <strong style="color:${scoreColor(q.score)}">${q.status === "na" ? "N/A" : pct(q.score)}</strong> · ${html(q.status)}</div>
+        ${q.comment ? `<div class="q-comment">${html(q.comment)}</div>` : ""}
+      </div>`).join("")}`;
+    }
+
+    function bindDashboardInteractions() {
+      document.querySelectorAll("[data-drill-domain]").forEach((el) => {
+        el.addEventListener("click", () => {
+          state.drill = { domain: el.dataset.drillDomain, subtopic: "" };
+          renderDashboard();
+        });
+        el.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            state.drill = { domain: el.dataset.drillDomain, subtopic: "" };
+            renderDashboard();
+          }
+        });
+      });
+      document.querySelectorAll("[data-drill-subtopic]").forEach((el) => {
+        el.addEventListener("click", () => {
+          state.drill.subtopic = el.dataset.drillSubtopic;
+          renderDashboard();
+        });
+      });
+      document.querySelectorAll("[data-drill-reset]").forEach((el) => {
+        el.addEventListener("click", () => {
+          state.drill = { domain: "", subtopic: "" };
+          renderDashboard();
+        });
+      });
     }
 
     function renderOverview() {
@@ -1211,6 +1532,7 @@
       $("cmpCount").textContent = String(rows.length);
 
       $("compareRows").innerHTML = rows.length ? rows.map(compareRow).join("") : `<p class="muted">Aucun domaine commun entre l’évaluation et le benchmark.</p>`;
+      document.querySelectorAll("#compareRef button").forEach((btn) => btn.classList.toggle("active", btn.dataset.ref === state.compareRef));
       renderLaggingMeasures();
     }
 
