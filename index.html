@@ -1650,11 +1650,21 @@
 
     const average = (values) => values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
 
-    function dummyQuestion({ id, type, subtopic, question, score, levels, status = "scored", comment, reliability = "Moyenne" }) {
+    function dummyQuestion({ id, type, subtopic, question, score, levels, status = "scored", comment, reliability = "Moyenne", evidence, requirements }) {
       const domain = inferDomain(id);
       const parsedScore = parseScore(score);
       const normalizedLevels = normalizeLevels(levels, parsedScore, status);
       const computedScore = normalizedLevels.some((value) => value > 0) ? scoreFromLevels(normalizedLevels) : parsedScore;
+      const genericRequirements = [
+        "Initial practice: informal, incomplete, or not consistently evidenced.",
+        "Defined practice: documented on a limited scope with partial ownership.",
+        "Managed practice: documented, deployed on core scope, and regularly evidenced.",
+        "Measured practice: monitored with indicators, exceptions, and management review.",
+        "Optimized practice: continuously tested, improved, and benchmarked against leading practice."
+      ];
+      const resolvedRequirements = Array.isArray(requirements) && requirements.some((value) => clean(value))
+        ? [0, 1, 2, 3, 4].map((index) => clean(requirements[index]) || genericRequirements[index])
+        : genericRequirements;
       return {
         id,
         order: Number(id.split(".")[1]) || 0,
@@ -1663,14 +1673,8 @@
         type,
         subtopic,
         question,
-        evidence: "Synthetic example: simulated evidence for demonstration.",
-        requirements: [
-          "Initial practice: informal, incomplete, or not consistently evidenced.",
-          "Defined practice: documented on a limited scope with partial ownership.",
-          "Managed practice: documented, deployed on core scope, and regularly evidenced.",
-          "Measured practice: monitored with indicators, exceptions, and management review.",
-          "Optimized practice: continuously tested, improved, and benchmarked against leading practice."
-        ],
+        evidence: clean(evidence) || "Synthetic example: simulated evidence for demonstration.",
+        requirements: resolvedRequirements,
         levels: normalizedLevels,
         score: status === "scored" && Number.isFinite(computedScore) ? computedScore : null,
         status,
