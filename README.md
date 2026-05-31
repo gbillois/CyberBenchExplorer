@@ -7,7 +7,7 @@ The UI defaults to English and automatically switches to French when the browser
 
 1. Publish the repository with GitHub Pages.
 2. Open `index.html`.
-3. A complete synthetic data set is displayed by default for testing without a real file (`data/dummy-assessment.json`: 221 questions, and `data/dummy-benchmark.json`: question-level Top 10 referential).
+3. A complete synthetic data set is displayed by default for testing without a real file (`data/dummy-assessment.json`: 220 questions whose IDs, subtopics, and assessment points mirror the real W-CyberBenchmark question bank, and `data/dummy-benchmark.json`: question-level Top 10 referential). Only the scores, maturity levels, comments, and reliability are synthetic.
 4. Upload an assessment `.xlsm`, `.xlsx`, `.xls`, or `.xlsb` file to replace the example.
 5. Optionally upload a benchmark file with columns such as `ID` or `Domain`, then `Average`, `Sector`, and `Top 10`.
 
