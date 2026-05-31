@@ -310,6 +310,20 @@
     .bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; }
 
     .radar-wrap, .scatter-wrap { min-height: 360px; display: grid; place-items: center; }
+    .radar-head-tools { display: flex; align-items: center; gap: 12px; }
+    .thumb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 980px) { .thumb-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px) { .thumb-grid { grid-template-columns: 1fr; } }
+    .thumb {
+      text-align: left; background: var(--card, #fff); border: 1px solid var(--border, rgba(0,0,0,.08));
+      border-radius: 12px; padding: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 8px;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .thumb:hover, .thumb:focus-visible { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.12); border-color: var(--cyan); outline: none; }
+    .thumb-preview { width: 100%; height: 76px; border-radius: 8px; background: rgba(22,153,168,.06); display: grid; place-items: center; overflow: hidden; }
+    .thumb-preview svg { width: 100%; height: 100%; }
+    .thumb-title { font-size: 13px; font-weight: 800; color: var(--text); }
+    .thumb-text { font-size: 12px; color: var(--muted); line-height: 1.35; }
     svg.chart { width: 100%; height: auto; max-height: 410px; overflow: visible; }
     .axis-label { fill: var(--muted); font-size: 11px; }
     .chart-grid { stroke: #dfeaf0; fill: none; }
@@ -488,6 +502,13 @@
       stroke-width: 2.4;
     }
     .bubble-point.dimmed { opacity: .22; }
+    .radar-vertex { fill: var(--cyan); stroke: rgba(0,0,0,.25); stroke-width: 1; transition: r .14s ease, fill .14s ease; }
+    circle.radar-vertex.bubble-point { cursor: pointer; }
+    circle.radar-vertex.bubble-point:hover, circle.radar-vertex.bubble-point:focus-visible { fill: #fff; }
+    circle.radar-vertex.active { fill: #fff; stroke: var(--cyan); stroke-width: 2.4; }
+    text.axis-label.bubble-point { cursor: pointer; }
+    text.axis-label.bubble-point:hover, text.axis-label.bubble-point:focus-visible { fill: var(--text); }
+    text.axis-label.active { fill: var(--cyan); font-weight: 800; }
     .bubble-label { fill: #6d747b; font-size: 13px; font-weight: 700; pointer-events: none; }
     .card-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .drill-stack { display: grid; gap: 12px; }
@@ -658,29 +679,33 @@
 
       <section class="side-section">
         <nav class="nav" id="nav">
-          <button data-tab="dashboard" class="active" title="Dashboard interactif">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="14" r="2.5"></circle><circle cx="13" cy="9" r="2.5"></circle><circle cx="17" cy="15" r="2.5"></circle><path d="M3 3v18h18"></path></svg>
-            Dashboard
+          <button data-tab="home" class="active" title="Synthèse">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
+            Synthèse
           </button>
-          <button data-tab="overview" title="Vue synthétique">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            Overview
+          <button data-tab="dashboard" title="Matrice de maturité">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="14" r="2.5"></circle><circle cx="13" cy="9" r="2.5"></circle><circle cx="17" cy="15" r="2.5"></circle><path d="M3 3v18h18"></path></svg>
+            Matrice
+          </button>
+          <button data-tab="overview" title="Rosace de maturité">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,3 20,8 17,18 7,18 4,8"></polygon><path d="M12 3v15"></path><path d="M4 8l16 0"></path></svg>
+            Rosace
           </button>
           <button data-tab="domains" title="Scores par domaine">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="M7 15v2"></path><path d="M12 9v8"></path><path d="M17 5v12"></path></svg>
-            Domains
+            Domaines
           </button>
-          <button data-tab="findings" title="Strengths and weaknesses">
+          <button data-tab="findings" title="Forces et faiblesses">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"></path><path d="M7 8h10"></path><path d="M5 21h14"></path><path d="m6 8-3 7h6L6 8Z"></path><path d="m18 8-3 7h6l-3-7Z"></path></svg>
-            Findings
+            Constats
           </button>
-          <button data-tab="questions" title="Exploration des questions">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
-            Questions
-          </button>
-          <button data-tab="compare" title="Benchmark comparison">
+          <button data-tab="compare" title="Comparaison au benchmark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M20 19V5"></path><path d="M8 7h8"></path><path d="M8 12h8"></path><path d="M8 17h8"></path></svg>
-            Compare
+            Comparaison
+          </button>
+          <button data-tab="questions" title="Détails des réponses">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
+            Détails réponse
           </button>
         </nav>
       </section>
@@ -708,7 +733,24 @@
           </div>
         </section>
 
-        <section id="dashboard" class="tab-panel">
+        <section id="home" class="tab-panel">
+          <div class="grid kpis">
+            <div class="card kpi"><div class="label" id="kpiCoverageLabel">Coverage</div><div class="value" id="kpiCoverage">-</div><div class="sub" id="kpiCoverageSub">Excluding N/A</div></div>
+            <div class="card kpi"><div class="label" id="kpiScoreLabel">Maturity</div><div class="value" id="kpiScore">-</div><div class="sub" id="kpiScoreSub">Scored questions</div></div>
+            <div class="card kpi"><div class="label" id="kpiBestLabel">Strong domain</div><div class="value" id="kpiBest">-</div><div class="sub" id="kpiBestSub">Highest score</div></div>
+            <div class="card kpi"><div class="label" id="kpiWeakLabel">Priority</div><div class="value" id="kpiWeak">-</div><div class="sub" id="kpiWeakSub">Lowest score</div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 id="exploreTitle">Explore</h3></div>
+            <div class="card-body"><div class="thumb-grid" id="thumbGrid"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3 id="distributionTitle">Maturity distribution</h3></div>
+            <div class="card-body" id="distributionChart"></div>
+          </div>
+        </section>
+
+        <section id="dashboard" class="tab-panel hidden">
           <div class="dashboard-layout">
             <div class="card scatter-card">
               <div class="card-head">
@@ -730,25 +772,17 @@
           </div>
         </section>
 
-        <section id="overview" class="tab-panel">
-          <div class="grid kpis">
-            <div class="card kpi"><div class="label" id="kpiScoreLabel">Average score</div><div class="value" id="kpiScore">-</div><div class="sub" id="kpiScoreSub">Scored questions</div></div>
-            <div class="card kpi"><div class="label" id="kpiCoverageLabel">Coverage</div><div class="value" id="kpiCoverage">-</div><div class="sub" id="kpiCoverageSub">Excluding N/A</div></div>
-            <div class="card kpi"><div class="label" id="kpiBestLabel">Strong domain</div><div class="value" id="kpiBest">-</div><div class="sub" id="kpiBestSub">Highest score</div></div>
-            <div class="card kpi"><div class="label" id="kpiWeakLabel">Priority</div><div class="value" id="kpiWeak">-</div><div class="sub" id="kpiWeakSub">Lowest score</div></div>
-          </div>
-          <div class="grid two">
-            <div class="card">
-              <div class="card-head">
-                <h3 id="radarTitle">Domain radar</h3>
+        <section id="overview" class="tab-panel hidden">
+          <div class="card">
+            <div class="card-head">
+              <h3 id="radarTitle">Domain radar</h3>
+              <div class="radar-head-tools">
+                <button class="ghost hidden" id="radarBack">Back</button>
                 <div class="legend"><span id="radarEvalLegend"><i style="background:var(--cyan)"></i>Assessment</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
               </div>
-              <div class="card-body radar-wrap" id="radarChart"></div>
             </div>
-            <div class="card">
-              <div class="card-head"><h3 id="distributionTitle">Maturity distribution</h3></div>
-              <div class="card-body" id="distributionChart"></div>
-            </div>
+            <div class="card-body radar-wrap" id="radarChart"></div>
+            <div class="card-body hidden" id="radarDetail" style="padding-top:0;"></div>
           </div>
         </section>
 
@@ -940,12 +974,14 @@
         assessmentHelp: "Local browser parsing. No file is sent.",
         benchmarkLabel: "Benchmark referential",
         benchmarkHelp: "Optional: global average, sector, top 10. Columns are detected automatically.",
-        navDashboard: "Dashboard",
-        navOverview: "Overview",
+        navHome: "Summary",
+        navDashboard: "Matrix",
+        navOverview: "Radar",
         navDomains: "Domains",
         navFindings: "Findings",
-        navQuestions: "Questions",
-        navCompare: "Compare",
+        navQuestions: "Response details",
+        navCompare: "Comparison",
+        exploreTitle: "Explore the analyses",
         waitingFile: "Waiting for file",
         dummyData: "Dummy data",
         assessmentLoaded: "Assessment loaded",
@@ -953,7 +989,7 @@
         emptyText: "The file is parsed in your browser. Domain sheets, maturity levels, comments, and response reliability are extracted to generate the views.",
         maturity: "Maturity",
         lag: "Lag",
-        averageScore: "Average score",
+        averageScore: "Maturity",
         scoredQuestions: "Scored questions",
         coverage: "Coverage",
         excludingNa: "Excluding N/A",
@@ -965,6 +1001,8 @@
         assessment: "Assessment",
         benchmark: "Benchmark",
         maturityDistribution: "Maturity distribution",
+        questionRadarTitle: "{name} · questions",
+        backToThemes: "← All themes",
         scoresByDomain: "Scores by domain",
         coverageScoreMatrix: "Coverage / score matrix",
         strengths: "Strengths",
@@ -1008,18 +1046,20 @@
         questionDetails: "Question details",
         levelDetails: "Level details",
         lagHelp: "Measures are available when the benchmark contains rows with the same ID as the questionnaire.",
+        homeIntro: "Key indicators and quick access to every analysis view.",
         dashboardIntro: "Slide-style view: maturity by theme, benchmark gap, and drill-down to categories then questions.",
-        overviewIntro: "Executive view of scores, coverage, and domains shaping the maturity profile.",
+        overviewIntro: "Maturity radar by theme, with drill-down to a theme's questions and their level details.",
         domainsIntro: "Domain ranking and cross-view of score versus coverage.",
         findingsIntro: "Quick reading of best points, priorities, and unanswered areas.",
         questionsIntro: "Filterable table to analyze each assessment point, levels 1 to 5, and comments.",
         compareIntro: "Alignment of the assessment with global average, sector, and top 10 benchmarks.",
-        dashboardTitle: "Dashboard",
-        overviewTitle: "Overview",
+        homeTitle: "Summary",
+        dashboardTitle: "Matrix",
+        overviewTitle: "Radar",
         domainsTitle: "Domains",
         findingsTitle: "Strengths / weaknesses",
-        questionsTitle: "Questions",
-        compareTitle: "Compare",
+        questionsTitle: "Response details",
+        compareTitle: "Comparison",
         themes: "Themes",
         categories: "Categories",
         noScoredDomain: "No scored domain.",
@@ -1069,12 +1109,14 @@
         assessmentHelp: "Chargement local dans le navigateur. Aucun fichier n'est envoyé.",
         benchmarkLabel: "Référentiel benchmark",
         benchmarkHelp: "Optionnel : moyenne globale, secteur, top 10. Les colonnes sont détectées automatiquement.",
-        navDashboard: "Dashboard",
-        navOverview: "Synthèse",
+        navHome: "Synthèse",
+        navDashboard: "Matrice",
+        navOverview: "Rosace",
         navDomains: "Domaines",
         navFindings: "Constats",
-        navQuestions: "Questions",
+        navQuestions: "Détails réponse",
         navCompare: "Comparaison",
+        exploreTitle: "Explorer les analyses",
         waitingFile: "En attente de fichier",
         dummyData: "Données exemple",
         assessmentLoaded: "Evaluation chargée",
@@ -1082,7 +1124,7 @@
         emptyText: "Le fichier est analysé côté navigateur. Les feuilles de domaines, les niveaux de maturité, les commentaires et la fiabilité des réponses sont extraits pour générer les vues.",
         maturity: "Maturité",
         lag: "Retard",
-        averageScore: "Score moyen",
+        averageScore: "Maturité",
         scoredQuestions: "Questions scorées",
         coverage: "Couverture",
         excludingNa: "Hors N/A",
@@ -1094,6 +1136,8 @@
         assessment: "Evaluation",
         benchmark: "Benchmark",
         maturityDistribution: "Distribution des maturités",
+        questionRadarTitle: "{name} · questions",
+        backToThemes: "← Tous les thèmes",
         scoresByDomain: "Scores par domaine",
         coverageScoreMatrix: "Matrice couverture / score",
         strengths: "Forces",
@@ -1137,17 +1181,19 @@
         questionDetails: "Détail question",
         levelDetails: "Détail des niveaux",
         lagHelp: "Les mesures sont disponibles quand le benchmark contient des lignes avec le même ID que le questionnaire.",
+        homeIntro: "Indicateurs clés et accès rapide à toutes les vues d'analyse.",
         dashboardIntro: "Vue type slide : maturité par thème, écart au benchmark et drill-down vers catégories puis questions.",
-        overviewIntro: "Vue exécutive des scores, de la couverture et des domaines qui structurent le profil de maturité.",
+        overviewIntro: "Rosace de maturité par thème, avec zoom sur les questions d'un thème et le détail de leurs niveaux.",
         domainsIntro: "Classement des domaines et visualisation croisée score / couverture.",
         findingsIntro: "Lecture rapide des meilleurs points, des priorités et des zones sans réponse.",
         questionsIntro: "Table filtrable pour analyser chaque point d'évaluation, ses niveaux 1 à 5 et les commentaires associés.",
         compareIntro: "Alignement de l'évaluation avec un référentiel de moyenne globale, secteur et top 10.",
-        dashboardTitle: "Dashboard",
-        overviewTitle: "Synthèse",
+        homeTitle: "Synthèse",
+        dashboardTitle: "Matrice",
+        overviewTitle: "Rosace",
         domainsTitle: "Domaines",
         findingsTitle: "Forces / faiblesses",
-        questionsTitle: "Questions",
+        questionsTitle: "Détails réponse",
         compareTitle: "Comparaison",
         themes: "Thèmes",
         categories: "Catégories",
@@ -1207,12 +1253,14 @@
     const state = {
       assessment: null,
       benchmark: null,
-      tab: "dashboard",
+      tab: "home",
       domainSort: "asc",
       tableSort: { key: "id", dir: "asc" },
       compareRef: "top",
       compareGap: 5,
       drill: { domain: "", questionId: "" },
+      overviewDomain: "",
+      overviewQuestion: "",
       findingsDomain: "",
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
@@ -1269,14 +1317,14 @@
         ["cmpAllSub", "assessmentVsGlobal"], ["cmpSectorLabel", "sectorGap"], ["cmpSectorSub", "assessmentVsSector"], ["cmpTopLabel", "topGap"],
         ["cmpTopSub", "assessmentVsTop"], ["cmpCountLabel", "comparedDomains"], ["cmpCountSub", "alignment"], ["compareRowsTitle", "comparisonByDomain"],
         ["lagTitle", "laggingMeasures"],
-        ["lagHelp", "lagHelp"]
+        ["lagHelp", "lagHelp"], ["exploreTitle", "exploreTitle"]
       ].forEach(([id, key]) => setText(id, key));
 
       const noticeText = $("dummyNotice")?.querySelector("span:last-child");
       if (noticeText) noticeText.textContent = t("localDisplayNotice");
       $("search").placeholder = t("searchPlaceholder");
       [
-        ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"]
+        ["home", "navHome"], ["dashboard", "navDashboard"], ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"]
       ].forEach(([tab, key]) => {
         const button = document.querySelector(`[data-tab="${tab}"]`);
         if (button?.lastChild) button.lastChild.textContent = t(key);
@@ -1650,11 +1698,21 @@
 
     const average = (values) => values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
 
-    function dummyQuestion({ id, type, subtopic, question, score, levels, status = "scored", comment, reliability = "Moyenne" }) {
+    function dummyQuestion({ id, type, subtopic, question, score, levels, status = "scored", comment, reliability = "Moyenne", evidence, requirements }) {
       const domain = inferDomain(id);
       const parsedScore = parseScore(score);
       const normalizedLevels = normalizeLevels(levels, parsedScore, status);
       const computedScore = normalizedLevels.some((value) => value > 0) ? scoreFromLevels(normalizedLevels) : parsedScore;
+      const genericRequirements = [
+        "Initial practice: informal, incomplete, or not consistently evidenced.",
+        "Defined practice: documented on a limited scope with partial ownership.",
+        "Managed practice: documented, deployed on core scope, and regularly evidenced.",
+        "Measured practice: monitored with indicators, exceptions, and management review.",
+        "Optimized practice: continuously tested, improved, and benchmarked against leading practice."
+      ];
+      const resolvedRequirements = Array.isArray(requirements) && requirements.some((value) => clean(value))
+        ? [0, 1, 2, 3, 4].map((index) => clean(requirements[index]) || genericRequirements[index])
+        : genericRequirements;
       return {
         id,
         order: Number(id.split(".")[1]) || 0,
@@ -1663,14 +1721,8 @@
         type,
         subtopic,
         question,
-        evidence: "Synthetic example: simulated evidence for demonstration.",
-        requirements: [
-          "Initial practice: informal, incomplete, or not consistently evidenced.",
-          "Defined practice: documented on a limited scope with partial ownership.",
-          "Managed practice: documented, deployed on core scope, and regularly evidenced.",
-          "Measured practice: monitored with indicators, exceptions, and management review.",
-          "Optimized practice: continuously tested, improved, and benchmarked against leading practice."
-        ],
+        evidence: clean(evidence) || "Synthetic example: simulated evidence for demonstration.",
+        requirements: resolvedRequirements,
         levels: normalizedLevels,
         score: status === "scored" && Number.isFinite(computedScore) ? computedScore : null,
         status,
@@ -1789,6 +1841,8 @@
           refs.benchmarkMeta.innerHTML = "";
         }
         state.drill = { domain: "", questionId: "" };
+        state.overviewDomain = "";
+        state.overviewQuestion = "";
         state.findingsDomain = "";
         state.filters = { search: "", domain: "", type: "", status: "", score: "" };
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
@@ -1826,6 +1880,7 @@
       updateTitle();
       if (!ready) return;
       renderFilters();
+      renderHome();
       renderDashboard();
       renderOverview();
       renderDomains();
@@ -1836,6 +1891,7 @@
 
     function updateTitle() {
       const titles = {
+        home: [t("homeTitle"), t("homeIntro")],
         dashboard: [t("dashboardTitle"), t("dashboardIntro")],
         overview: [t("overviewTitle"), t("overviewIntro")],
         domains: [t("domainsTitle"), t("domainsIntro")],
@@ -2040,14 +2096,18 @@
         return;
       }
 
-      const top = questionGap(selectedQuestion, ["top"]);
-      $("drillPanel").innerHTML = `${crumbs}<div class="question-card">
-        <div class="q-title">${html(selectedQuestion.question || selectedQuestion.subtopic || selectedQuestion.id)}</div>
-        <div class="q-meta">${html(selectedQuestion.id)} · ${html(selectedQuestion.type)} · ${html(selectedQuestion.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
-        ${levelStrip(selectedQuestion)}
-        <div class="q-comment">${html(selectedQuestion.comment || "-")}</div>
+      $("drillPanel").innerHTML = `${crumbs}${questionDetailCard(selectedQuestion)}`;
+    }
+
+    function questionDetailCard(question) {
+      const top = questionGap(question, ["top"]);
+      return `<div class="question-card">
+        <div class="q-title">${html(question.question || question.subtopic || question.id)}</div>
+        <div class="q-meta">${html(question.id)} · ${html(question.type)} · ${html(question.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
+        ${levelStrip(question)}
+        <div class="q-comment">${html(question.comment || "-")}</div>
         <h4 style="margin:12px 0 0; font-size:12px; color:var(--muted);">${t("levelDetails")}</h4>
-        ${levelDetail(selectedQuestion)}
+        ${levelDetail(question)}
       </div>`;
     }
 
@@ -2091,7 +2151,7 @@
       };
     }
 
-    function renderOverview() {
+    function renderHome() {
       const qs = state.assessment.questions;
       const scored = qs.filter((q) => q.status === "scored");
       const avg = average(scored.map((q) => q.score));
@@ -2107,48 +2167,218 @@
       $("kpiBestSub").textContent = best ? `${best.name} · ${pct(best.score)}` : t("highestScore");
       $("kpiWeak").textContent = weak ? weak.id : "-";
       $("kpiWeakSub").textContent = weak ? `${weak.name} · ${pct(weak.score)}` : t("lowestScore");
-      renderRadar();
+      renderThumbnails();
       renderDistribution();
+    }
+
+    function renderThumbnails() {
+      const tiles = [
+        { tab: "dashboard", title: t("navDashboard"), text: t("dashboardIntro"), preview: miniMatrix() },
+        { tab: "overview", title: t("navOverview"), text: t("overviewIntro"), preview: miniRadar() },
+        { tab: "domains", title: t("navDomains"), text: t("domainsIntro"), preview: miniBars() },
+        { tab: "findings", title: t("navFindings"), text: t("findingsIntro"), preview: miniFindings() },
+        { tab: "compare", title: t("navCompare"), text: t("compareIntro"), preview: miniCompare() },
+        { tab: "questions", title: t("navQuestions"), text: t("questionsIntro"), preview: miniTable() }
+      ];
+      $("thumbGrid").innerHTML = tiles.map((tile) => `
+        <button class="thumb" type="button" data-nav-tab="${tile.tab}">
+          <div class="thumb-preview">${tile.preview}</div>
+          <div class="thumb-title">${html(tile.title)}</div>
+          <div class="thumb-text">${html(tile.text)}</div>
+        </button>`).join("");
+      document.querySelectorAll("[data-nav-tab]").forEach((el) => {
+        el.addEventListener("click", () => {
+          state.tab = el.dataset.navTab;
+          render();
+        });
+      });
+    }
+
+    // --- Mini previews for the home thumbnails (non-interactive, real data) ---
+    function miniColor(score) { return scoreColor(Number.isFinite(score) ? score : 0); }
+
+    function miniRadar() {
+      const domains = state.assessment.domainStats;
+      const cx = 60, cy = 38, R = 30, n = Math.max(domains.length, 3);
+      const at = (i, r) => `${cx + Math.cos(-Math.PI / 2 + i * 2 * Math.PI / n) * r},${cy + Math.sin(-Math.PI / 2 + i * 2 * Math.PI / n) * r}`;
+      const ring = `<polygon points="${domains.map((_, i) => at(i, R)).join(" ")}" fill="none" stroke="rgba(0,0,0,.12)"></polygon>`;
+      const poly = `<polygon points="${domains.map((d, i) => at(i, R * (d.score || 0) / 100)).join(" ")}" fill="rgba(22,153,168,.25)" stroke="var(--cyan)" stroke-width="1.5"></polygon>`;
+      return `<svg viewBox="0 0 120 76">${ring}${poly}</svg>`;
+    }
+
+    function miniBars() {
+      const domains = [...state.assessment.domainStats].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 5);
+      const rows = domains.map((d, i) => {
+        const w = Math.max(2, (d.score || 0) / 100 * 96);
+        return `<rect x="8" y="${8 + i * 13}" width="${w}" height="8" rx="2" fill="${miniColor(d.score)}"></rect>`;
+      }).join("");
+      return `<svg viewBox="0 0 120 76">${rows}</svg>`;
+    }
+
+    function miniMatrix() {
+      const domains = state.assessment.domainStats;
+      const dots = domains.map((d) => {
+        const x = 12 + (d.score || 0) / 100 * 96;
+        const cov = d.total ? (d.scored + d.na) / d.total : 0;
+        const y = 66 - cov * 56;
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${miniColor(d.score)}" opacity=".85"></circle>`;
+      }).join("");
+      return `<svg viewBox="0 0 120 76"><line x1="10" y1="68" x2="116" y2="68" stroke="rgba(0,0,0,.15)"></line><line x1="10" y1="8" x2="10" y2="68" stroke="rgba(0,0,0,.15)"></line>${dots}</svg>`;
+    }
+
+    function miniCompare() {
+      const domains = [...state.assessment.domainStats].slice(0, 5);
+      const benchMap = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
+      const groups = domains.map((d, i) => {
+        const x = 10 + i * 22;
+        const evalH = (d.score || 0) / 100 * 56;
+        const b = benchMap ? benchMap.get(d.id) : null;
+        const refVal = b ? (b.top ?? b.sector ?? b.all ?? 0) : 0;
+        const refH = refVal / 100 * 56;
+        const refBar = benchMap ? `<rect x="${x + 8}" y="${68 - refH}" width="7" height="${refH}" rx="1.5" fill="var(--amber)"></rect>` : "";
+        return `<rect x="${x}" y="${68 - evalH}" width="7" height="${evalH}" rx="1.5" fill="var(--cyan)"></rect>${refBar}`;
+      }).join("");
+      return `<svg viewBox="0 0 120 76"><line x1="6" y1="68" x2="116" y2="68" stroke="rgba(0,0,0,.15)"></line>${groups}</svg>`;
+    }
+
+    function miniFindings() {
+      const domains = [...state.assessment.domainStats].filter((d) => Number.isFinite(d.score)).sort((a, b) => b.score - a.score);
+      const top = domains.slice(0, 2);
+      const low = domains.slice(-2).reverse();
+      const line = (label, color, y) => `<rect x="8" y="${y}" width="6" height="6" rx="1.5" fill="${color}"></rect><rect x="20" y="${y + 1}" width="${Math.max(10, 80)}" height="4" rx="2" fill="rgba(0,0,0,.08)"></rect>`;
+      const rows = [
+        ...top.map((d, i) => line(d.id, "var(--cyan)", 8 + i * 15)),
+        ...low.map((d, i) => line(d.id, "#f17778", 40 + i * 15))
+      ].join("");
+      return `<svg viewBox="0 0 120 76">${rows}</svg>`;
+    }
+
+    function miniTable() {
+      const rows = [0, 1, 2, 3].map((i) => `
+        <rect x="8" y="${8 + i * 15}" width="14" height="9" rx="2" fill="rgba(22,153,168,.5)"></rect>
+        <rect x="28" y="${10 + i * 15}" width="84" height="5" rx="2.5" fill="rgba(0,0,0,.1)"></rect>`).join("");
+      return `<svg viewBox="0 0 120 76">${rows}</svg>`;
+    }
+
+    function renderOverview() {
+      renderRadar();
     }
 
     function renderRadar() {
       const domains = state.assessment.domainStats;
-      const benchmark = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
-      $("radarBenchmarkLegend").classList.toggle("hidden", !benchmark);
-      if (benchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
+      // Drop a stale drill-down if the selected theme no longer exists.
+      if (state.overviewDomain && !domains.some((d) => d.id === state.overviewDomain)) {
+        state.overviewDomain = "";
+        state.overviewQuestion = "";
+      }
+      const hasBenchmark = Boolean(state.benchmark);
+      $("radarBenchmarkLegend").classList.toggle("hidden", !hasBenchmark);
+      if (hasBenchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
+
+      let items, ariaLabel, selectedQuestion = null;
+      if (state.overviewDomain) {
+        const benchMap = state.benchmark ? state.benchmark.recordMap : null;
+        const name = DOMAIN_NAMES[state.overviewDomain] || state.overviewDomain;
+        const questions = state.assessment.questions.filter((q) => q.domain === state.overviewDomain);
+        // Drop a stale question selection that no longer belongs to the theme.
+        if (state.overviewQuestion && !questions.some((q) => q.id === state.overviewQuestion)) state.overviewQuestion = "";
+        selectedQuestion = state.overviewQuestion ? questions.find((q) => q.id === state.overviewQuestion) : null;
+        $("radarTitle").textContent = t("questionRadarTitle", { name });
+        $("radarBack").textContent = selectedQuestion ? `← ${name}` : t("backToThemes");
+        items = questions.map((q) => {
+          const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
+          const refVal = ref ? (ref.top ?? ref.sector ?? ref.all ?? null) : null;
+          return {
+            label: q.id,
+            value: Number.isFinite(q.score) ? q.score : 0,
+            benchValue: Number.isFinite(refVal) ? refVal : null,
+            tooltip: `${q.id} · ${q.subtopic || q.question || ""} · ${pct(q.score)}`,
+            overviewQuestion: q.id,
+            active: q.id === state.overviewQuestion
+          };
+        });
+        ariaLabel = `Radar des questions du thème ${name}`;
+      } else {
+        const benchMap = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
+        $("radarTitle").textContent = t("domainRadar");
+        $("radarBack").textContent = t("backToThemes");
+        items = domains.map((d) => {
+          const b = benchMap ? benchMap.get(d.id) : null;
+          const refVal = b ? (b.top ?? b.sector ?? b.all ?? null) : null;
+          return {
+            label: d.id,
+            value: Number.isFinite(d.score) ? d.score : 0,
+            benchValue: Number.isFinite(refVal) ? refVal : null,
+            tooltip: `${d.name} · ${pct(d.score)}`,
+            drillDomain: d.id
+          };
+        });
+        ariaLabel = "Radar des scores par domaine";
+      }
+
+      $("radarBack").classList.toggle("hidden", !state.overviewDomain);
+      $("radarChart").innerHTML = radarSvg(items, ariaLabel);
+      const detail = $("radarDetail");
+      detail.classList.toggle("hidden", !selectedQuestion);
+      detail.innerHTML = selectedQuestion ? questionDetailCard(selectedQuestion) : "";
+      bindOverviewInteractions();
+    }
+
+    function radarSvg(items, ariaLabel) {
       const size = 390, center = size / 2, radius = 142;
-      const points = domains.map((d, i) => {
-        const angle = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
-        const r = radius * ((d.score || 0) / 100);
-        return { x: center + Math.cos(angle) * r, y: center + Math.sin(angle) * r, angle, domain: d };
-      });
+      const n = Math.max(items.length, 1);
+      const angleAt = (i) => -Math.PI / 2 + i * 2 * Math.PI / n;
+      const itemAttrs = (item) => {
+        if (item.drillDomain) return ` data-overview-domain="${html(item.drillDomain)}" tabindex="0" role="button"`;
+        if (item.overviewQuestion) return ` data-overview-question="${html(item.overviewQuestion)}" tabindex="0" role="button"`;
+        return "";
+      };
       const grid = [25, 50, 75, 100].map((level) => {
         const r = radius * level / 100;
-        return `<polygon class="chart-grid" points="${domains.map((_, i) => {
-          const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+        return `<polygon class="chart-grid" points="${items.map((_, i) => {
+          const a = angleAt(i);
           return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
         }).join(" ")}"></polygon>`;
       }).join("");
-      const axes = domains.map((d, i) => {
-        const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+      const axes = items.map((item, i) => {
+        const a = angleAt(i);
         const x = center + Math.cos(a) * (radius + 26);
         const y = center + Math.sin(a) * (radius + 26);
-        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="axis-label bubble-point" data-overview-domain="${html(d.id)}" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" tabindex="0" role="button">${d.id}</text>`;
+        const interactive = item.drillDomain || item.overviewQuestion;
+        const cls = interactive ? `axis-label bubble-point${item.active ? " active" : ""}` : "axis-label";
+        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="${cls}"${itemAttrs(item)} x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${html(item.label)}<title>${html(item.tooltip || "")}</title></text>`;
       }).join("");
-      const mainPoly = `<polygon class="chart-line" points="${points.map((p) => `${p.x},${p.y}`).join(" ")}"></polygon>`;
+      const vertices = items.map((item, i) => {
+        const a = angleAt(i), r = radius * (item.value || 0) / 100;
+        const cx = center + Math.cos(a) * r, cy = center + Math.sin(a) * r;
+        const interactive = item.drillDomain || item.overviewQuestion;
+        const cls = interactive ? `radar-vertex bubble-point${item.active ? " active" : ""}` : "radar-vertex";
+        return `<circle class="${cls}" cx="${cx}" cy="${cy}" r="${item.active ? 6 : 4}"${itemAttrs(item)}><title>${html(item.tooltip || "")}</title></circle>`;
+      }).join("");
+      const mainPoly = `<polygon class="chart-line" points="${items.map((item, i) => {
+        const a = angleAt(i), r = radius * (item.value || 0) / 100;
+        return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
+      }).join(" ")}"></polygon>`;
       let secondary = "";
-      if (benchmark) {
-        const pts = domains.map((d, i) => {
-          const b = benchmark.get(d.id);
-          const val = b ? (b.top ?? b.sector ?? b.all ?? 0) : 0;
-          const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
-          const r = radius * val / 100;
+      if (items.some((item) => Number.isFinite(item.benchValue))) {
+        const pts = items.map((item, i) => {
+          const a = angleAt(i), r = radius * (Number.isFinite(item.benchValue) ? item.benchValue : 0) / 100;
           return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
         });
         secondary = `<polygon class="chart-line secondary" points="${pts.join(" ")}"></polygon>`;
       }
-      $("radarChart").innerHTML = `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="Radar des scores par domaine">${grid}${axes}${secondary}${mainPoly}</svg>`;
-      bindOverviewInteractions();
+      return `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="${html(ariaLabel)}">${grid}${axes}${secondary}${mainPoly}${vertices}</svg>`;
+    }
+
+    function openOverviewDomain(domainId) {
+      state.overviewDomain = domainId;
+      state.overviewQuestion = "";
+      renderOverview();
+    }
+
+    function openOverviewQuestion(questionId) {
+      state.overviewQuestion = questionId;
+      renderOverview();
     }
 
     function openDashboardDomain(domainId) {
@@ -2158,15 +2388,25 @@
     }
 
     function bindOverviewInteractions() {
-      document.querySelectorAll("[data-overview-domain]").forEach((el) => {
-        el.addEventListener("click", () => openDashboardDomain(el.dataset.overviewDomain));
+      const activate = (el) => {
+        if (el.dataset.overviewDomain) openOverviewDomain(el.dataset.overviewDomain);
+        else if (el.dataset.overviewQuestion) openOverviewQuestion(el.dataset.overviewQuestion);
+      };
+      document.querySelectorAll("[data-overview-domain], [data-overview-question]").forEach((el) => {
+        el.addEventListener("click", () => activate(el));
         el.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            openDashboardDomain(el.dataset.overviewDomain);
+            activate(el);
           }
         });
       });
+      $("radarBack").onclick = () => {
+        // Step back one level: question detail -> theme radar -> domain radar.
+        if (state.overviewQuestion) state.overviewQuestion = "";
+        else state.overviewDomain = "";
+        renderOverview();
+      };
     }
 
     function renderDistribution() {
