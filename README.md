@@ -10,6 +10,7 @@ Dataviz HTML autonome pour explorer un fichier W-CyberBenchmark rempli depuis Gi
 4. Optionnellement charger un fichier benchmark contenant des colonnes de type `ID` ou `Domain`, puis `Average` / `Moyenne`, `Sector` / `Secteur`, `Top 10`.
 
 Les fichiers sont lus localement dans le navigateur. Aucun backend n'est utilisé.
+La librairie SheetJS est embarquée dans `vendor/` pour éviter une dépendance CDN à l'exécution.
 
 ## Benchmark attendu
 
