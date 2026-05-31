@@ -1,22 +1,23 @@
 # CyberBench Explorer
 
-Dataviz HTML autonome pour explorer un fichier W-CyberBenchmark rempli depuis GitHub Pages.
+Standalone HTML dataviz to explore a completed W-CyberBenchmark file from GitHub Pages.
+The UI defaults to English and automatically switches to French when the browser language starts with `fr`.
 
 ## Utilisation
 
-1. Publier le repo avec GitHub Pages.
-2. Ouvrir `index.html`.
-3. Un jeu de données fictif complet est affiché par défaut pour tester les vues sans fichier réel (`data/dummy-assessment.json` : 221 questions, et `data/dummy-benchmark.json` : référentiel Top 10 au niveau question).
-4. Charger le fichier d'évaluation `.xlsm`, `.xlsx`, `.xls` ou `.xlsb` pour remplacer l'exemple.
-5. Optionnellement charger un fichier benchmark contenant des colonnes de type `ID` ou `Domain`, puis `Average` / `Moyenne`, `Sector` / `Secteur`, `Top 10`.
+1. Publish the repository with GitHub Pages.
+2. Open `index.html`.
+3. A complete synthetic data set is displayed by default for testing without a real file (`data/dummy-assessment.json`: 221 questions, and `data/dummy-benchmark.json`: question-level Top 10 referential).
+4. Upload an assessment `.xlsm`, `.xlsx`, `.xls`, or `.xlsb` file to replace the example.
+5. Optionally upload a benchmark file with columns such as `ID` or `Domain`, then `Average`, `Sector`, and `Top 10`.
 
-Les fichiers sont lus localement dans le navigateur. Aucun backend n'est utilisé.
-La librairie SheetJS est embarquée dans `vendor/` pour éviter une dépendance CDN à l'exécution.
-Les données de démonstration sont des fichiers JSON statiques. Si ces fichiers sont absents ou invalides, `index.html` charge un fallback minimal pour éviter un écran vide. Les fichiers chargés par l'utilisateur ne sont ni stockés dans le navigateur, ni envoyés à un serveur.
+Files are read locally in the browser. No backend is used.
+SheetJS is vendored in `vendor/` to avoid a runtime CDN dependency.
+Demo data is stored as static JSON files. If those files are missing or invalid, `index.html` loads a minimal fallback to avoid an empty screen. User-uploaded files are neither stored in the browser nor sent to a server.
 
-## Benchmark attendu
+## Expected Benchmark
 
-Le référentiel peut être au niveau domaine ou au niveau mesure.
+The referential can be at domain level or question level.
 
 Colonnes recommandées :
 
@@ -25,4 +26,4 @@ Colonnes recommandées :
 | GOV.01 | GOV | 62% | 67% | 84% | L4 |
 | RISK.01 | RISK | 55% | 60% | 79% | L4 |
 
-Quand les `ID` correspondent aux questions du questionnaire, l'onglet Comparaison affiche les mesures où le client est en retard. Le référentiel JSON de démonstration ajoute aussi `topMaturityLevel` et `topLevels` par question pour tester la comparaison de maturité Top 10.
+When `ID` values match questionnaire questions, the Compare tab displays lagging measures. The demo JSON referential also adds `topMaturityLevel` and `topLevels` per question to test Top 10 maturity comparison.

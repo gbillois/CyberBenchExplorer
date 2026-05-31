@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -577,6 +577,8 @@
       .finding { grid-template-columns: 1fr; }
       .score-badge { justify-self: start; }
       .bar-row, .compare-row { grid-template-columns: 1fr; gap: 7px; }
+      .scatter-stage { min-height: 380px; }
+      .slide-chart { min-height: 320px; }
       aside { padding: 0; }
       .nav button { flex-basis: 50%; }
     }
@@ -600,18 +602,18 @@
 
       <section class="side-section stack">
         <div>
-          <label for="assessmentFile">Evaluation XLS/XLSM</label>
+          <label for="assessmentFile">Assessment XLS/XLSM</label>
           <input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb">
-          <p class="help">Chargement local dans le navigateur. Aucun fichier n’est envoyé.</p>
+          <p class="help" id="assessmentHelp">Local browser parsing. No file is sent.</p>
         </div>
         <div id="assessmentMeta" class="file-meta"></div>
       </section>
 
       <section class="side-section stack">
         <div>
-          <label for="benchmarkFile">Référentiel benchmark</label>
+          <label for="benchmarkFile">Benchmark referential</label>
           <input id="benchmarkFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb,.csv">
-          <p class="help">Optionnel : moyenne globale, secteur, top 10. Les colonnes sont détectées automatiquement.</p>
+          <p class="help" id="benchmarkHelp">Optional: global average, sector, top 10. Columns are detected automatically.</p>
         </div>
         <div id="benchmarkMeta" class="file-meta"></div>
       </section>
@@ -624,23 +626,23 @@
           </button>
           <button data-tab="overview" title="Vue synthétique">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            Synthèse
+            Overview
           </button>
           <button data-tab="domains" title="Scores par domaine">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="M7 15v2"></path><path d="M12 9v8"></path><path d="M17 5v12"></path></svg>
-            Domaines
+            Domains
           </button>
-          <button data-tab="findings" title="Forces et faiblesses">
+          <button data-tab="findings" title="Strengths and weaknesses">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"></path><path d="M7 8h10"></path><path d="M5 21h14"></path><path d="m6 8-3 7h6L6 8Z"></path><path d="m18 8-3 7h6l-3-7Z"></path></svg>
-            Forces / faiblesses
+            Findings
           </button>
           <button data-tab="questions" title="Exploration des questions">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
             Questions
           </button>
-          <button data-tab="compare" title="Comparaison benchmark">
+          <button data-tab="compare" title="Benchmark comparison">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M20 19V5"></path><path d="M8 7h8"></path><path d="M8 12h8"></path><path d="M8 17h8"></path></svg>
-            Comparaison
+            Compare
           </button>
         </nav>
       </section>
@@ -655,16 +657,16 @@
 
         <div class="topbar">
           <div class="title">
-            <h2 id="pageTitle">Synthèse</h2>
-            <p id="pageIntro">Chargez un fichier W-CyberBenchmark rempli pour produire les indicateurs, les classements et les vues d’exploration.</p>
+            <h2 id="pageTitle">Overview</h2>
+            <p id="pageIntro">Upload a completed W-CyberBenchmark file to generate indicators, rankings, and exploration views.</p>
           </div>
-          <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">En attente de fichier</span></div>
+          <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div>
         </div>
 
         <section id="emptyState" class="empty">
           <div>
-            <h3>Chargez un fichier d’évaluation</h3>
-            <p>Le fichier est analysé côté navigateur. Les feuilles de domaines, les niveaux de maturité, les commentaires et la fiabilité des réponses sont extraits pour générer les vues.</p>
+            <h3 id="emptyTitle">Upload an assessment file</h3>
+            <p id="emptyText">The file is parsed in your browser. Domain sheets, maturity levels, comments, and response reliability are extracted to generate the views.</p>
           </div>
         </section>
 
@@ -672,10 +674,10 @@
           <div class="dashboard-layout">
             <div class="card scatter-card">
               <div class="card-head">
-                <h3 id="bubbleTitle">Maturité par thème</h3>
+                <h3 id="bubbleTitle">Maturity by theme</h3>
                 <div class="legend">
-                  <span><i style="background:#4db8b4"></i>Maturité</span>
-                  <span><i style="background:#f17778"></i>Retard</span>
+                  <span id="legendMaturity"><i style="background:#4db8b4"></i>Maturity</span>
+                  <span id="legendLag"><i style="background:#f17778"></i>Lag</span>
                 </div>
               </div>
               <div class="card-body scatter-stage" id="bubbleChart"></div>
@@ -689,21 +691,21 @@
 
         <section id="overview" class="tab-panel">
           <div class="grid kpis">
-            <div class="card kpi"><div class="label">Score moyen</div><div class="value" id="kpiScore">-</div><div class="sub" id="kpiScoreSub">Questions scorées</div></div>
-            <div class="card kpi"><div class="label">Couverture</div><div class="value" id="kpiCoverage">-</div><div class="sub" id="kpiCoverageSub">Hors N/A</div></div>
-            <div class="card kpi"><div class="label">Domaine fort</div><div class="value" id="kpiBest">-</div><div class="sub" id="kpiBestSub">Score le plus élevé</div></div>
-            <div class="card kpi"><div class="label">Priorité</div><div class="value" id="kpiWeak">-</div><div class="sub" id="kpiWeakSub">Score le plus faible</div></div>
+            <div class="card kpi"><div class="label" id="kpiScoreLabel">Average score</div><div class="value" id="kpiScore">-</div><div class="sub" id="kpiScoreSub">Scored questions</div></div>
+            <div class="card kpi"><div class="label" id="kpiCoverageLabel">Coverage</div><div class="value" id="kpiCoverage">-</div><div class="sub" id="kpiCoverageSub">Excluding N/A</div></div>
+            <div class="card kpi"><div class="label" id="kpiBestLabel">Strong domain</div><div class="value" id="kpiBest">-</div><div class="sub" id="kpiBestSub">Highest score</div></div>
+            <div class="card kpi"><div class="label" id="kpiWeakLabel">Priority</div><div class="value" id="kpiWeak">-</div><div class="sub" id="kpiWeakSub">Lowest score</div></div>
           </div>
           <div class="grid two">
             <div class="card">
               <div class="card-head">
-                <h3>Radar domaines</h3>
-                <div class="legend"><span><i style="background:var(--cyan)"></i>Evaluation</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
+                <h3 id="radarTitle">Domain radar</h3>
+                <div class="legend"><span id="radarEvalLegend"><i style="background:var(--cyan)"></i>Assessment</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
               </div>
               <div class="card-body radar-wrap" id="radarChart"></div>
             </div>
             <div class="card">
-              <div class="card-head"><h3>Distribution des maturités</h3></div>
+              <div class="card-head"><h3 id="distributionTitle">Maturity distribution</h3></div>
               <div class="card-body" id="distributionChart"></div>
             </div>
           </div>
@@ -713,7 +715,7 @@
           <div class="grid two">
             <div class="card">
               <div class="card-head">
-                <h3>Scores par domaine</h3>
+                <h3 id="domainScoresTitle">Scores by domain</h3>
                 <div class="segmented" id="domainSort">
                   <button data-sort="asc" class="active">Asc</button>
                   <button data-sort="desc">Desc</button>
@@ -723,7 +725,7 @@
               <div class="card-body"><div class="bars" id="domainBars"></div></div>
             </div>
             <div class="card">
-              <div class="card-head"><h3>Matrice couverture / score</h3></div>
+              <div class="card-head"><h3 id="domainScatterTitle">Coverage / score matrix</h3></div>
               <div class="card-body scatter-wrap" id="domainScatter"></div>
             </div>
           </div>
@@ -732,15 +734,15 @@
         <section id="findings" class="tab-panel hidden">
           <div class="grid three">
             <div class="card">
-              <div class="card-head"><h3>Forces</h3></div>
+              <div class="card-head"><h3 id="strengthsTitle">Strengths</h3></div>
               <div class="card-body"><div class="list" id="strengths"></div></div>
             </div>
             <div class="card">
-              <div class="card-head"><h3>Faiblesses</h3></div>
+              <div class="card-head"><h3 id="weaknessesTitle">Weaknesses</h3></div>
               <div class="card-body"><div class="list" id="weaknesses"></div></div>
             </div>
             <div class="card">
-              <div class="card-head"><h3>Angles morts</h3></div>
+              <div class="card-head"><h3 id="blindspotsTitle">Blind spots</h3></div>
               <div class="card-body"><div class="list" id="blindspots"></div></div>
             </div>
           </div>
@@ -749,24 +751,24 @@
         <section id="questions" class="tab-panel hidden">
           <div class="card">
             <div class="card-head">
-              <h3>Exploration détaillée</h3>
-              <button class="ghost" id="exportCsv">Exporter CSV</button>
+              <h3 id="questionsTitle">Detailed exploration</h3>
+              <button class="ghost" id="exportCsv">Export CSV</button>
             </div>
             <div class="card-body">
               <div class="toolbar">
-                <div><label for="search">Recherche</label><input id="search" type="search" placeholder="ID, thème, question, commentaire..."></div>
-                <div><label for="domainFilter">Domaine</label><select id="domainFilter"><option value="">Tous</option></select></div>
-                <div><label for="typeFilter">Type</label><select id="typeFilter"><option value="">Tous</option></select></div>
-                <div><label for="statusFilter">Statut</label><select id="statusFilter"><option value="">Tous</option><option value="scored">Scorées</option><option value="na">N/A</option><option value="missing">Non scorées</option></select></div>
-                <div><label for="scoreFilter">Maturité globale</label><select id="scoreFilter"><option value="">Tous</option><option value="weak">&lt; 40%</option><option value="medium">40-70%</option><option value="strong">&gt;= 70%</option></select></div>
+                <div><label for="search">Search</label><input id="search" type="search" placeholder="ID, theme, question, comment..."></div>
+                <div><label for="domainFilter">Domain</label><select id="domainFilter"><option value="">All</option></select></div>
+                <div><label for="typeFilter">Type</label><select id="typeFilter"><option value="">All</option></select></div>
+                <div><label for="statusFilter">Status</label><select id="statusFilter"><option value="">All</option><option value="scored">Scored</option><option value="na">N/A</option><option value="missing">Missing</option></select></div>
+                <div><label for="scoreFilter">Overall maturity</label><select id="scoreFilter"><option value="">All</option><option value="weak">&lt; 40%</option><option value="medium">40-70%</option><option value="strong">&gt;= 70%</option></select></div>
               </div>
               <div class="table-wrap">
                 <table id="questionsTable">
                   <thead>
                     <tr>
                       <th class="small" data-key="id">ID</th>
-                      <th class="small" data-key="domain">Domaine</th>
-                      <th data-key="subtopic">Sujet</th>
+                      <th class="small" data-key="domain">Domain</th>
+                      <th data-key="subtopic">Topic</th>
                       <th data-key="question">Question</th>
                       <th class="small" data-key="type">Type</th>
                       <th class="small">N1</th>
@@ -776,9 +778,9 @@
                       <th class="small">N5</th>
                       <th class="small">Top 10</th>
                       <th class="small">Top Lvl</th>
-                      <th class="small">Ecart</th>
-                      <th class="small" data-key="status">Statut</th>
-                      <th data-key="comment">Commentaire</th>
+                      <th class="small">Gap</th>
+                      <th class="small" data-key="status">Status</th>
+                      <th data-key="comment">Comment</th>
                     </tr>
                   </thead>
                   <tbody></tbody>
@@ -791,24 +793,24 @@
         <section id="compare" class="tab-panel hidden">
           <div id="compareEmpty" class="empty">
             <div>
-              <h3>Chargez un référentiel benchmark</h3>
-              <p>Le second fichier peut contenir des lignes par domaine ou par question. L’explorateur cherchera les colonnes de moyenne globale, secteur et top 10 puis alignera les valeurs avec l’évaluation chargée.</p>
+              <h3 id="compareEmptyTitle">Upload a benchmark referential</h3>
+              <p id="compareEmptyText">The second file can contain rows by domain or by question. The explorer detects global average, sector, and top 10 columns, then aligns values with the loaded assessment.</p>
             </div>
           </div>
           <div id="compareContent" class="grid hidden">
             <div class="grid kpis">
-              <div class="card kpi"><div class="label">Ecart moyenne</div><div class="value" id="cmpAll">-</div><div class="sub">Evaluation vs benchmark global</div></div>
-              <div class="card kpi"><div class="label">Ecart secteur</div><div class="value" id="cmpSector">-</div><div class="sub">Evaluation vs secteur</div></div>
-              <div class="card kpi"><div class="label">Ecart top 10</div><div class="value" id="cmpTop">-</div><div class="sub">Evaluation vs top performers</div></div>
-              <div class="card kpi"><div class="label">Domaines comparés</div><div class="value" id="cmpCount">-</div><div class="sub">Alignement domaine ou question</div></div>
+              <div class="card kpi"><div class="label" id="cmpAllLabel">Average gap</div><div class="value" id="cmpAll">-</div><div class="sub" id="cmpAllSub">Assessment vs global benchmark</div></div>
+              <div class="card kpi"><div class="label" id="cmpSectorLabel">Sector gap</div><div class="value" id="cmpSector">-</div><div class="sub" id="cmpSectorSub">Assessment vs sector</div></div>
+              <div class="card kpi"><div class="label" id="cmpTopLabel">Top 10 gap</div><div class="value" id="cmpTop">-</div><div class="sub" id="cmpTopSub">Assessment vs top performers</div></div>
+              <div class="card kpi"><div class="label" id="cmpCountLabel">Compared domains</div><div class="value" id="cmpCount">-</div><div class="sub" id="cmpCountSub">Domain or question alignment</div></div>
             </div>
             <div class="card">
               <div class="card-head">
-                <h3>Comparaison par domaine</h3>
+                <h3 id="compareRowsTitle">Comparison by domain</h3>
                 <div class="legend">
-                  <span><i style="background:var(--cyan)"></i>Evaluation</span>
-                  <span><i style="background:var(--blue)"></i>Moyenne</span>
-                  <span><i style="background:var(--violet)"></i>Secteur</span>
+                  <span id="compareLegendEval"><i style="background:var(--cyan)"></i>Assessment</span>
+                  <span id="compareLegendAll"><i style="background:var(--blue)"></i>Average</span>
+                  <span id="compareLegendSector"><i style="background:var(--violet)"></i>Sector</span>
                   <span><i style="background:var(--amber)"></i>Top 10</span>
                 </div>
               </div>
@@ -816,17 +818,17 @@
             </div>
             <div class="card">
               <div class="card-head">
-                <h3>Mesures en retard</h3>
+                <h3 id="lagTitle">Lagging measures</h3>
                 <div class="segmented" id="compareRef">
-                  <button data-ref="all">Moy.</button>
-                  <button data-ref="sector">Secteur</button>
+                  <button data-ref="all">Avg.</button>
+                  <button data-ref="sector">Sector</button>
                   <button data-ref="top" class="active">Top 10</button>
                 </div>
               </div>
               <div class="card-body">
                 <div class="toolbar" style="grid-template-columns:minmax(180px,.4fr) minmax(220px,1fr);">
                   <div>
-                    <label for="gapFilter">Retard minimum</label>
+                    <label for="gapFilter">Minimum lag</label>
                     <select id="gapFilter">
                       <option value="0">Tout retard</option>
                       <option value="5" selected>&gt;= 5 pts</option>
@@ -834,18 +836,18 @@
                       <option value="20">&gt;= 20 pts</option>
                     </select>
                   </div>
-                  <div class="help" style="align-self:end; margin:0;">Les mesures sont disponibles quand le benchmark contient des lignes avec le même ID que le questionnaire.</div>
+                  <div class="help" id="lagHelp" style="align-self:end; margin:0;">Measures are available when the benchmark contains rows with the same ID as the questionnaire.</div>
                 </div>
                 <div class="table-wrap">
                   <table id="lagTable">
                     <thead>
                       <tr>
                         <th class="small">ID</th>
-                        <th class="small">Domaine</th>
+                        <th class="small">Domain</th>
                         <th>Mesure</th>
                         <th class="small">Client</th>
                         <th class="small">Réf.</th>
-                        <th class="small">Ecart</th>
+                        <th class="small">Gap</th>
                       </tr>
                     </thead>
                     <tbody></tbody>
@@ -881,6 +883,271 @@
       CLOUD: "Cloud Security",
       AIS: "AI Security"
     };
+
+    const browserLanguage = typeof navigator !== "undefined" && navigator.language ? navigator.language : "en";
+    const lang = /^fr\b/i.test(browserLanguage) ? "fr" : "en";
+    if (document.documentElement) document.documentElement.lang = lang;
+
+    const I18N = {
+      en: {
+        all: "All",
+        assessmentLabel: "Assessment XLS/XLSM",
+        assessmentHelp: "Local browser parsing. No file is sent.",
+        benchmarkLabel: "Benchmark referential",
+        benchmarkHelp: "Optional: global average, sector, top 10. Columns are detected automatically.",
+        navDashboard: "Dashboard",
+        navOverview: "Overview",
+        navDomains: "Domains",
+        navFindings: "Findings",
+        navQuestions: "Questions",
+        navCompare: "Compare",
+        waitingFile: "Waiting for file",
+        dummyData: "Dummy data",
+        assessmentLoaded: "Assessment loaded",
+        emptyTitle: "Upload an assessment file",
+        emptyText: "The file is parsed in your browser. Domain sheets, maturity levels, comments, and response reliability are extracted to generate the views.",
+        maturity: "Maturity",
+        lag: "Lag",
+        averageScore: "Average score",
+        scoredQuestions: "Scored questions",
+        coverage: "Coverage",
+        excludingNa: "Excluding N/A",
+        strongDomain: "Strong domain",
+        highestScore: "Highest score",
+        priority: "Priority",
+        lowestScore: "Lowest score",
+        domainRadar: "Domain radar",
+        assessment: "Assessment",
+        benchmark: "Benchmark",
+        maturityDistribution: "Maturity distribution",
+        scoresByDomain: "Scores by domain",
+        coverageScoreMatrix: "Coverage / score matrix",
+        strengths: "Strengths",
+        weaknesses: "Weaknesses",
+        blindspots: "Blind spots",
+        detailedExploration: "Detailed exploration",
+        exportCsv: "Export CSV",
+        search: "Search",
+        searchPlaceholder: "ID, theme, question, comment...",
+        domain: "Domain",
+        type: "Type",
+        status: "Status",
+        scored: "Scored",
+        missing: "Missing",
+        overallMaturity: "Overall maturity",
+        topic: "Topic",
+        question: "Question",
+        gap: "Gap",
+        comment: "Comment",
+        measure: "Measure",
+        reliability: "Reliability",
+        compareEmptyTitle: "Upload a benchmark referential",
+        compareEmptyText: "The second file can contain rows by domain or by question. The explorer detects global average, sector, and top 10 columns, then aligns values with the loaded assessment.",
+        avgGap: "Average gap",
+        sectorGap: "Sector gap",
+        topGap: "Top 10 gap",
+        comparedDomains: "Compared domains",
+        assessmentVsGlobal: "Assessment vs global benchmark",
+        assessmentVsSector: "Assessment vs sector",
+        assessmentVsTop: "Assessment vs top performers",
+        alignment: "Domain or question alignment",
+        comparisonByDomain: "Comparison by domain",
+        average: "Average",
+        sector: "Sector",
+        laggingMeasures: "Lagging measures",
+        avgShort: "Avg.",
+        minimumLag: "Minimum lag",
+        lagHelp: "Measures are available when the benchmark contains rows with the same ID as the questionnaire.",
+        dashboardIntro: "Slide-style view: maturity by theme, benchmark gap, and drill-down to categories then questions.",
+        overviewIntro: "Executive view of scores, coverage, and domains shaping the maturity profile.",
+        domainsIntro: "Domain ranking and cross-view of score versus coverage.",
+        findingsIntro: "Quick reading of best points, priorities, and unanswered areas.",
+        questionsIntro: "Filterable table to analyze each assessment point, levels 1 to 5, and comments.",
+        compareIntro: "Alignment of the assessment with global average, sector, and top 10 benchmarks.",
+        dashboardTitle: "Dashboard",
+        overviewTitle: "Overview",
+        domainsTitle: "Domains",
+        findingsTitle: "Strengths / weaknesses",
+        questionsTitle: "Questions",
+        compareTitle: "Compare",
+        themes: "Themes",
+        categories: "Categories",
+        noScoredDomain: "No scored domain.",
+        noScoredQuestionLevel: "No scored question for this level.",
+        noScoredQuestion: "No scored question.",
+        noBlindspot: "No blind spot detected.",
+        noCommonDomain: "No common domain between the assessment and the benchmark.",
+        noLaggingMeasure: "No lagging measure detected for this referential, or the benchmark is not available at question ID level.",
+        fallbackToast: "Example JSON files are missing or invalid: minimal fallback loaded.",
+        assessmentReadError: "The file could not be read.",
+        missingSheetJs: "SheetJS is not loaded. Check the local vendor file.",
+        noDomainSheet: "No W-CyberBenchmark domain sheet detected.",
+        noBenchmark: "No benchmark table detected. Expected columns: ID or Domain, then Average, Sector, or Top 10.",
+        benchmarkAfterAssessment: "The benchmark will be displayed after the assessment is loaded.",
+        questionsScoredOn: "{scored} scored questions out of {total}",
+        questionsCovered: "{covered} covered questions, including {na} N/A",
+        comparedQuestionCount: "{count} questions",
+        domainsCount: "{count} domains",
+        rowsSheet: "{rows} rows · sheet {sheet}",
+        scoredTotal: "{scored}/{total} scored",
+        scoredNa: "{scored}/{total} scored · {na} N/A",
+        questionsScored: "{scored}/{total} scored questions",
+        gapInternalAverage: "gap to internal average",
+        gapRef: "gap to {ref}",
+        maturityVs: "Maturity vs {ref}",
+        questionsVs: "{domain} questions vs {ref}",
+        maturityThemeAria: "Maturity by theme and referential gap",
+        gapWith: "Gap with the {ref}",
+        maturityEnterprise: "Maturity of the enterprise",
+        maturityQuestion: "Maturity of the question",
+        coverageAxis: "Coverage",
+        scoreAxis: "Score",
+        domainQuestionsTop: "{domain} · Questions vs Top 10",
+        backDomains: "Domains",
+        noQuestionScored: "No scored question.",
+        questionScoreAxis: "Question score",
+        top10GapAxis: "Top 10 gap",
+        evalShort: "Eval",
+        avgShortMarker: "Avg.",
+        sectorShort: "Sector",
+        topShort: "Top",
+        localDisplayNotice: "W-CyberBenchmark Explorer: dummy data displayed for tests. Upload your own data and benchmark referential at the top of the window. Nothing is stored or shared on the Internet; it is only a local display."
+      },
+      fr: {
+        all: "Tous",
+        assessmentLabel: "Evaluation XLS/XLSM",
+        assessmentHelp: "Chargement local dans le navigateur. Aucun fichier n'est envoyé.",
+        benchmarkLabel: "Référentiel benchmark",
+        benchmarkHelp: "Optionnel : moyenne globale, secteur, top 10. Les colonnes sont détectées automatiquement.",
+        navDashboard: "Dashboard",
+        navOverview: "Synthèse",
+        navDomains: "Domaines",
+        navFindings: "Constats",
+        navQuestions: "Questions",
+        navCompare: "Comparaison",
+        waitingFile: "En attente de fichier",
+        dummyData: "Données exemple",
+        assessmentLoaded: "Evaluation chargée",
+        emptyTitle: "Chargez un fichier d'évaluation",
+        emptyText: "Le fichier est analysé côté navigateur. Les feuilles de domaines, les niveaux de maturité, les commentaires et la fiabilité des réponses sont extraits pour générer les vues.",
+        maturity: "Maturité",
+        lag: "Retard",
+        averageScore: "Score moyen",
+        scoredQuestions: "Questions scorées",
+        coverage: "Couverture",
+        excludingNa: "Hors N/A",
+        strongDomain: "Domaine fort",
+        highestScore: "Score le plus élevé",
+        priority: "Priorité",
+        lowestScore: "Score le plus faible",
+        domainRadar: "Radar domaines",
+        assessment: "Evaluation",
+        benchmark: "Benchmark",
+        maturityDistribution: "Distribution des maturités",
+        scoresByDomain: "Scores par domaine",
+        coverageScoreMatrix: "Matrice couverture / score",
+        strengths: "Forces",
+        weaknesses: "Faiblesses",
+        blindspots: "Angles morts",
+        detailedExploration: "Exploration détaillée",
+        exportCsv: "Exporter CSV",
+        search: "Recherche",
+        searchPlaceholder: "ID, thème, question, commentaire...",
+        domain: "Domaine",
+        type: "Type",
+        status: "Statut",
+        scored: "Scorées",
+        missing: "Non scorées",
+        overallMaturity: "Maturité globale",
+        topic: "Sujet",
+        question: "Question",
+        gap: "Ecart",
+        comment: "Commentaire",
+        measure: "Mesure",
+        reliability: "Fiabilité",
+        compareEmptyTitle: "Chargez un référentiel benchmark",
+        compareEmptyText: "Le second fichier peut contenir des lignes par domaine ou par question. L'explorateur détecte les colonnes de moyenne globale, secteur et top 10 puis aligne les valeurs avec l'évaluation chargée.",
+        avgGap: "Ecart moyenne",
+        sectorGap: "Ecart secteur",
+        topGap: "Ecart top 10",
+        comparedDomains: "Domaines comparés",
+        assessmentVsGlobal: "Evaluation vs benchmark global",
+        assessmentVsSector: "Evaluation vs secteur",
+        assessmentVsTop: "Evaluation vs top performers",
+        alignment: "Alignement domaine ou question",
+        comparisonByDomain: "Comparaison par domaine",
+        average: "Moyenne",
+        sector: "Secteur",
+        laggingMeasures: "Mesures en retard",
+        avgShort: "Moy.",
+        minimumLag: "Retard minimum",
+        lagHelp: "Les mesures sont disponibles quand le benchmark contient des lignes avec le même ID que le questionnaire.",
+        dashboardIntro: "Vue type slide : maturité par thème, écart au benchmark et drill-down vers catégories puis questions.",
+        overviewIntro: "Vue exécutive des scores, de la couverture et des domaines qui structurent le profil de maturité.",
+        domainsIntro: "Classement des domaines et visualisation croisée score / couverture.",
+        findingsIntro: "Lecture rapide des meilleurs points, des priorités et des zones sans réponse.",
+        questionsIntro: "Table filtrable pour analyser chaque point d'évaluation, ses niveaux 1 à 5 et les commentaires associés.",
+        compareIntro: "Alignement de l'évaluation avec un référentiel de moyenne globale, secteur et top 10.",
+        dashboardTitle: "Dashboard",
+        overviewTitle: "Synthèse",
+        domainsTitle: "Domaines",
+        findingsTitle: "Forces / faiblesses",
+        questionsTitle: "Questions",
+        compareTitle: "Comparaison",
+        themes: "Thèmes",
+        categories: "Catégories",
+        noScoredDomain: "Aucun domaine scoré.",
+        noScoredQuestionLevel: "Aucune question scorée pour ce niveau.",
+        noScoredQuestion: "Aucune question scorée.",
+        noBlindspot: "Aucun angle mort détecté.",
+        noCommonDomain: "Aucun domaine commun entre l'évaluation et le benchmark.",
+        noLaggingMeasure: "Aucune mesure en retard détectée pour ce référentiel, ou le benchmark n'est pas au niveau ID de question.",
+        fallbackToast: "Fichiers JSON d'exemple absents ou invalides : fallback minimal chargé.",
+        assessmentReadError: "Lecture du fichier impossible.",
+        missingSheetJs: "La librairie SheetJS n'est pas chargée. Vérifiez le fichier local.",
+        noDomainSheet: "Aucune feuille de domaine W-CyberBenchmark détectée.",
+        noBenchmark: "Aucune table benchmark détectée. Colonnes attendues : ID ou Domain, puis Average/Moyenne, Sector/Secteur ou Top 10.",
+        benchmarkAfterAssessment: "Le benchmark sera affiché après chargement de l'évaluation.",
+        questionsScoredOn: "{scored} questions scorées sur {total}",
+        questionsCovered: "{covered} questions couvertes, dont {na} N/A",
+        comparedQuestionCount: "{count} questions",
+        domainsCount: "{count} domaines",
+        rowsSheet: "{rows} lignes · feuille {sheet}",
+        scoredTotal: "{scored}/{total} scorées",
+        scoredNa: "{scored}/{total} scorées · {na} N/A",
+        questionsScored: "{scored}/{total} questions scorées",
+        gapInternalAverage: "écart moyenne interne",
+        gapRef: "écart {ref}",
+        maturityVs: "Maturité vs {ref}",
+        questionsVs: "Questions {domain} vs {ref}",
+        maturityThemeAria: "Maturité par thème et écart au référentiel",
+        gapWith: "Ecart avec {ref}",
+        maturityEnterprise: "Maturité de l'entreprise",
+        maturityQuestion: "Maturité de la question",
+        coverageAxis: "Couverture",
+        scoreAxis: "Score",
+        domainQuestionsTop: "{domain} · Questions vs Top 10",
+        backDomains: "Domaines",
+        noQuestionScored: "Aucune question scorée.",
+        questionScoreAxis: "Score question",
+        top10GapAxis: "Ecart Top 10",
+        evalShort: "Eval",
+        avgShortMarker: "Moy.",
+        sectorShort: "Sect.",
+        topShort: "Top",
+        localDisplayNotice: "W-CyberBenchmark Explorer: données factices affichées pour les tests. Chargez vos propres données et votre référentiel benchmark en haut de la fenêtre. Rien n'est stocké ni partagé sur Internet ; il s'agit uniquement d'un affichage local."
+      }
+    };
+
+    const t = (key, vars = {}) => {
+      const text = I18N[lang][key] || I18N.en[key] || key;
+      return Object.entries(vars).reduce((result, [name, value]) => result.replaceAll(`{${name}}`, value), text);
+    };
+
+    function setText(id, key) {
+      const el = $(id);
+      if (el) el.textContent = t(key);
+    }
 
     const state = {
       assessment: null,
@@ -918,6 +1185,70 @@
       pageIntro: $("pageIntro"),
       panels: [...document.querySelectorAll(".tab-panel")]
     };
+
+    function applyLocale() {
+      const labelMap = {
+        assessmentFile: "assessmentLabel",
+        benchmarkFile: "benchmarkLabel",
+        search: "search",
+        domainFilter: "domain",
+        typeFilter: "type",
+        statusFilter: "status",
+        scoreFilter: "overallMaturity",
+        gapFilter: "minimumLag"
+      };
+      Object.entries(labelMap).forEach(([forId, key]) => {
+        const label = document.querySelector(`label[for="${forId}"]`);
+        if (label) label.textContent = t(key);
+      });
+      [
+        ["assessmentHelp", "assessmentHelp"], ["benchmarkHelp", "benchmarkHelp"], ["emptyTitle", "emptyTitle"], ["emptyText", "emptyText"],
+        ["legendMaturity", "maturity"], ["legendLag", "lag"], ["kpiScoreLabel", "averageScore"], ["kpiScoreSub", "scoredQuestions"],
+        ["kpiCoverageLabel", "coverage"], ["kpiCoverageSub", "excludingNa"], ["kpiBestLabel", "strongDomain"], ["kpiBestSub", "highestScore"],
+        ["kpiWeakLabel", "priority"], ["kpiWeakSub", "lowestScore"], ["radarTitle", "domainRadar"], ["radarEvalLegend", "assessment"],
+        ["distributionTitle", "maturityDistribution"], ["domainScoresTitle", "scoresByDomain"], ["domainScatterTitle", "coverageScoreMatrix"],
+        ["strengthsTitle", "strengths"], ["weaknessesTitle", "weaknesses"], ["blindspotsTitle", "blindspots"], ["questionsTitle", "detailedExploration"],
+        ["exportCsv", "exportCsv"], ["compareEmptyTitle", "compareEmptyTitle"], ["compareEmptyText", "compareEmptyText"], ["cmpAllLabel", "avgGap"],
+        ["cmpAllSub", "assessmentVsGlobal"], ["cmpSectorLabel", "sectorGap"], ["cmpSectorSub", "assessmentVsSector"], ["cmpTopLabel", "topGap"],
+        ["cmpTopSub", "assessmentVsTop"], ["cmpCountLabel", "comparedDomains"], ["cmpCountSub", "alignment"], ["compareRowsTitle", "comparisonByDomain"],
+        ["compareLegendEval", "assessment"], ["compareLegendAll", "average"], ["compareLegendSector", "sector"], ["lagTitle", "laggingMeasures"],
+        ["lagHelp", "lagHelp"]
+      ].forEach(([id, key]) => setText(id, key));
+
+      const noticeText = $("dummyNotice")?.querySelector("span:last-child");
+      if (noticeText) noticeText.textContent = t("localDisplayNotice");
+      $("search").placeholder = t("searchPlaceholder");
+      [
+        ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"]
+      ].forEach(([tab, key]) => {
+        const button = document.querySelector(`[data-tab="${tab}"]`);
+        if (button?.lastChild) button.lastChild.textContent = t(key);
+      });
+      const statusOptions = $("statusFilter").options;
+      if (statusOptions.length >= 4) {
+        statusOptions[0].text = t("all");
+        statusOptions[1].text = t("scored");
+        statusOptions[2].text = "N/A";
+        statusOptions[3].text = t("missing");
+      }
+      const scoreOptions = $("scoreFilter").options;
+      if (scoreOptions.length >= 4) scoreOptions[0].text = t("all");
+      document.querySelector('#compareRef [data-ref="all"]').textContent = t("avgShort");
+      document.querySelector('#compareRef [data-ref="sector"]').textContent = t("sector");
+
+      const questionHeaders = $("questionsTable").querySelectorAll("th");
+      const questionHeaderLabels = ["ID", "domain", "topic", "question", "type", "N1", "N2", "N3", "N4", "N5", "Top 10", "Top Lvl", "gap", "status", "comment"];
+      questionHeaders.forEach((th, index) => {
+        const key = questionHeaderLabels[index];
+        if (key) th.textContent = I18N[lang][key] || key;
+      });
+      const lagHeaders = $("lagTable").querySelectorAll("th");
+      const lagHeaderLabels = ["ID", "domain", "measure", "Client", "Ref.", "gap"];
+      lagHeaders.forEach((th, index) => {
+        const key = lagHeaderLabels[index];
+        th.textContent = I18N[lang][key] || I18N.en[key] || key;
+      });
+    }
 
     function toast(message) {
       const el = $("toast");
@@ -1010,7 +1341,7 @@
     function readWorkbook(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onerror = () => reject(new Error("Lecture du fichier impossible."));
+        reader.onerror = () => reject(new Error(t("assessmentReadError")));
         reader.onload = () => {
           try {
             const data = new Uint8Array(reader.result);
@@ -1186,7 +1517,7 @@
         }
         if (best) break;
       }
-      if (!best) throw new Error("Aucune table benchmark détectée. Colonnes attendues : ID ou Domain, puis Average/Moyenne, Sector/Secteur ou Top 10.");
+      if (!best) throw new Error(t("noBenchmark"));
 
       const records = [];
       const rows = best.sheet.rows.slice(best.headerRow + 1);
@@ -1287,9 +1618,9 @@
 
     function createDummyAssessment() {
       const questions = [
-        dummyQuestion({ id: "GOV.01", type: "ORGA", subtopic: "Fallback", question: "Question fictive de secours sur la gouvernance ?", score: 70, comment: "Fallback minimal utilisé car le JSON d'exemple est absent." }),
-        dummyQuestion({ id: "IAM.01", type: "TECH", subtopic: "Fallback", question: "Question fictive de secours sur les accès ?", score: 55, comment: "Chargez les fichiers JSON d'exemple pour le jeu complet." }),
-        dummyQuestion({ id: "DET.01", type: "TECH", subtopic: "Fallback", question: "Question fictive de secours sur la détection ?", score: 45, comment: "Ce jeu minimal évite un écran vide." })
+        dummyQuestion({ id: "GOV.01", type: "ORGA", subtopic: "Fallback", question: "Is fallback governance evidence available?", score: 70, comment: "Minimal fallback loaded because the example JSON file is unavailable." }),
+        dummyQuestion({ id: "IAM.01", type: "TECH", subtopic: "Fallback", question: "Is fallback access control evidence available?", score: 55, comment: "Load the example JSON files to use the complete synthetic data set." }),
+        dummyQuestion({ id: "DET.01", type: "TECH", subtopic: "Fallback", question: "Is fallback detection evidence available?", score: 45, comment: "This minimal data set prevents an empty screen." })
       ];
       return { questions, domainStats: buildDomainStats(questions), sheetCount: new Set(questions.map((q) => q.domain)).size };
     }
@@ -1363,23 +1694,23 @@
         usedFallback = true;
         state.assessment = createDummyAssessment();
         state.benchmark = createDummyBenchmark();
-        toast("Fichiers JSON d'exemple absents ou invalides : fallback minimal chargé.");
+        toast(t("fallbackToast"));
       }
       state.dummyAssessment = true;
       state.dummyBenchmark = true;
       state.compareRef = "top";
-      refs.assessmentMeta.innerHTML = `<strong>${state.assessment.sourceName || (usedFallback ? "Fallback assessment" : "Dummy assessment")}</strong><br>${state.assessment.questions.length} questions · ${state.assessment.sheetCount} domaines`;
-      refs.benchmarkMeta.innerHTML = `<strong>Dummy benchmark</strong><br>${state.benchmark.records.length} lignes · feuille ${state.benchmark.sourceSheet}`;
+      refs.assessmentMeta.innerHTML = `<strong>${state.assessment.sourceName || (usedFallback ? "Fallback assessment" : "Dummy assessment")}</strong><br>${t("comparedQuestionCount", { count: state.assessment.questions.length })} · ${t("domainsCount", { count: state.assessment.sheetCount })}`;
+      refs.benchmarkMeta.innerHTML = `<strong>Dummy benchmark</strong><br>${t("rowsSheet", { rows: state.benchmark.records.length, sheet: state.benchmark.sourceSheet })}`;
       refs.statusDot.className = "dot warn";
-      refs.statusText.textContent = "Données exemple";
+      refs.statusText.textContent = t("dummyData");
     }
 
     async function handleAssessment(file) {
       try {
-        if (!window.XLSX) throw new Error("La librairie SheetJS n’est pas chargée. Vérifiez l’accès au CDN.");
+        if (!window.XLSX) throw new Error(t("missingSheetJs"));
         const workbook = await readWorkbook(file);
         const assessment = parseAssessment(workbook);
-        if (!assessment.questions.length) throw new Error("Aucune feuille de domaine W-CyberBenchmark détectée.");
+        if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
         state.assessment = assessment;
         state.dummyAssessment = false;
         if (state.dummyBenchmark) {
@@ -1389,9 +1720,9 @@
         }
         state.drill = { domain: "", subtopic: "" };
         state.filters = { search: "", domain: "", type: "", status: "", score: "" };
-        refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${assessment.questions.length} questions · ${assessment.sheetCount} domaines`;
+        refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
         refs.statusDot.className = "dot ready";
-        refs.statusText.textContent = "Evaluation chargée";
+        refs.statusText.textContent = t("assessmentLoaded");
         render();
       } catch (error) {
         toast(error.message);
@@ -1400,7 +1731,7 @@
 
     async function handleBenchmark(file) {
       try {
-        if (!state.assessment) toast("Le benchmark sera affiché après chargement de l’évaluation.");
+        if (!state.assessment) toast(t("benchmarkAfterAssessment"));
         const workbook = await readWorkbook(file);
         const benchmark = parseBenchmark(workbook, file.name);
         state.benchmark = benchmark;
@@ -1408,7 +1739,7 @@
         const hasRef = (key) => benchmark.domainStats.some((d) => Number.isFinite(d[key]));
         if (hasRef("top")) state.compareRef = "top";
         else if (!hasRef(state.compareRef)) state.compareRef = ["sector", "all", "top"].find(hasRef) || "sector";
-        refs.benchmarkMeta.innerHTML = `<strong>${file.name}</strong><br>${benchmark.records.length} lignes · feuille ${benchmark.sourceSheet}`;
+        refs.benchmarkMeta.innerHTML = `<strong>${file.name}</strong><br>${t("rowsSheet", { rows: benchmark.records.length, sheet: benchmark.sourceSheet })}`;
         render();
       } catch (error) {
         toast(error.message);
@@ -1434,12 +1765,12 @@
 
     function updateTitle() {
       const titles = {
-        dashboard: ["Dashboard", "Vue type slide 5 : maturité par thème, écart au benchmark et drill-down vers catégories puis questions."],
-        overview: ["Synthèse", "Vue exécutive des scores, de la couverture et des domaines qui structurent le profil de maturité."],
-        domains: ["Domaines", "Classement des domaines et visualisation croisée score / couverture."],
-        findings: ["Forces / faiblesses", "Lecture rapide des meilleurs points, des priorités et des zones sans réponse."],
-        questions: ["Questions", "Table filtrable pour analyser chaque point d’évaluation, ses niveaux 1 à 5 et les commentaires associés."],
-        compare: ["Comparaison", "Alignement de l’évaluation avec un référentiel de moyenne globale, secteur et top 10."]
+        dashboard: [t("dashboardTitle"), t("dashboardIntro")],
+        overview: [t("overviewTitle"), t("overviewIntro")],
+        domains: [t("domainsTitle"), t("domainsIntro")],
+        findings: [t("findingsTitle"), t("findingsIntro")],
+        questions: [t("questionsTitle"), t("questionsIntro")],
+        compare: [t("compareTitle"), t("compareIntro")]
       };
       const [title, intro] = titles[state.tab];
       refs.pageTitle.textContent = title;
@@ -1451,7 +1782,7 @@
       const domainSelect = $("domainFilter");
       const currentDomain = state.filters.domain;
       domainSelect.innerHTML = "";
-      domainSelect.add(new Option("Tous", ""));
+      domainSelect.add(new Option(t("all"), ""));
       domains.forEach((domain) => domainSelect.add(new Option(`${domain} · ${DOMAIN_NAMES[domain] || domain}`, domain)));
       if (domains.includes(currentDomain)) domainSelect.value = currentDomain;
       else state.filters.domain = "";
@@ -1460,7 +1791,7 @@
       const types = [...new Set(state.assessment.questions.map((q) => q.type).filter(Boolean))].sort();
       const currentType = state.filters.type;
       typeSelect.innerHTML = "";
-      typeSelect.add(new Option("Tous", ""));
+      typeSelect.add(new Option(t("all"), ""));
       types.forEach((type) => typeSelect.add(new Option(type, type)));
       if (types.includes(currentType)) typeSelect.value = currentType;
       else state.filters.type = "";
@@ -1476,7 +1807,7 @@
       const order = ["top", "sector", "all"];
       const key = order.find((candidate) => Number.isFinite(bench[candidate]));
       if (!key) return null;
-      const labels = { all: "moyenne", sector: "secteur", top: "top 10" };
+      const labels = { all: t("average").toLowerCase(), sector: t("sector").toLowerCase(), top: "top 10" };
       return { key, label: labels[key], value: bench[key], maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
     }
 
@@ -1486,7 +1817,7 @@
       if (!bench) return null;
       const key = order.find((candidate) => Number.isFinite(bench[candidate]));
       if (!key) return null;
-      const labels = { all: "moyenne", sector: "secteur", top: "top 10" };
+      const labels = { all: t("average").toLowerCase(), sector: t("sector").toLowerCase(), top: "top 10" };
       return { key, label: labels[key], value: bench[key], maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
     }
 
@@ -1509,7 +1840,7 @@
           display: q.id,
           ref,
           gap: Number.isFinite(refValue) ? q.score - refValue : 0,
-          gapLabel: ref ? `écart ${ref.label}` : "écart moyenne interne"
+          gapLabel: ref ? t("gapRef", { ref: ref.label }) : t("gapInternalAverage")
         };
       });
     }
@@ -1524,7 +1855,7 @@
           ...d,
           ref,
           gap: Number.isFinite(refValue) ? d.score - refValue : 0,
-          gapLabel: ref ? `écart ${ref.label}` : "écart moyenne interne"
+          gapLabel: ref ? t("gapRef", { ref: ref.label }) : t("gapInternalAverage")
         };
       });
     }
@@ -1532,20 +1863,20 @@
     function renderDashboard() {
       const domainPoints = dashboardPoints();
       if (!domainPoints.length) {
-        $("bubbleChart").innerHTML = `<p class="muted">Aucun domaine scoré.</p>`;
+        $("bubbleChart").innerHTML = `<p class="muted">${t("noScoredDomain")}</p>`;
         $("drillPanel").innerHTML = "";
         return;
       }
       if (state.drill.domain && !domainPoints.some((d) => d.id === state.drill.domain)) state.drill = { domain: "", subtopic: "" };
       const selectedDomain = domainPoints.find((d) => d.id === state.drill.domain);
       const points = selectedDomain ? questionDashboardPoints(selectedDomain.id, state.drill.subtopic) : domainPoints;
-      const refLabel = points.find((d) => d.ref)?.ref?.label || "moyenne interne";
+      const refLabel = points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, "");
       $("bubbleTitle").textContent = selectedDomain
-        ? `Questions ${selectedDomain.id} vs ${refLabel}`
-        : `Maturité vs ${refLabel}`;
+        ? t("questionsVs", { domain: selectedDomain.id, ref: refLabel })
+        : t("maturityVs", { ref: refLabel });
 
       if (!points.length) {
-        $("bubbleChart").innerHTML = `<p class="muted">Aucune question scorée pour ce niveau.</p>`;
+        $("bubbleChart").innerHTML = `<p class="muted">${t("noScoredQuestionLevel")}</p>`;
         renderDrillPanel(domainPoints);
         bindDashboardInteractions();
         return;
@@ -1581,13 +1912,13 @@
         </g>`;
       }).join("");
 
-      $("bubbleChart").innerHTML = `<svg class="slide-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Maturité par thème et écart au référentiel">
+      $("bubbleChart").innerHTML = `<svg class="slide-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${t("maturityThemeAria")}">
         <rect x="0" y="0" width="${w}" height="${h}" fill="#f8f8f6"></rect>
         ${grid}
         <line class="slide-axis" x1="${pad.left}" y1="${h - pad.bottom}" x2="${w - pad.right}" y2="${h - pad.bottom}"></line>
         <line class="slide-axis" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${h - pad.bottom}"></line>
-        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">Gap with the ${refLabel}</text>
-        <text class="slide-label" x="18" y="${h / 2}" transform="rotate(-90 18 ${h / 2})" text-anchor="middle">${selectedDomain ? "Maturity of the question" : "Maturity of the enterprise"}</text>
+        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${t("gapWith", { ref: refLabel })}</text>
+        <text class="slide-label" x="18" y="${h / 2}" transform="rotate(-90 18 ${h / 2})" text-anchor="middle">${selectedDomain ? t("maturityQuestion") : t("maturityEnterprise")}</text>
         ${bubbles}
       </svg>`;
       renderDrillPanel(domainPoints);
@@ -1614,11 +1945,11 @@
     function renderDrillPanel(points) {
       const domain = points.find((d) => d.id === state.drill.domain);
       if (!domain) {
-        $("drillTitle").textContent = "Thèmes";
+        $("drillTitle").textContent = t("themes");
         $("drillPanel").innerHTML = points
           .sort((a, b) => a.gap - b.gap || (a.score ?? 0) - (b.score ?? 0))
           .map((d) => `<button class="metric-line" data-drill-domain="${html(d.id)}">
-            <span><strong>${html(d.id)} · ${html(d.name)}</strong><span>${d.gapLabel} ${signedPct(d.gap)} · ${d.scored}/${d.total} scorées</span></span>
+            <span><strong>${html(d.id)} · ${html(d.name)}</strong><span>${d.gapLabel} ${signedPct(d.gap)} · ${t("scoredTotal", { scored: d.scored, total: d.total })}</span></span>
             <b style="color:${scoreColor(d.score)}">${pct(d.score)}</b>
           </button>`).join("");
         return;
@@ -1626,9 +1957,9 @@
 
       const categories = categoryStats(domain.id);
       const selectedCategory = state.drill.subtopic;
-      $("drillTitle").textContent = selectedCategory ? "Questions" : "Catégories";
+      $("drillTitle").textContent = selectedCategory ? t("questionsTitle") : t("categories");
       const crumbs = `<div class="crumbs">
-        <button class="ghost" data-drill-reset="all">Thèmes</button>
+        <button class="ghost" data-drill-reset="all">${t("themes")}</button>
         <span>/</span>
         <button class="ghost" data-drill-domain="${html(domain.id)}">${html(domain.id)}</button>
         ${selectedCategory ? `<span>/</span><span>${html(selectedCategory)}</span>` : ""}
@@ -1636,12 +1967,12 @@
       const summary = `<div class="kpi" style="padding:0;">
         <div class="label">${html(domain.name)}</div>
         <div class="value" style="font-size:34px; color:${scoreColor(domain.score)}">${pct(domain.score)}</div>
-        <div class="sub">${domain.gapLabel} ${signedPct(domain.gap)} · ${domain.scored}/${domain.total} questions scorées</div>
+        <div class="sub">${domain.gapLabel} ${signedPct(domain.gap)} · ${t("questionsScored", { scored: domain.scored, total: domain.total })}</div>
       </div>`;
 
       if (!selectedCategory) {
         $("drillPanel").innerHTML = `${crumbs}${summary}${categories.map((cat) => `<button class="metric-line" data-drill-subtopic="${html(cat.subtopic)}">
-          <span><strong>${html(cat.subtopic)}</strong><span>${cat.scored}/${cat.total} scorées · ${cat.na} N/A</span></span>
+          <span><strong>${html(cat.subtopic)}</strong><span>${t("scoredNa", { scored: cat.scored, total: cat.total, na: cat.na })}</span></span>
           <b style="color:${scoreColor(cat.score)}">${pct(cat.score)}</b>
         </button>`).join("")}`;
         return;
@@ -1705,13 +2036,13 @@
       const best = [...domains].sort((a, b) => b.score - a.score)[0];
       const weak = [...domains].sort((a, b) => a.score - b.score)[0];
       $("kpiScore").textContent = pct(avg);
-      $("kpiScoreSub").textContent = `${scored.length} questions scorées sur ${qs.length}`;
+      $("kpiScoreSub").textContent = t("questionsScoredOn", { scored: scored.length, total: qs.length });
       $("kpiCoverage").textContent = pct(covered / qs.length * 100);
-      $("kpiCoverageSub").textContent = `${covered} questions couvertes, dont ${qs.filter((q) => q.status === "na").length} N/A`;
+      $("kpiCoverageSub").textContent = t("questionsCovered", { covered, na: qs.filter((q) => q.status === "na").length });
       $("kpiBest").textContent = best ? best.id : "-";
-      $("kpiBestSub").textContent = best ? `${best.name} · ${pct(best.score)}` : "Score le plus élevé";
+      $("kpiBestSub").textContent = best ? `${best.name} · ${pct(best.score)}` : t("highestScore");
       $("kpiWeak").textContent = weak ? weak.id : "-";
-      $("kpiWeakSub").textContent = weak ? `${weak.name} · ${pct(weak.score)}` : "Score le plus faible";
+      $("kpiWeakSub").textContent = weak ? `${weak.name} · ${pct(weak.score)}` : t("lowestScore");
       renderRadar();
       renderDistribution();
     }
@@ -1806,8 +2137,8 @@
         <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
         <line x1="${pad}" y1="${h-pad-(h-pad*2)*.7}" x2="${w-pad}" y2="${h-pad-(h-pad*2)*.7}" stroke="rgba(255,255,255,.08)" stroke-dasharray="4 5"></line>
         <line x1="${pad+(w-pad*2)*.8}" y1="${pad}" x2="${pad+(w-pad*2)*.8}" y2="${h-pad}" stroke="rgba(255,255,255,.08)" stroke-dasharray="4 5"></line>
-        <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">Couverture</text>
-        <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">Score</text>
+        <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${t("coverageAxis")}</text>
+        <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">${t("scoreAxis")}</text>
         ${dots}
       </svg>`;
     }
@@ -1815,7 +2146,7 @@
     function renderQuestionScatter(domain) {
       const points = questionDashboardPoints(domain.id);
       if (!points.length) {
-        $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(domain.id)} · ${html(domain.name)}</strong><button class="ghost" data-domain-reset="1">Domaines</button></div><p class="muted">Aucune question scorée.</p>`;
+        $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(domain.id)} · ${html(domain.name)}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div><p class="muted">${t("noQuestionScored")}</p>`;
         return;
       }
       const w = 430, h = 330, pad = 42;
@@ -1827,13 +2158,13 @@
         <text class="axis-label" x="${x(q.gap) + 10}" y="${y(q.score) + 4}">${html(q.id)}</text>
         <title>${html(q.question)} · ${pct(q.score)} · ${q.gapLabel} ${signedPct(q.gap)}</title>
       </g>`).join("");
-      $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(domain.id)} · Questions vs Top 10</strong><button class="ghost" data-domain-reset="1">Domaines</button></div>
+      $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(t("domainQuestionsTop", { domain: domain.id }))}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div>
         <svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Questions du domaine vs top 10">
           <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${x(0)}" y1="${pad}" x2="${x(0)}" y2="${h-pad}" stroke="rgba(255,255,255,.18)" stroke-dasharray="4 5"></line>
-          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">Ecart Top 10</text>
-          <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">Score question</text>
+          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${t("top10GapAxis")}</text>
+          <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">${t("questionScoreAxis")}</text>
           ${dots}
         </svg>`;
     }
@@ -1874,9 +2205,9 @@
       const strengths = [...scored].sort((a, b) => b.score - a.score).slice(0, 8);
       const weaknesses = [...scored].sort((a, b) => a.score - b.score).slice(0, 8);
       const blindspots = state.assessment.questions.filter((q) => q.status !== "scored").slice(0, 8);
-      $("strengths").innerHTML = strengths.length ? strengths.map(findingItem).join("") : `<p class="muted">Aucune question scorée.</p>`;
-      $("weaknesses").innerHTML = weaknesses.length ? weaknesses.map(findingItem).join("") : `<p class="muted">Aucune question scorée.</p>`;
-      $("blindspots").innerHTML = blindspots.length ? blindspots.map(findingItem).join("") : `<p class="muted">Aucun angle mort détecté.</p>`;
+      $("strengths").innerHTML = strengths.length ? strengths.map(findingItem).join("") : `<p class="muted">${t("noScoredQuestion")}</p>`;
+      $("weaknesses").innerHTML = weaknesses.length ? weaknesses.map(findingItem).join("") : `<p class="muted">${t("noScoredQuestion")}</p>`;
+      $("blindspots").innerHTML = blindspots.length ? blindspots.map(findingItem).join("") : `<p class="muted">${t("noBlindspot")}</p>`;
     }
 
     function filteredQuestions() {
@@ -1947,7 +2278,7 @@
       $("cmpTop").textContent = signedPct(average(diffs("top")));
       $("cmpCount").textContent = String(rows.length);
 
-      $("compareRows").innerHTML = rows.length ? rows.map(compareRow).join("") : `<p class="muted">Aucun domaine commun entre l’évaluation et le benchmark.</p>`;
+      $("compareRows").innerHTML = rows.length ? rows.map(compareRow).join("") : `<p class="muted">${t("noCommonDomain")}</p>`;
       document.querySelectorAll("#compareRef button").forEach((btn) => btn.classList.toggle("active", btn.dataset.ref === state.compareRef));
       renderLaggingMeasures();
     }
@@ -1959,10 +2290,10 @@
 
     function compareRow(d) {
       const markers = [
-        { key: "score", label: "Eval", value: d.score, color: "var(--cyan)" },
-        { key: "all", label: "Moy.", value: d.benchmark.all, color: "var(--blue)" },
-        { key: "sector", label: "Sect.", value: d.benchmark.sector, color: "var(--violet)" },
-        { key: "top", label: "Top", value: d.benchmark.top, color: "var(--amber)" }
+        { key: "score", label: t("evalShort"), value: d.score, color: "var(--cyan)" },
+        { key: "all", label: t("avgShortMarker"), value: d.benchmark.all, color: "var(--blue)" },
+        { key: "sector", label: t("sectorShort"), value: d.benchmark.sector, color: "var(--violet)" },
+        { key: "top", label: t("topShort"), value: d.benchmark.top, color: "var(--amber)" }
       ].filter((m) => Number.isFinite(m.value));
       return `<div class="compare-row">
         <div><strong>${d.id}</strong><div class="muted">${d.name}</div></div>
@@ -1988,7 +2319,7 @@
         .sort((a, b) => a.gap - b.gap);
 
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="muted">Aucune mesure en retard détectée pour ce référentiel, ou le benchmark n’est pas au niveau ID de question.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">${t("noLaggingMeasure")}</td></tr>`;
         return;
       }
 
@@ -2006,7 +2337,7 @@
     function exportCsv() {
       if (!state.assessment) return;
       const rows = filteredQuestions();
-      const headers = ["ID", "Domaine", "Sujet", "Question", "Type", "N1", "N2", "N3", "N4", "N5", "Top 10", "Top 10 maturity", "Ecart Top 10", "Statut", "Fiabilite", "Commentaire"];
+      const headers = ["ID", t("domain"), t("topic"), t("question"), t("type"), "N1", "N2", "N3", "N4", "N5", "Top 10", "Top 10 maturity", t("top10GapAxis"), t("status"), t("reliability"), t("comment")];
       const data = rows.map((q) => {
         const top = questionGap(q, ["top"]);
         return [q.id, q.domain, q.subtopic, q.question, q.type, ...[0, 1, 2, 3, 4].map((index) => Number.isFinite(q.levels?.[index]) ? q.levels[index] * 100 : ""), top.ref?.value ?? "", maturityLabel(top.ref?.maturityLevel), top.gap ?? "", q.status, q.reliability, q.comment];
@@ -2061,6 +2392,7 @@
     }));
     $("exportCsv").addEventListener("click", exportCsv);
 
+    applyLocale();
     loadDummyData().finally(render);
   </script>
 </body>
