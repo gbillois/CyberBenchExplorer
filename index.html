@@ -775,6 +775,7 @@
                       <th class="small">N4</th>
                       <th class="small">N5</th>
                       <th class="small">Top 10</th>
+                      <th class="small">Top Lvl</th>
                       <th class="small">Ecart</th>
                       <th class="small" data-key="status">Statut</th>
                       <th data-key="comment">Commentaire</th>
@@ -982,6 +983,30 @@
       return `<div class="level-strip">${[0, 1, 2, 3, 4].map((index) => `<span class="level-chip"><span>N${index + 1}</span>${levelPct(question, index)}</span>`).join("")}</div>`;
     }
 
+    function maturityLevelFromScore(score) {
+      if (!Number.isFinite(score)) return null;
+      return clamp(Math.ceil(clamp(score, 0, 100) / 20), 1, 5);
+    }
+
+    function maturityLevelFromLevels(levels) {
+      const values = normalizeLevels(levels);
+      const max = Math.max(...values);
+      if (max <= 0) return null;
+      return values.findIndex((value) => value === max) + 1;
+    }
+
+    function maturityLabel(level) {
+      return Number.isFinite(level) ? `L${level}` : "-";
+    }
+
+    function parseMaturityLevel(value) {
+      if (value === null || value === undefined || value === "") return null;
+      const raw = clean(value);
+      const match = raw.match(/[1-5]/);
+      const n = match ? Number(match[0]) : Number(raw.replace(",", "."));
+      return Number.isFinite(n) ? clamp(Math.round(n), 1, 5) : null;
+    }
+
     function readWorkbook(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1151,10 +1176,11 @@
           const allIdx = headerIndex(headers, ["All companies", "Global average", "Average", "Moyenne globale", "Moyenne", "Benchmark"]);
           const sectorIdx = headerIndex(headers, ["Sector", "Secteur", "Sector average", "Moyenne secteur"]);
           const topIdx = headerIndex(headers, ["Top 10", "Top10", "Top performers", "Best performers"]);
+          const topLevelIdx = headerIndex(headers, ["Top 10 maturity", "Top maturity", "Top level", "Top 10 level", "Niveau Top 10", "Maturité Top 10"]);
           const scoreIdx = headerIndex(headers, ["Score", "Scores"]);
           const scoreLike = [allIdx, sectorIdx, topIdx, scoreIdx].filter((i) => i >= 0).length;
           if ((idIdx >= 0 || domainIdx >= 0) && scoreLike > 0) {
-            best = { sheet, headerRow, idx: { id: idIdx, domain: domainIdx, all: allIdx, sector: sectorIdx, top: topIdx, score: scoreIdx } };
+            best = { sheet, headerRow, idx: { id: idIdx, domain: domainIdx, all: allIdx, sector: sectorIdx, top: topIdx, topLevel: topLevelIdx, score: scoreIdx } };
             break;
           }
         }
@@ -1176,8 +1202,10 @@
           domain,
           all: best.idx.all >= 0 ? parseScore(row[best.idx.all]) : (genericTarget === "all" ? genericScore : null),
           sector: best.idx.sector >= 0 ? parseScore(row[best.idx.sector]) : null,
-          top: best.idx.top >= 0 ? parseScore(row[best.idx.top]) : (genericTarget === "top" ? genericScore : null)
+          top: best.idx.top >= 0 ? parseScore(row[best.idx.top]) : (genericTarget === "top" ? genericScore : null),
+          topMaturityLevel: best.idx.topLevel >= 0 ? parseMaturityLevel(row[best.idx.topLevel]) : null
         };
+        if (!Number.isFinite(rec.topMaturityLevel)) rec.topMaturityLevel = maturityLevelFromScore(rec.top);
         if ((rec.id || rec.domain) && [rec.all, rec.sector, rec.top].some(Number.isFinite)) records.push(rec);
       });
 
@@ -1268,9 +1296,9 @@
 
     function createDummyBenchmark() {
       const records = [
-        { id: "GOV.01", domain: "GOV", all: 62, sector: 68, top: 84 },
-        { id: "IAM.01", domain: "IAM", all: 60, sector: 66, top: 86 },
-        { id: "DET.01", domain: "DET", all: 58, sector: 64, top: 82 }
+        { id: "GOV.01", domain: "GOV", all: 62, sector: 68, top: 84, topMaturityLevel: 4, topLevels: [0, 0, 0.64, 0.22, 0.14] },
+        { id: "IAM.01", domain: "IAM", all: 60, sector: 66, top: 86, topMaturityLevel: 4, topLevels: [0, 0, 0.56, 0.27, 0.17] },
+        { id: "DET.01", domain: "DET", all: 58, sector: 64, top: 82, topMaturityLevel: 4, topLevels: [0, 0, 0.72, 0.17, 0.11] }
       ];
       return {
         sourceSheet: "Fallback benchmark",
@@ -1305,8 +1333,13 @@
         domain: inferDomain(item.domain || item.id),
         all: parseScore(item.all),
         sector: parseScore(item.sector),
-        top: parseScore(item.top)
+        top: parseScore(item.top),
+        topLevels: normalizeLevels(item.topLevels || item.topMaturityLevels || item.levels, parseScore(item.top)),
+        topMaturityLevel: parseMaturityLevel(item.topMaturityLevel ?? item.topLevel ?? item.maturityLevel)
       })).filter((r) => (r.id || r.domain) && [r.all, r.sector, r.top].some(Number.isFinite));
+      records.forEach((record) => {
+        if (!Number.isFinite(record.topMaturityLevel)) record.topMaturityLevel = maturityLevelFromLevels(record.topLevels) || maturityLevelFromScore(record.top);
+      });
       if (!records.length) throw new Error("Benchmark d'exemple vide.");
       return {
         sourceSheet: payload.sourceSheet || payload.name || "Dummy benchmark",
@@ -1444,7 +1477,7 @@
       const key = order.find((candidate) => Number.isFinite(bench[candidate]));
       if (!key) return null;
       const labels = { all: "moyenne", sector: "secteur", top: "top 10" };
-      return { key, label: labels[key], value: bench[key] };
+      return { key, label: labels[key], value: bench[key], maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
     }
 
     function questionReference(question, order = ["top", "sector", "all"]) {
@@ -1454,7 +1487,7 @@
       const key = order.find((candidate) => Number.isFinite(bench[candidate]));
       if (!key) return null;
       const labels = { all: "moyenne", sector: "secteur", top: "top 10" };
-      return { key, label: labels[key], value: bench[key] };
+      return { key, label: labels[key], value: bench[key], maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
     }
 
     function questionGap(question, order = ["top", "sector", "all"]) {
@@ -1621,7 +1654,7 @@
         const top = questionGap(q, ["top"]);
         return `<div class="question-card">
           <div class="q-title">${html(q.question || q.subtopic || q.id)}</div>
-          <div class="q-meta">${html(q.id)} · ${html(q.type)} · ${html(q.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${signedPct(top.gap)}` : ""}</div>
+          <div class="q-meta">${html(q.id)} · ${html(q.type)} · ${html(q.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
           ${levelStrip(q)}
           ${q.comment ? `<div class="q-comment">${html(q.comment)}</div>` : ""}
         </div>`;
@@ -1831,7 +1864,7 @@
       const top = questionGap(q, ["top"]);
       return `<div class="finding">
         <div class="id">${q.id}</div>
-        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${signedPct(top.gap)}` : ""}</div></div>
+        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div></div>
         <div class="score-badge" style="color:${scoreColor(q.score)}">${q.status === "na" ? "N/A" : pct(q.score)}</div>
       </div>`;
     }
@@ -1889,6 +1922,7 @@
             <td class="small">${levelPct(q, 3)}</td>
             <td class="small">${levelPct(q, 4)}</td>
             <td class="small">${top.ref ? pct(top.ref.value) : "-"}</td>
+            <td class="small">${top.ref ? maturityLabel(top.ref.maturityLevel) : "-"}</td>
             <td class="small" style="color:${Number.isFinite(top.gap) && top.gap < 0 ? "var(--red)" : "var(--muted)"}; font-weight:800">${signedPct(top.gap)}</td>
             <td class="small">${q.status}</td>
             <td>${q.comment || `<span class="muted">-</span>`}</td>
@@ -1972,10 +2006,10 @@
     function exportCsv() {
       if (!state.assessment) return;
       const rows = filteredQuestions();
-      const headers = ["ID", "Domaine", "Sujet", "Question", "Type", "N1", "N2", "N3", "N4", "N5", "Top 10", "Ecart Top 10", "Statut", "Fiabilite", "Commentaire"];
+      const headers = ["ID", "Domaine", "Sujet", "Question", "Type", "N1", "N2", "N3", "N4", "N5", "Top 10", "Top 10 maturity", "Ecart Top 10", "Statut", "Fiabilite", "Commentaire"];
       const data = rows.map((q) => {
         const top = questionGap(q, ["top"]);
-        return [q.id, q.domain, q.subtopic, q.question, q.type, ...[0, 1, 2, 3, 4].map((index) => Number.isFinite(q.levels?.[index]) ? q.levels[index] * 100 : ""), top.ref?.value ?? "", top.gap ?? "", q.status, q.reliability, q.comment];
+        return [q.id, q.domain, q.subtopic, q.question, q.type, ...[0, 1, 2, 3, 4].map((index) => Number.isFinite(q.levels?.[index]) ? q.levels[index] * 100 : ""), top.ref?.value ?? "", maturityLabel(top.ref?.maturityLevel), top.gap ?? "", q.status, q.reliability, q.comment];
       });
       const csv = [headers, ...data].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
       const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });

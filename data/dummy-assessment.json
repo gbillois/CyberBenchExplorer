@@ -1,418 +1,3542 @@
 {
-  "name": "Dummy assessment",
+  "name": "Dummy assessment - full synthetic questionnaire",
+  "description": "Synthetic questionnaire for CyberBench Explorer tests. Comments are invented in English and do not describe a real organization.",
   "questions": [
     {
       "id": "GOV.01",
       "type": "ORGA",
-      "subtopic": "Pilotage",
-      "question": "Les rôles de gouvernance cybersécurité sont-ils formalisés et connus ?",
-      "score": 75,
-      "comment": "Comité sécurité mensuel et RACI disponibles, mais relais métiers encore inégaux.",
-      "reliability": "Haute",
+      "subtopic": "Governance and ownership",
+      "question": "Is security governance charter defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
+        0.96,
+        0.04,
         0,
-        0,
-        1,
         0,
         0
-      ]
+      ],
+      "score": 26,
+      "comment": "Evidence for security governance charter is still fragmented. Ownership is understood locally, but repeatable execution across Governance is not yet demonstrated.",
+      "reliability": "Low"
     },
     {
       "id": "GOV.02",
-      "type": "ORGA",
-      "subtopic": "Pilotage",
-      "question": "La stratégie cyber est-elle alignée avec les priorités business ?",
-      "score": 62,
-      "comment": "Feuille de route annuelle validée, arbitrages budgétaires encore opportunistes.",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is executive cyber risk reporting defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
-        0,
         0.52,
         0.48,
         0,
+        0,
         0
-      ]
+      ],
+      "score": 37,
+      "comment": "Evidence for executive cyber risk reporting is still fragmented. Ownership is understood locally, but repeatable execution across Governance is not yet demonstrated.",
+      "reliability": "Low"
     },
     {
       "id": "GOV.03",
-      "type": "ORGA",
-      "subtopic": "Politiques",
-      "question": "Les politiques de sécurité sont-elles revues périodiquement ?",
-      "score": 88,
-      "comment": "Corpus documentaire revu en janvier avec validation RSSI et juridique.",
-      "reliability": "Haute",
-      "levels": [
-        0,
-        0,
-        0.48,
-        0.34,
-        0.18
-      ]
-    },
-    {
-      "id": "RISK.01",
-      "type": "ORGA",
-      "subtopic": "Analyse de risques",
-      "question": "Les risques cyber critiques sont-ils identifiés et priorisés ?",
-      "score": 55,
-      "comment": "Cartographie lancée sur les actifs majeurs, couverture encore partielle.",
-      "levels": [
-        0,
-        0.8,
-        0.2,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "RISK.02",
-      "type": "ORGA",
-      "subtopic": "Traitement",
-      "question": "Les plans de traitement sont-ils suivis jusqu'à clôture ?",
-      "score": 42,
-      "comment": "Plans existants mais dates d'échéance et propriétaires incomplets.",
-      "levels": [
-        0.32,
-        0.68,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "RISK.03",
-      "type": "ORGA",
-      "subtopic": "Acceptation",
-      "question": "Les acceptations de risque sont-elles documentées par le bon niveau hiérarchique ?",
-      "score": 30,
-      "comment": "Quelques dérogations non renouvelées formellement depuis plus d'un an.",
-      "reliability": "Faible",
-      "levels": [
-        0.8,
-        0.2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "IAM.01",
       "type": "TECH",
-      "subtopic": "Authentification",
-      "question": "Le MFA est-il activé pour les accès sensibles ?",
-      "score": 80,
-      "comment": "MFA généralisé sur VPN, messagerie et consoles cloud.",
-      "reliability": "Haute",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is policy exception process defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
-        0,
-        0,
-        0.8,
-        0.13,
-        0.07
-      ]
-    },
-    {
-      "id": "IAM.02",
-      "type": "TECH",
-      "subtopic": "Cycle de vie",
-      "question": "Les comptes sont-ils désactivés rapidement lors des départs ?",
-      "score": 67,
-      "comment": "Process RH connecté à l'IAM, exceptions manuelles sur deux filiales.",
-      "levels": [
-        0,
-        0.32,
-        0.68,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "IAM.03",
-      "type": "ORGA",
-      "subtopic": "Revue d'accès",
-      "question": "Les droits privilégiés font-ils l'objet de revues régulières ?",
-      "score": 38,
-      "comment": "Revue trimestrielle prévue mais pas encore systématique sur les administrateurs locaux.",
-      "levels": [
-        0.48,
-        0.52,
+        0.08,
+        0.92,
         0,
         0,
         0
-      ]
-    },
-    {
-      "id": "NTW.01",
-      "type": "TECH",
-      "subtopic": "Segmentation",
-      "question": "Le réseau est-il segmenté selon la criticité des actifs ?",
+      ],
       "score": 48,
-      "comment": "Segmentation datacenter en place, segmentation bureautique limitée.",
-      "levels": [
-        0.08,
-        0.92,
-        0,
-        0,
-        0
-      ]
+      "comment": "policy exception process is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
     },
     {
-      "id": "NTW.02",
-      "type": "TECH",
-      "subtopic": "Filtrage",
-      "question": "Les flux inter-zones sont-ils filtrés et journalisés ?",
-      "score": 72,
-      "comment": "Règles firewall documentées, revue des règles obsolètes en retard.",
-      "levels": [
-        0,
-        0.12,
-        0.88,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "NTW.03",
-      "type": "TECH",
-      "subtopic": "Accès distant",
-      "question": "Les accès distants tiers sont-ils contrôlés et tracés ?",
-      "score": 28,
-      "comment": "Bastion disponible mais encore contourné pour certains fournisseurs historiques.",
-      "levels": [
-        0.88,
-        0.12,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "DATA.01",
+      "id": "GOV.04",
       "type": "ORGA",
-      "subtopic": "Classification",
-      "question": "Les données sensibles sont-elles classifiées ?",
-      "score": 58,
-      "comment": "Taxonomie validée, déploiement opérationnel en cours.",
+      "subtopic": "Testing and improvement",
+      "question": "Is cybersecurity budget planning defined, implemented, evidenced, and improved for the Governance scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "cybersecurity budget planning is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "GOV.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is security steering committee defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
         0,
         0.68,
         0.32,
         0,
         0
-      ]
+      ],
+      "score": 58,
+      "comment": "security steering committee is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
     },
     {
-      "id": "DATA.02",
+      "id": "GOV.06",
       "type": "TECH",
-      "subtopic": "Protection",
-      "question": "Le chiffrement est-il appliqué aux données critiques ?",
-      "score": 70,
-      "comment": "Chiffrement activé au repos sur les bases principales et les sauvegardes.",
+      "subtopic": "Implementation and coverage",
+      "question": "Is control ownership model defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
         0,
-        0.2,
-        0.8,
+        0.24,
+        0.76,
         0,
         0
-      ]
+      ],
+      "score": 69,
+      "comment": "control ownership model is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
     },
     {
-      "id": "DATA.03",
+      "id": "GOV.07",
       "type": "TECH",
-      "subtopic": "DLP",
-      "question": "Des contrôles DLP couvrent-ils les canaux de sortie majeurs ?",
-      "score": 35,
-      "comment": "DLP messagerie en pilote, pas encore sur stockage cloud partagé.",
-      "levels": [
-        0.6,
-        0.4,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "CLOUD.01",
-      "type": "TECH",
-      "subtopic": "Configuration",
-      "question": "Les configurations cloud sont-elles contrôlées automatiquement ?",
-      "score": 64,
-      "comment": "CSPM actif sur le tenant principal, couverture multi-cloud à étendre.",
-      "levels": [
-        0,
-        0.44,
-        0.56,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "CLOUD.02",
-      "type": "TECH",
-      "subtopic": "Journalisation",
-      "question": "Les journaux cloud critiques sont-ils centralisés ?",
-      "score": 78,
-      "comment": "Logs IAM et réseau centralisés dans le SIEM avec alertes de base.",
-      "levels": [
-        0,
-        0,
-        0.88,
-        0.08,
-        0.04
-      ]
-    },
-    {
-      "id": "CLOUD.03",
-      "type": "ORGA",
-      "subtopic": "Responsabilités",
-      "question": "Le modèle de responsabilité partagée est-il compris par les équipes projets ?",
-      "score": 50,
-      "comment": "Support de formation prêt, adoption encore variable selon les squads.",
-      "levels": [
-        0,
-        1,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "DET.01",
-      "type": "TECH",
-      "subtopic": "Supervision",
-      "question": "Les événements de sécurité sont-ils corrélés dans un SIEM ?",
-      "score": 74,
-      "comment": "Cas d'usage prioritaires actifs, tuning régulier du SOC.",
-      "reliability": "Haute",
-      "levels": [
-        0,
-        0.04,
-        0.96,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "DET.02",
-      "type": "TECH",
-      "subtopic": "Détection endpoint",
-      "question": "Les postes et serveurs sont-ils couverts par une solution EDR ?",
-      "score": 84,
-      "comment": "EDR déployé sur 92 % du parc connu.",
-      "levels": [
-        0,
-        0,
-        0.64,
-        0.23,
-        0.13
-      ]
-    },
-    {
-      "id": "DET.03",
-      "type": "ORGA",
-      "subtopic": "Qualité des alertes",
-      "question": "La performance de détection est-elle mesurée ?",
-      "score": 46,
-      "comment": "MTTD suivi, mais peu de tests d'efficacité adversary emulation.",
-      "levels": [
-        0.16,
-        0.84,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "INC.01",
-      "type": "ORGA",
-      "subtopic": "Préparation",
-      "question": "Le plan de réponse à incident est-il testé ?",
-      "score": 52,
-      "comment": "Table-top annuel réalisé, exercice technique complet à planifier.",
-      "levels": [
-        0,
-        0.92,
-        0.08,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "INC.02",
-      "type": "ORGA",
-      "subtopic": "Communication",
-      "question": "Les circuits de crise et d'escalade sont-ils définis ?",
-      "score": 68,
-      "comment": "Annuaire de crise disponible, doublures à confirmer pour les astreintes.",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is regulatory obligation tracking defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
         0,
         0.28,
         0.72,
         0,
         0
-      ]
+      ],
+      "score": 68,
+      "comment": "regulatory obligation tracking is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
     },
     {
-      "id": "INC.03",
-      "type": "TECH",
-      "subtopic": "Forensic",
-      "question": "Les capacités de collecte forensic sont-elles disponibles ?",
-      "status": "missing",
-      "score": null,
-      "comment": "Non évalué dans cet exemple fictif.",
+      "id": "GOV.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is security awareness governance defined, implemented, evidenced, and improved for the Governance scope?",
       "levels": [
         0,
         0,
+        0.84,
+        0.1,
+        0.06
+      ],
+      "score": 79,
+      "comment": "security awareness governance is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "GOV.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is board-level risk appetite defined, implemented, evidenced, and improved for the Governance scope?",
+      "levels": [
+        0.56,
+        0.44,
         0,
         0,
         0
-      ]
+      ],
+      "score": 36,
+      "comment": "Evidence for board-level risk appetite is still fragmented. Ownership is understood locally, but repeatable execution across Governance is not yet demonstrated.",
+      "reliability": "Low"
     },
     {
-      "id": "RES.01",
+      "id": "GOV.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is audit remediation oversight defined, implemented, evidenced, and improved for the Governance scope?",
+      "levels": [
+        0.6,
+        0.4,
+        0,
+        0,
+        0
+      ],
+      "score": 35,
+      "comment": "Evidence for audit remediation oversight is still fragmented. Ownership is understood locally, but repeatable execution across Governance is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "GOV.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is cyber performance indicators defined, implemented, evidenced, and improved for the Governance scope?",
+      "levels": [
+        0.16,
+        0.84,
+        0,
+        0,
+        0
+      ],
+      "score": 46,
+      "comment": "cyber performance indicators is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "GOV.12",
       "type": "ORGA",
-      "subtopic": "Continuité",
-      "question": "Les scénarios cyber sont-ils intégrés au plan de continuité ?",
-      "score": 60,
-      "comment": "Scénario ransomware inclus, dépendances fournisseurs à compléter.",
+      "subtopic": "Testing and improvement",
+      "question": "Is security role segregation defined, implemented, evidenced, and improved for the Governance scope?",
+      "levels": [
+        0,
+        0.72,
+        0.28,
+        0,
+        0
+      ],
+      "score": 57,
+      "comment": "security role segregation is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "GOV.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is continuous improvement process defined, implemented, evidenced, and improved for the Governance scope?",
+      "levels": [
+        0,
+        0.76,
+        0.24,
+        0,
+        0
+      ],
+      "score": 56,
+      "comment": "continuous improvement process is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is risk assessment methodology defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for risk assessment methodology is still fragmented. Ownership is understood locally, but repeatable execution across Risk Management is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "RISK.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is business impact calibration defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "business impact calibration is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is risk treatment planning defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "risk treatment planning is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is risk acceptance workflow defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "risk acceptance workflow is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is threat intelligence intake defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "threat intelligence intake is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is scenario-based risk analysis defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.12,
+        0.08
+      ],
+      "score": 80,
+      "comment": "scenario-based risk analysis is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "RISK.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is control effectiveness testing defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0,
+        0.84,
+        0.1,
+        0.06
+      ],
+      "score": 79,
+      "comment": "control effectiveness testing is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "RISK.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is risk register maintenance defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0.56,
+        0.44,
+        0,
+        0,
+        0
+      ],
+      "score": 36,
+      "comment": "Evidence for risk register maintenance is still fragmented. Ownership is understood locally, but repeatable execution across Risk Management is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "RISK.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is residual risk reporting defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "residual risk reporting is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is risk appetite thresholds defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0.16,
+        0.84,
+        0,
+        0,
+        0
+      ],
+      "score": 46,
+      "comment": "risk appetite thresholds is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is project risk reviews defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0.72,
+        0.28,
+        0,
+        0
+      ],
+      "score": 57,
+      "comment": "project risk reviews is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is risk quantification approach defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0.28,
+        0.72,
+        0,
+        0
+      ],
+      "score": 68,
+      "comment": "risk quantification approach is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RISK.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is risk review cadence defined, implemented, evidenced, and improved for the Risk Management scope?",
+      "levels": [
+        0,
+        0.32,
+        0.68,
+        0,
+        0
+      ],
+      "score": 67,
+      "comment": "risk review cadence is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is supplier security onboarding defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "supplier security onboarding is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is third-party risk tiering defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "third-party risk tiering is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is contract security clauses defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "contract security clauses is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "TP.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is supplier evidence review defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "supplier evidence review is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is outsourced service monitoring defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.12,
+        0.08
+      ],
+      "score": 80,
+      "comment": "outsourced service monitoring is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "TP.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is critical supplier exit planning defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for critical supplier exit planning is still fragmented. Ownership is understood locally, but repeatable execution across Third-Party is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "TP.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is software supplier assurance defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0.56,
+        0.44,
+        0,
+        0,
+        0
+      ],
+      "score": 36,
+      "comment": "Evidence for software supplier assurance is still fragmented. Ownership is understood locally, but repeatable execution across Third-Party is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "TP.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is vendor remote access review defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "vendor remote access review is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is subcontractor visibility defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "subcontractor visibility is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is supplier incident notification defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0.72,
+        0.28,
+        0,
+        0
+      ],
+      "score": 57,
+      "comment": "supplier incident notification is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is annual supplier reassessment defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0.28,
+        0.72,
+        0,
+        0
+      ],
+      "score": 68,
+      "comment": "annual supplier reassessment is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "TP.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is cloud provider assurance defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0,
+        0.84,
+        0.1,
+        0.06
+      ],
+      "score": 79,
+      "comment": "cloud provider assurance is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "TP.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is third-party issue tracking defined, implemented, evidenced, and improved for the Third-Party scope?",
+      "levels": [
+        0,
+        0,
+        0.88,
+        0.07,
+        0.05
+      ],
+      "score": 78,
+      "comment": "third-party issue tracking is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "ASSET.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is asset inventory completeness defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "asset inventory completeness is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ASSET.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is ownership of critical assets defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "ownership of critical assets is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "ASSET.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is configuration baseline mapping defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "configuration baseline mapping is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "ASSET.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is data owner assignment defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0.96,
+        0.04,
+        0,
+        0,
+        0
+      ],
+      "score": 26,
+      "comment": "Evidence for data owner assignment is still fragmented. Ownership is understood locally, but repeatable execution across Asset Management is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ASSET.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is asset lifecycle controls defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for asset lifecycle controls is still fragmented. Ownership is understood locally, but repeatable execution across Asset Management is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ASSET.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is shadow IT discovery defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "shadow IT discovery is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ASSET.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is criticality classification defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "criticality classification is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ASSET.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is CMDB reconciliation defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "CMDB reconciliation is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ASSET.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is software inventory accuracy defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "software inventory accuracy is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ASSET.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is hardware disposal tracking defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0.28,
+        0.72,
+        0,
+        0
+      ],
+      "score": 68,
+      "comment": "hardware disposal tracking is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ASSET.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is internet exposure inventory defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0,
+        0,
+        0.84,
+        0.1,
+        0.06
+      ],
+      "score": 79,
+      "comment": "internet exposure inventory is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "ASSET.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is business service mapping defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0.56,
+        0.44,
+        0,
+        0,
+        0
+      ],
+      "score": 36,
+      "comment": "Evidence for business service mapping is still fragmented. Ownership is understood locally, but repeatable execution across Asset Management is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ASSET.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is asset review cadence defined, implemented, evidenced, and improved for the Asset Management scope?",
+      "levels": [
+        0.6,
+        0.4,
+        0,
+        0,
+        0
+      ],
+      "score": 35,
+      "comment": "Evidence for asset review cadence is still fragmented. Ownership is understood locally, but repeatable execution across Asset Management is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "OPS.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is secure operating procedures defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "secure operating procedures is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "OPS.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is change control enforcement defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "change control enforcement is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "OPS.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is vulnerability remediation workflow defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for vulnerability remediation workflow is still fragmented. Ownership is understood locally, but repeatable execution across Operational Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "OPS.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is patch prioritization defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for patch prioritization is still fragmented. Ownership is understood locally, but repeatable execution across Operational Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "OPS.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is privileged maintenance windows defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "privileged maintenance windows is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "OPS.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is backup operation monitoring defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "backup operation monitoring is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "OPS.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is malware protection operations defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "malware protection operations is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "OPS.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is job scheduling safeguards defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "job scheduling safeguards is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "OPS.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is operations logging review defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.12,
+        0.08
+      ],
+      "score": 80,
+      "comment": "operations logging review is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "OPS.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is baseline hardening checks defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0,
+        0,
+        0.84,
+        0.1,
+        0.06
+      ],
+      "score": 79,
+      "comment": "baseline hardening checks is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "OPS.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is capacity and availability monitoring defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0.56,
+        0.44,
+        0,
+        0,
+        0
+      ],
+      "score": 36,
+      "comment": "Evidence for capacity and availability monitoring is still fragmented. Ownership is understood locally, but repeatable execution across Operational Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "OPS.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is configuration drift management defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "configuration drift management is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "OPS.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is administrative activity review defined, implemented, evidenced, and improved for the Operational Security scope?",
+      "levels": [
+        0.16,
+        0.84,
+        0,
+        0,
+        0
+      ],
+      "score": 46,
+      "comment": "administrative activity review is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is endpoint protection coverage defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.92,
+        0.08,
+        0,
+        0,
+        0
+      ],
+      "score": 27,
+      "comment": "Evidence for endpoint protection coverage is still fragmented. Ownership is understood locally, but repeatable execution across Endpoint Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ENDPT.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is EDR response workflow defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for EDR response workflow is still fragmented. Ownership is understood locally, but repeatable execution across Endpoint Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ENDPT.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is device encryption coverage defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "device encryption coverage is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is local administrator control defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "local administrator control is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is mobile device management defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "mobile device management is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is endpoint patch compliance defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "endpoint patch compliance is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "ENDPT.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is USB and removable media control defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "USB and removable media control is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is endpoint telemetry quality defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.12,
+        0.08
+      ],
+      "score": 80,
+      "comment": "endpoint telemetry quality is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "ENDPT.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is golden image hardening defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for golden image hardening is still fragmented. Ownership is understood locally, but repeatable execution across Endpoint Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ENDPT.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is unauthorized software blocking defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.56,
+        0.44,
+        0,
+        0,
+        0
+      ],
+      "score": 36,
+      "comment": "Evidence for unauthorized software blocking is still fragmented. Ownership is understood locally, but repeatable execution across Endpoint Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ENDPT.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is lost device response defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "lost device response is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is server protection coverage defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "server protection coverage is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ENDPT.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is endpoint exception review defined, implemented, evidenced, and improved for the Endpoint Security scope?",
+      "levels": [
+        0,
+        0.72,
+        0.28,
+        0,
+        0
+      ],
+      "score": 57,
+      "comment": "endpoint exception review is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is network segmentation model defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for network segmentation model is still fragmented. Ownership is understood locally, but repeatable execution across Network Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "NTW.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is firewall rule governance defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "firewall rule governance is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is remote access security defined, implemented, evidenced, and improved for the Network Security scope?",
       "levels": [
         0,
         0.6,
         0.4,
         0,
         0
-      ]
+      ],
+      "score": 60,
+      "comment": "remote access security is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
     },
     {
-      "id": "RES.02",
+      "id": "NTW.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is network device hardening defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "network device hardening is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is wireless access controls defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "wireless access controls is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "NTW.06",
       "type": "TECH",
-      "subtopic": "Sauvegardes",
-      "question": "Les sauvegardes critiques sont-elles isolées et testées ?",
-      "score": 82,
-      "comment": "Sauvegardes immuables sur les applications critiques, tests trimestriels concluants.",
-      "reliability": "Haute",
+      "subtopic": "Implementation and coverage",
+      "question": "Is DNS security monitoring defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "DNS security monitoring is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "NTW.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is internet ingress filtering defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0.96,
+        0.04,
+        0,
+        0,
+        0
+      ],
+      "score": 26,
+      "comment": "Evidence for internet ingress filtering is still fragmented. Ownership is understood locally, but repeatable execution across Network Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "NTW.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is east-west traffic visibility defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for east-west traffic visibility is still fragmented. Ownership is understood locally, but repeatable execution across Network Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "NTW.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is network change review defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "network change review is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is VPN account recertification defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "VPN account recertification is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is network intrusion detection defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "network intrusion detection is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is privileged network administration defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "privileged network administration is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "NTW.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is legacy protocol reduction defined, implemented, evidenced, and improved for the Network Security scope?",
+      "levels": [
+        0,
+        0.28,
+        0.72,
+        0,
+        0
+      ],
+      "score": 68,
+      "comment": "legacy protocol reduction is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is secure development lifecycle defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "secure development lifecycle is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is application threat modeling defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "application threat modeling is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is code review process defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "code review process is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "APP.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is dependency vulnerability scanning defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "dependency vulnerability scanning is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "APP.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is application penetration testing defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "application penetration testing is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "APP.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is release security gates defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for release security gates is still fragmented. Ownership is understood locally, but repeatable execution across Application Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "APP.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is API authentication controls defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for API authentication controls is still fragmented. Ownership is understood locally, but repeatable execution across Application Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "APP.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is secret management in code defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "secret management in code is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is security regression testing defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "security regression testing is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is web application firewall tuning defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "web application firewall tuning is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is application logging coverage defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "application logging coverage is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "APP.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is developer security training defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.12,
+        0.08
+      ],
+      "score": 80,
+      "comment": "developer security training is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "APP.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is production access restrictions defined, implemented, evidenced, and improved for the Application Security scope?",
+      "levels": [
+        0,
+        0,
+        0.84,
+        0.1,
+        0.06
+      ],
+      "score": 79,
+      "comment": "production access restrictions is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "DATA.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is data classification scheme defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "data classification scheme is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DATA.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is encryption at rest defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "encryption at rest is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "DATA.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is encryption in transit defined, implemented, evidenced, and improved for the Data Security scope?",
       "levels": [
         0,
         0,
         0.72,
-        0.18,
-        0.1
-      ]
+        0.17,
+        0.11
+      ],
+      "score": 82,
+      "comment": "encryption in transit is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "DATA.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is data retention control defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0.92,
+        0.08,
+        0,
+        0,
+        0
+      ],
+      "score": 27,
+      "comment": "Evidence for data retention control is still fragmented. Ownership is understood locally, but repeatable execution across Data Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DATA.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is DLP monitoring coverage defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for DLP monitoring coverage is still fragmented. Ownership is understood locally, but repeatable execution across Data Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DATA.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is database activity monitoring defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "database activity monitoring is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DATA.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is sensitive data discovery defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "sensitive data discovery is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DATA.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is key management process defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "key management process is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DATA.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is data masking in test defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "data masking in test is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "DATA.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is privacy-by-design review defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "privacy-by-design review is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DATA.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is data access recertification defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.12,
+        0.08
+      ],
+      "score": 80,
+      "comment": "data access recertification is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "DATA.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is backup data protection defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for backup data protection is still fragmented. Ownership is understood locally, but repeatable execution across Data Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DATA.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is data deletion assurance defined, implemented, evidenced, and improved for the Data Security scope?",
+      "levels": [
+        0.56,
+        0.44,
+        0,
+        0,
+        0
+      ],
+      "score": 36,
+      "comment": "Evidence for data deletion assurance is still fragmented. Ownership is understood locally, but repeatable execution across Data Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "IAM.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is MFA coverage defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "MFA coverage is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "IAM.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is joiner mover leaver process defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0,
+        0,
+        0.72,
+        0.17,
+        0.11
+      ],
+      "score": 82,
+      "comment": "joiner mover leaver process is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "IAM.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is privileged access management defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for privileged access management is still fragmented. Ownership is understood locally, but repeatable execution across Identity & Access is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "IAM.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is access recertification defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for access recertification is still fragmented. Ownership is understood locally, but repeatable execution across Identity & Access is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "IAM.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is service account governance defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "service account governance is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "IAM.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is passwordless roadmap defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "passwordless roadmap is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "IAM.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is identity federation controls defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "identity federation controls is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "IAM.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is break-glass account process defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "break-glass account process is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "IAM.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is role-based access model defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "role-based access model is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "IAM.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is segregation of duties checks defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.96,
+        0.04,
+        0,
+        0,
+        0
+      ],
+      "score": 26,
+      "comment": "Evidence for segregation of duties checks is still fragmented. Ownership is understood locally, but repeatable execution across Identity & Access is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "IAM.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is identity logging coverage defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for identity logging coverage is still fragmented. Ownership is understood locally, but repeatable execution across Identity & Access is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "IAM.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is external identity lifecycle defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "external identity lifecycle is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "IAM.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is access request approval defined, implemented, evidenced, and improved for the Identity & Access scope?",
+      "levels": [
+        0.12,
+        0.88,
+        0,
+        0,
+        0
+      ],
+      "score": 47,
+      "comment": "access request approval is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DET.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is SIEM use case coverage defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0.88,
+        0.12,
+        0,
+        0,
+        0
+      ],
+      "score": 28,
+      "comment": "Evidence for SIEM use case coverage is still fragmented. Ownership is understood locally, but repeatable execution across Detection is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DET.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is log source onboarding defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for log source onboarding is still fragmented. Ownership is understood locally, but repeatable execution across Detection is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DET.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is alert triage procedure defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "alert triage procedure is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DET.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is detection engineering backlog defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "detection engineering backlog is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DET.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is EDR alert integration defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "EDR alert integration is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DET.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is cloud detection rules defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "cloud detection rules is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "DET.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is identity anomaly detection defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "identity anomaly detection is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "DET.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is network detection content defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "network detection content is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "DET.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is false positive tuning defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for false positive tuning is still fragmented. Ownership is understood locally, but repeatable execution across Detection is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DET.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is detection test exercises defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for detection test exercises is still fragmented. Ownership is understood locally, but repeatable execution across Detection is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "DET.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is threat hunting cadence defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "threat hunting cadence is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DET.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is SOC performance metrics defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "SOC performance metrics is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "DET.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is coverage gap review defined, implemented, evidenced, and improved for the Detection scope?",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ],
+      "score": 58,
+      "comment": "coverage gap review is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is incident response plan defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for incident response plan is still fragmented. Ownership is understood locally, but repeatable execution across Incident Response is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "INC.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is crisis communication tree defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "crisis communication tree is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is technical containment playbooks defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0.56,
+        0.44,
+        0,
+        0
+      ],
+      "score": 61,
+      "comment": "technical containment playbooks is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is forensic collection readiness defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "forensic collection readiness is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is legal and privacy escalation defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "legal and privacy escalation is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "INC.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is ransomware response exercise defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0,
+        0.72,
+        0.17,
+        0.11
+      ],
+      "score": 82,
+      "comment": "ransomware response exercise is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "INC.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is supplier incident coordination defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0.92,
+        0.08,
+        0,
+        0,
+        0
+      ],
+      "score": 27,
+      "comment": "Evidence for supplier incident coordination is still fragmented. Ownership is understood locally, but repeatable execution across Incident Response is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "INC.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is post-incident review process defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for post-incident review process is still fragmented. Ownership is understood locally, but repeatable execution across Incident Response is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "INC.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is evidence preservation process defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "evidence preservation process is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is executive decision protocol defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "executive decision protocol is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is incident severity model defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "incident severity model is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "INC.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is tabletop exercise cadence defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "tabletop exercise cadence is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "INC.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is lessons learned tracking defined, implemented, evidenced, and improved for the Incident Response scope?",
+      "levels": [
+        0,
+        0.24,
+        0.76,
+        0,
+        0
+      ],
+      "score": 69,
+      "comment": "lessons learned tracking is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RES.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is business continuity integration defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "business continuity integration is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RES.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is immutable backup coverage defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0.56,
+        0.44,
+        0,
+        0
+      ],
+      "score": 61,
+      "comment": "immutable backup coverage is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
     },
     {
       "id": "RES.03",
       "type": "TECH",
-      "subtopic": "Reprise",
-      "question": "Les objectifs RTO/RPO sont-ils vérifiés par exercice ?",
-      "status": "na",
-      "score": null,
-      "comment": "N/A pour le périmètre fictif de démonstration.",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is restore test evidence defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0.12,
+        0.88,
+        0,
+        0
+      ],
+      "score": 72,
+      "comment": "restore test evidence is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "RES.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is disaster recovery runbooks defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "disaster recovery runbooks is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "RES.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is RTO RPO validation defined, implemented, evidenced, and improved for the Resilience scope?",
       "levels": [
         0,
         0,
+        0.72,
+        0.17,
+        0.11
+      ],
+      "score": 82,
+      "comment": "RTO RPO validation is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "RES.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is cyber crisis scenario planning defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0.44,
+        0.56,
         0,
         0,
         0
-      ]
+      ],
+      "score": 39,
+      "comment": "Evidence for cyber crisis scenario planning is still fragmented. Ownership is understood locally, but repeatable execution across Resilience is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "RES.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is critical dependency mapping defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for critical dependency mapping is still fragmented. Ownership is understood locally, but repeatable execution across Resilience is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "RES.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is alternate operating procedures defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "alternate operating procedures is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RES.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is resilience exercise reporting defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "resilience exercise reporting is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RES.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is backup access segregation defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "backup access segregation is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "RES.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is recovery prioritization model defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "recovery prioritization model is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "RES.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is offline communication plan defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "offline communication plan is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "RES.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is resilience improvement backlog defined, implemented, evidenced, and improved for the Resilience scope?",
+      "levels": [
+        0.96,
+        0.04,
+        0,
+        0,
+        0
+      ],
+      "score": 26,
+      "comment": "Evidence for resilience improvement backlog is still fragmented. Ownership is understood locally, but repeatable execution across Resilience is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "PHY.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is physical access badge controls defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0.56,
+        0.44,
+        0,
+        0
+      ],
+      "score": 61,
+      "comment": "physical access badge controls is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "PHY.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is visitor management process defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0.12,
+        0.88,
+        0,
+        0
+      ],
+      "score": 72,
+      "comment": "visitor management process is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "PHY.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is secure area zoning defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0,
+        0.68,
+        0.2,
+        0.12
+      ],
+      "score": 83,
+      "comment": "secure area zoning is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "PHY.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is CCTV monitoring coverage defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0.88,
+        0.12,
+        0,
+        0,
+        0
+      ],
+      "score": 28,
+      "comment": "Evidence for CCTV monitoring coverage is still fragmented. Ownership is understood locally, but repeatable execution across Physical Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "PHY.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is environmental monitoring defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for environmental monitoring is still fragmented. Ownership is understood locally, but repeatable execution across Physical Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "PHY.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is media storage protection defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "media storage protection is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "PHY.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is data center access review defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "data center access review is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "PHY.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is physical incident escalation defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "physical incident escalation is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "PHY.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is equipment disposal chain defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "equipment disposal chain is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "PHY.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is tailgating prevention controls defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "tailgating prevention controls is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "PHY.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is site resilience measures defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0,
+        0,
+        0.76,
+        0.15,
+        0.09
+      ],
+      "score": 81,
+      "comment": "site resilience measures is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "PHY.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is physical key management defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for physical key management is still fragmented. Ownership is understood locally, but repeatable execution across Physical Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "PHY.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is facility supplier oversight defined, implemented, evidenced, and improved for the Physical Security scope?",
+      "levels": [
+        0.52,
+        0.48,
+        0,
+        0,
+        0
+      ],
+      "score": 37,
+      "comment": "Evidence for facility supplier oversight is still fragmented. Ownership is understood locally, but repeatable execution across Physical Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ICS.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is industrial asset inventory defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        0.12,
+        0.88,
+        0,
+        0
+      ],
+      "score": 72,
+      "comment": "industrial asset inventory is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "ICS.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is OT network segmentation defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        0,
+        0.68,
+        0.2,
+        0.12
+      ],
+      "score": 83,
+      "comment": "OT network segmentation is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "ICS.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is engineering workstation hardening defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0.4,
+        0.6,
+        0,
+        0,
+        0
+      ],
+      "score": 40,
+      "comment": "engineering workstation hardening is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ICS.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is industrial remote access control defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for industrial remote access control is still fragmented. Ownership is understood locally, but repeatable execution across Industrial Systems is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ICS.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is safety system isolation defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "safety system isolation is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ICS.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is OT vulnerability management defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        0.56,
+        0.44,
+        0,
+        0
+      ],
+      "score": 61,
+      "comment": "OT vulnerability management is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ICS.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is industrial backup procedures defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "industrial backup procedures is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ICS.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is PLC change governance defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "PLC change governance is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "ICS.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is OT incident playbooks defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0,
+        0,
+        0.72,
+        0.17,
+        0.11
+      ],
+      "score": 82,
+      "comment": "OT incident playbooks is mature and supported by recurring evidence. The team tracks performance indicators and uses findings to refine the control.",
+      "reliability": "High"
+    },
+    {
+      "id": "ICS.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is vendor maintenance controls defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0.92,
+        0.08,
+        0,
+        0,
+        0
+      ],
+      "score": 27,
+      "comment": "Evidence for vendor maintenance controls is still fragmented. Ownership is understood locally, but repeatable execution across Industrial Systems is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ICS.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is industrial logging visibility defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for industrial logging visibility is still fragmented. Ownership is understood locally, but repeatable execution across Industrial Systems is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "ICS.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is legacy system risk acceptance defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "legacy system risk acceptance is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "ICS.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is OT security monitoring defined, implemented, evidenced, and improved for the Industrial Systems scope?",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ],
+      "score": 48,
+      "comment": "OT security monitoring is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "CLOUD.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is cloud landing zone governance defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0.84,
+        0.16,
+        0,
+        0,
+        0
+      ],
+      "score": 29,
+      "comment": "Evidence for cloud landing zone governance is still fragmented. Ownership is understood locally, but repeatable execution across Cloud Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "CLOUD.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is CSPM coverage defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0.4,
+        0.6,
+        0,
+        0,
+        0
+      ],
+      "score": 40,
+      "comment": "CSPM coverage is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Low"
+    },
+    {
+      "id": "CLOUD.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is cloud IAM least privilege defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0.96,
+        0.04,
+        0,
+        0
+      ],
+      "score": 51,
+      "comment": "cloud IAM least privilege is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "CLOUD.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is cloud logging centralization defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "cloud logging centralization is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "CLOUD.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is cloud network segmentation defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0.56,
+        0.44,
+        0,
+        0
+      ],
+      "score": 61,
+      "comment": "cloud network segmentation is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "CLOUD.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is container image scanning defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0.12,
+        0.88,
+        0,
+        0
+      ],
+      "score": 72,
+      "comment": "container image scanning is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "CLOUD.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is Kubernetes security baseline defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "Kubernetes security baseline is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "CLOUD.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is cloud secret management defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0,
+        0.72,
+        0.17,
+        0.11
+      ],
+      "score": 82,
+      "comment": "cloud secret management is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "CLOUD.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is infrastructure as code review defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for infrastructure as code review is still fragmented. Ownership is understood locally, but repeatable execution across Cloud Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "CLOUD.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is cloud backup configuration defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ],
+      "score": 38,
+      "comment": "Evidence for cloud backup configuration is still fragmented. Ownership is understood locally, but repeatable execution across Cloud Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "CLOUD.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is multi-cloud account inventory defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "multi-cloud account inventory is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "CLOUD.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is cloud incident playbooks defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "cloud incident playbooks is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "CLOUD.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is serverless security controls defined, implemented, evidenced, and improved for the Cloud Security scope?",
+      "levels": [
+        0,
+        0.64,
+        0.36,
+        0,
+        0
+      ],
+      "score": 59,
+      "comment": "serverless security controls is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.01",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is AI system inventory defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0.4,
+        0.6,
+        0,
+        0,
+        0
+      ],
+      "score": 40,
+      "comment": "AI system inventory is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Low"
+    },
+    {
+      "id": "AIS.02",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is model risk classification defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.96,
+        0.04,
+        0,
+        0
+      ],
+      "score": 51,
+      "comment": "model risk classification is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.03",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is training data governance defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.52,
+        0.48,
+        0,
+        0
+      ],
+      "score": 62,
+      "comment": "training data governance is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.04",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is prompt injection testing defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.56,
+        0.44,
+        0,
+        0
+      ],
+      "score": 61,
+      "comment": "prompt injection testing is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.05",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is model access control defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.12,
+        0.88,
+        0,
+        0
+      ],
+      "score": 72,
+      "comment": "model access control is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "AIS.06",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is AI output monitoring defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0,
+        0.68,
+        0.2,
+        0.12
+      ],
+      "score": 83,
+      "comment": "AI output monitoring is close to leading practice. Continuous testing, metrics, and improvement actions are visible across the assessed perimeter.",
+      "reliability": "High"
+    },
+    {
+      "id": "AIS.07",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is third-party AI service review defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0.88,
+        0.12,
+        0,
+        0,
+        0
+      ],
+      "score": 28,
+      "comment": "Evidence for third-party AI service review is still fragmented. Ownership is understood locally, but repeatable execution across AI Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "AIS.08",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is sensitive data filtering defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0.44,
+        0.56,
+        0,
+        0,
+        0
+      ],
+      "score": 39,
+      "comment": "Evidence for sensitive data filtering is still fragmented. Ownership is understood locally, but repeatable execution across AI Security is not yet demonstrated.",
+      "reliability": "Low"
+    },
+    {
+      "id": "AIS.09",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is model change management defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "score": 50,
+      "comment": "model change management is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.10",
+      "type": "TECH",
+      "subtopic": "Implementation and coverage",
+      "question": "Is AI incident response defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0.04,
+        0.96,
+        0,
+        0,
+        0
+      ],
+      "score": 49,
+      "comment": "AI incident response is partially implemented and documented. The main gap is consistent coverage, evidence quality, and routine management review.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.11",
+      "type": "TECH",
+      "subtopic": "Monitoring and evidence",
+      "question": "Is human oversight process defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ],
+      "score": 60,
+      "comment": "human oversight process is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "Medium"
+    },
+    {
+      "id": "AIS.12",
+      "type": "ORGA",
+      "subtopic": "Testing and improvement",
+      "question": "Is AI policy enforcement defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.16,
+        0.84,
+        0,
+        0
+      ],
+      "score": 71,
+      "comment": "AI policy enforcement is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
+    },
+    {
+      "id": "AIS.13",
+      "type": "ORGA",
+      "subtopic": "Governance and ownership",
+      "question": "Is AI assurance reporting defined, implemented, evidenced, and improved for the AI Security scope?",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ],
+      "score": 70,
+      "comment": "AI assurance reporting is established on the core scope with accountable owners. Remaining work concerns automation, exception tracking, and coverage of edge cases.",
+      "reliability": "High"
     }
   ]
 }
