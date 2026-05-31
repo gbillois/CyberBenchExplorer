@@ -310,6 +310,7 @@
     .bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; }
 
     .radar-wrap, .scatter-wrap { min-height: 360px; display: grid; place-items: center; }
+    .radar-head-tools { display: flex; align-items: center; gap: 12px; }
     svg.chart { width: 100%; height: auto; max-height: 410px; overflow: visible; }
     .axis-label { fill: var(--muted); font-size: 11px; }
     .chart-grid { stroke: #dfeaf0; fill: none; }
@@ -741,7 +742,10 @@
             <div class="card">
               <div class="card-head">
                 <h3 id="radarTitle">Domain radar</h3>
-                <div class="legend"><span id="radarEvalLegend"><i style="background:var(--cyan)"></i>Assessment</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
+                <div class="radar-head-tools">
+                  <button class="ghost hidden" id="radarBack">Back</button>
+                  <div class="legend"><span id="radarEvalLegend"><i style="background:var(--cyan)"></i>Assessment</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
+                </div>
               </div>
               <div class="card-body radar-wrap" id="radarChart"></div>
             </div>
@@ -965,6 +969,8 @@
         assessment: "Assessment",
         benchmark: "Benchmark",
         maturityDistribution: "Maturity distribution",
+        questionRadarTitle: "{name} · questions",
+        backToThemes: "← All themes",
         scoresByDomain: "Scores by domain",
         coverageScoreMatrix: "Coverage / score matrix",
         strengths: "Strengths",
@@ -1094,6 +1100,8 @@
         assessment: "Evaluation",
         benchmark: "Benchmark",
         maturityDistribution: "Distribution des maturités",
+        questionRadarTitle: "{name} · questions",
+        backToThemes: "← Tous les thèmes",
         scoresByDomain: "Scores par domaine",
         coverageScoreMatrix: "Matrice couverture / score",
         strengths: "Forces",
@@ -1213,6 +1221,7 @@
       compareRef: "top",
       compareGap: 5,
       drill: { domain: "", questionId: "" },
+      overviewDomain: "",
       findingsDomain: "",
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
@@ -1793,6 +1802,7 @@
           refs.benchmarkMeta.innerHTML = "";
         }
         state.drill = { domain: "", questionId: "" };
+        state.overviewDomain = "";
         state.findingsDomain = "";
         state.filters = { search: "", domain: "", type: "", status: "", score: "" };
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
@@ -2117,42 +2127,91 @@
 
     function renderRadar() {
       const domains = state.assessment.domainStats;
-      const benchmark = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
-      $("radarBenchmarkLegend").classList.toggle("hidden", !benchmark);
-      if (benchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
+      // Drop a stale drill-down if the selected theme no longer exists.
+      if (state.overviewDomain && !domains.some((d) => d.id === state.overviewDomain)) state.overviewDomain = "";
+      const hasBenchmark = Boolean(state.benchmark);
+      $("radarBenchmarkLegend").classList.toggle("hidden", !hasBenchmark);
+      if (hasBenchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
+      $("radarBack").classList.toggle("hidden", !state.overviewDomain);
+      $("radarBack").textContent = t("backToThemes");
+
+      let items, ariaLabel;
+      if (state.overviewDomain) {
+        const benchMap = state.benchmark ? state.benchmark.recordMap : null;
+        const name = DOMAIN_NAMES[state.overviewDomain] || state.overviewDomain;
+        $("radarTitle").textContent = t("questionRadarTitle", { name });
+        items = state.assessment.questions
+          .filter((q) => q.domain === state.overviewDomain)
+          .map((q) => {
+            const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
+            const refVal = ref ? (ref.top ?? ref.sector ?? ref.all ?? null) : null;
+            return {
+              label: q.id,
+              value: Number.isFinite(q.score) ? q.score : 0,
+              benchValue: Number.isFinite(refVal) ? refVal : null,
+              tooltip: `${q.id} · ${q.subtopic || q.question || ""} · ${pct(q.score)}`
+            };
+          });
+        ariaLabel = `Radar des questions du thème ${name}`;
+      } else {
+        const benchMap = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
+        $("radarTitle").textContent = t("domainRadar");
+        items = domains.map((d) => {
+          const b = benchMap ? benchMap.get(d.id) : null;
+          const refVal = b ? (b.top ?? b.sector ?? b.all ?? null) : null;
+          return {
+            label: d.id,
+            value: Number.isFinite(d.score) ? d.score : 0,
+            benchValue: Number.isFinite(refVal) ? refVal : null,
+            tooltip: `${d.name} · ${pct(d.score)}`,
+            drillDomain: d.id
+          };
+        });
+        ariaLabel = "Radar des scores par domaine";
+      }
+
+      $("radarChart").innerHTML = radarSvg(items, ariaLabel);
+      bindOverviewInteractions();
+    }
+
+    function radarSvg(items, ariaLabel) {
       const size = 390, center = size / 2, radius = 142;
-      const points = domains.map((d, i) => {
-        const angle = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
-        const r = radius * ((d.score || 0) / 100);
-        return { x: center + Math.cos(angle) * r, y: center + Math.sin(angle) * r, angle, domain: d };
-      });
+      const n = Math.max(items.length, 1);
+      const angleAt = (i) => -Math.PI / 2 + i * 2 * Math.PI / n;
       const grid = [25, 50, 75, 100].map((level) => {
         const r = radius * level / 100;
-        return `<polygon class="chart-grid" points="${domains.map((_, i) => {
-          const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+        return `<polygon class="chart-grid" points="${items.map((_, i) => {
+          const a = angleAt(i);
           return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
         }).join(" ")}"></polygon>`;
       }).join("");
-      const axes = domains.map((d, i) => {
-        const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+      const axes = items.map((item, i) => {
+        const a = angleAt(i);
         const x = center + Math.cos(a) * (radius + 26);
         const y = center + Math.sin(a) * (radius + 26);
-        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="axis-label bubble-point" data-overview-domain="${html(d.id)}" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" tabindex="0" role="button">${d.id}</text>`;
+        const interactive = item.drillDomain
+          ? ` class="axis-label bubble-point" data-overview-domain="${html(item.drillDomain)}" tabindex="0" role="button"`
+          : ` class="axis-label"`;
+        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text${interactive} x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${html(item.label)}<title>${html(item.tooltip || "")}</title></text>`;
       }).join("");
-      const mainPoly = `<polygon class="chart-line" points="${points.map((p) => `${p.x},${p.y}`).join(" ")}"></polygon>`;
+      const mainPoly = `<polygon class="chart-line" points="${items.map((item, i) => {
+        const a = angleAt(i), r = radius * (item.value || 0) / 100;
+        return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
+      }).join(" ")}"></polygon>`;
       let secondary = "";
-      if (benchmark) {
-        const pts = domains.map((d, i) => {
-          const b = benchmark.get(d.id);
-          const val = b ? (b.top ?? b.sector ?? b.all ?? 0) : 0;
-          const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
-          const r = radius * val / 100;
+      if (items.some((item) => Number.isFinite(item.benchValue))) {
+        const pts = items.map((item, i) => {
+          const a = angleAt(i), r = radius * (Number.isFinite(item.benchValue) ? item.benchValue : 0) / 100;
           return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
         });
         secondary = `<polygon class="chart-line secondary" points="${pts.join(" ")}"></polygon>`;
       }
-      $("radarChart").innerHTML = `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="Radar des scores par domaine">${grid}${axes}${secondary}${mainPoly}</svg>`;
-      bindOverviewInteractions();
+      return `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="${html(ariaLabel)}">${grid}${axes}${secondary}${mainPoly}</svg>`;
+    }
+
+    function openOverviewDomain(domainId) {
+      state.overviewDomain = domainId;
+      renderOverview();
     }
 
     function openDashboardDomain(domainId) {
@@ -2163,14 +2222,18 @@
 
     function bindOverviewInteractions() {
       document.querySelectorAll("[data-overview-domain]").forEach((el) => {
-        el.addEventListener("click", () => openDashboardDomain(el.dataset.overviewDomain));
+        el.addEventListener("click", () => openOverviewDomain(el.dataset.overviewDomain));
         el.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            openDashboardDomain(el.dataset.overviewDomain);
+            openOverviewDomain(el.dataset.overviewDomain);
           }
         });
       });
+      $("radarBack").onclick = () => {
+        state.overviewDomain = "";
+        renderOverview();
+      };
     }
 
     function renderDistribution() {
