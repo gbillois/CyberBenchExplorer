@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CyberBench Explorer</title>
+  <title>Wavestone Cyberbenchmark Explorer</title>
   <script src="vendor/xlsx.full.min.js"></script>
   <style>
     :root {
@@ -437,6 +437,20 @@
     .legend { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 12px; }
     .legend span { display: inline-flex; align-items: center; gap: 6px; }
     .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .legend button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: transparent;
+      box-shadow: none;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .legend button.active { background: var(--panel-3); border-color: #54cdb2; color: #0b7582; }
 
     .dashboard-layout {
       display: grid;
@@ -619,7 +633,7 @@
           </svg>
         </div>
         <div>
-          <h1>CyberBench Explorer</h1>
+          <h1>Wavestone Cyberbenchmark Explorer</h1>
           <p>Assessment dataviz</p>
         </div>
       </div>
@@ -840,9 +854,9 @@
                 <h3 id="compareRowsTitle">Comparison by domain</h3>
                 <div class="legend">
                   <span id="compareLegendEval"><i style="background:var(--cyan)"></i>Assessment</span>
-                  <span id="compareLegendAll"><i style="background:var(--blue)"></i>Average</span>
-                  <span id="compareLegendSector"><i style="background:var(--violet)"></i>Sector</span>
-                  <span><i style="background:var(--amber)"></i>Top 10</span>
+                  <button type="button" data-compare-chart-ref="all" id="compareLegendAll"><i style="background:var(--blue)"></i>All</button>
+                  <button type="button" data-compare-chart-ref="sector" id="compareLegendSector"><i style="background:var(--violet)"></i>Sector</button>
+                  <button type="button" data-compare-chart-ref="top" id="compareLegendTop"><i style="background:var(--amber)"></i>Top 10</button>
                 </div>
               </div>
               <div class="card-body" id="compareRows"></div>
@@ -851,7 +865,7 @@
               <div class="card-head">
                 <h3 id="lagTitle">Lagging measures</h3>
                 <div class="segmented" id="compareRef">
-                  <button data-ref="all">Avg.</button>
+                  <button data-ref="all">All</button>
                   <button data-ref="sector">Sector</button>
                   <button data-ref="top" class="active">Top 10</button>
                 </div>
@@ -1254,7 +1268,7 @@
         ["exportCsv", "exportCsv"], ["compareEmptyTitle", "compareEmptyTitle"], ["compareEmptyText", "compareEmptyText"], ["cmpAllLabel", "avgGap"],
         ["cmpAllSub", "assessmentVsGlobal"], ["cmpSectorLabel", "sectorGap"], ["cmpSectorSub", "assessmentVsSector"], ["cmpTopLabel", "topGap"],
         ["cmpTopSub", "assessmentVsTop"], ["cmpCountLabel", "comparedDomains"], ["cmpCountSub", "alignment"], ["compareRowsTitle", "comparisonByDomain"],
-        ["compareLegendEval", "assessment"], ["compareLegendAll", "average"], ["compareLegendSector", "sector"], ["lagTitle", "laggingMeasures"],
+        ["lagTitle", "laggingMeasures"],
         ["lagHelp", "lagHelp"]
       ].forEach(([id, key]) => setText(id, key));
 
@@ -1277,8 +1291,12 @@
       const scoreOptions = $("scoreFilter").options;
       if (scoreOptions.length >= 4) scoreOptions[0].text = t("all");
       $("dashboardBack").textContent = t("back");
-      document.querySelector('#compareRef [data-ref="all"]').textContent = t("avgShort");
+      document.querySelector('#compareRef [data-ref="all"]').textContent = t("all");
       document.querySelector('#compareRef [data-ref="sector"]').textContent = t("sector");
+      $("compareLegendEval").innerHTML = `<i style="background:var(--cyan)"></i>${t("assessment")}`;
+      document.querySelector('[data-compare-chart-ref="all"]').innerHTML = `<i style="background:var(--blue)"></i>${t("all")}`;
+      document.querySelector('[data-compare-chart-ref="sector"]').innerHTML = `<i style="background:var(--violet)"></i>${t("sector")}`;
+      document.querySelector('[data-compare-chart-ref="top"]').innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
 
       const questionHeaders = $("questionsTable").querySelectorAll("th");
       const questionHeaderLabels = ["ID", "domain", "topic", "question", "type", "N1", "N2", "N3", "N4", "N5", "Top 10", "Top Lvl", "gap", "status", "comment"];
@@ -2357,6 +2375,7 @@
 
       $("compareRows").innerHTML = rows.length ? rows.map(compareRow).join("") : `<p class="muted">${t("noCommonDomain")}</p>`;
       document.querySelectorAll("#compareRef button").forEach((btn) => btn.classList.toggle("active", btn.dataset.ref === state.compareRef));
+      document.querySelectorAll("[data-compare-chart-ref]").forEach((btn) => btn.classList.toggle("active", btn.dataset.compareChartRef === state.compareRef));
       renderLaggingMeasures();
     }
 
@@ -2368,10 +2387,10 @@
     function compareRow(d) {
       const markers = [
         { key: "score", label: t("evalShort"), value: d.score, color: "var(--cyan)" },
-        { key: "all", label: t("avgShortMarker"), value: d.benchmark.all, color: "var(--blue)" },
+        { key: "all", label: t("all"), value: d.benchmark.all, color: "var(--blue)" },
         { key: "sector", label: t("sectorShort"), value: d.benchmark.sector, color: "var(--violet)" },
         { key: "top", label: t("topShort"), value: d.benchmark.top, color: "var(--amber)" }
-      ].filter((m) => Number.isFinite(m.value));
+      ].filter((m) => Number.isFinite(m.value) && (m.key === "score" || m.key === state.compareRef));
       return `<div class="compare-row">
         <div><strong>${d.id}</strong><div class="muted">${d.name}</div></div>
         <div class="compare-track">
@@ -2449,7 +2468,11 @@
     document.querySelectorAll("#compareRef button").forEach((btn) => btn.addEventListener("click", () => {
       state.compareRef = btn.dataset.ref;
       document.querySelectorAll("#compareRef button").forEach((b) => b.classList.toggle("active", b === btn));
-      if (state.assessment && state.benchmark) renderLaggingMeasures();
+      if (state.assessment && state.benchmark) renderCompare();
+    }));
+    document.querySelectorAll("[data-compare-chart-ref]").forEach((btn) => btn.addEventListener("click", () => {
+      state.compareRef = btn.dataset.compareChartRef;
+      if (state.assessment && state.benchmark) renderCompare();
     }));
     $("gapFilter").addEventListener("input", (event) => {
       state.compareGap = Number(event.target.value) || 0;

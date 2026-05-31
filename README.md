@@ -1,4 +1,4 @@
-# CyberBench Explorer
+# Wavestone Cyberbenchmark Explorer
 
 Standalone HTML dataviz to explore a completed W-CyberBenchmark file from GitHub Pages.
 The UI defaults to English and automatically switches to French when the browser language starts with `fr`.
