@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberBench Explorer</title>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c1117;
+      --panel: #121923;
+      --panel-2: #17212d;
+      --panel-3: #1e2a38;
+      --line: #2a3747;
+      --line-soft: rgba(255,255,255,.08);
+      --text: #e9edf2;
+      --muted: #9aa7b5;
+      --muted-2: #6f7f90;
+      --blue: #4aa3ff;
+      --cyan: #36d6d0;
+      --green: #63d27c;
+      --amber: #f1b84b;
+      --red: #f46d75;
+      --violet: #a98cff;
+      --shadow: 0 18px 50px rgba(0,0,0,.28);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(32, 45, 58, .9) 0%, rgba(12, 17, 23, 0) 36rem),
+        radial-gradient(circle at 12% -8%, rgba(74, 163, 255, .18), transparent 23rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button, input, select { font: inherit; }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 6px;
+      min-height: 36px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: rgba(74, 163, 255, .75); background: #1b2837; }
+    button.primary { background: linear-gradient(180deg, #246cb0, #195385); border-color: #317ec8; }
+    button.ghost { background: transparent; }
+    button.icon { width: 36px; padding: 0; display: inline-grid; place-items: center; }
+    button.active { background: #25374a; border-color: var(--blue); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    input, select {
+      width: 100%;
+      min-height: 36px;
+      color: var(--text);
+      background: #0f1720;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    input[type="file"] {
+      height: auto;
+      min-height: 42px;
+      padding: 9px;
+      color: var(--muted);
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 6px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      border-right: 1px solid var(--line-soft);
+      background: rgba(11, 16, 23, .92);
+      backdrop-filter: blur(16px);
+      padding: 22px 18px;
+      overflow: auto;
+    }
+
+    main { min-width: 0; }
+
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .mark {
+      width: 38px; height: 38px; border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(54,214,208,.95), rgba(74,163,255,.95));
+      display: grid; place-items: center;
+      box-shadow: 0 12px 30px rgba(54, 214, 208, .22);
+    }
+    .mark svg { width: 23px; height: 23px; color: #061017; }
+    .brand h1 { font-size: 17px; line-height: 1.15; margin: 0; }
+    .brand p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+
+    .side-section { border-top: 1px solid var(--line-soft); padding-top: 16px; margin-top: 16px; }
+    .side-section:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+    .stack { display: grid; gap: 12px; }
+    .help { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
+    .file-meta { color: var(--muted); font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+
+    .nav { display: grid; gap: 6px; }
+    .nav button {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 8px;
+      align-items: center;
+      text-align: left;
+      justify-content: start;
+      background: transparent;
+      border-color: transparent;
+      padding: 0 10px;
+    }
+    .nav button.active { background: #172435; border-color: var(--line); }
+    .nav svg { width: 17px; height: 17px; color: var(--muted); }
+    .nav button.active svg { color: var(--cyan); }
+
+    .content { padding: 28px clamp(18px, 3vw, 36px) 44px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .title h2 { font-size: clamp(24px, 3vw, 36px); margin: 0 0 6px; letter-spacing: 0; }
+    .title p { color: var(--muted); margin: 0; max-width: 900px; line-height: 1.5; }
+    .status-pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      white-space: nowrap;
+      background: rgba(18, 25, 35, .8);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
+    .dot.ready { background: var(--green); box-shadow: 0 0 0 5px rgba(99,210,124,.1); }
+    .dot.warn { background: var(--amber); box-shadow: 0 0 0 5px rgba(241,184,75,.1); }
+
+    .grid { display: grid; gap: 16px; }
+    .grid.kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 16px; }
+    .grid.two { grid-template-columns: minmax(0, 1.1fr) minmax(340px, .9fr); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      background: rgba(18, 25, 35, .9);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .card-head h3 { margin: 0; font-size: 14px; letter-spacing: .02em; }
+    .card-body { padding: 16px; }
+
+    .kpi { padding: 15px 16px; }
+    .kpi .label { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .kpi .value { font-size: 28px; font-weight: 780; line-height: 1; }
+    .kpi .sub { margin-top: 8px; color: var(--muted); font-size: 12px; min-height: 18px; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(200px, 1.2fr) repeat(4, minmax(132px, .65fr));
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: #0f1720;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .segmented button { min-height: 30px; padding: 0 9px; border-color: transparent; background: transparent; }
+    .segmented button.active { background: var(--panel-3); border-color: var(--line-soft); }
+
+    .bars { display: grid; gap: 10px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(92px, 130px) minmax(0, 1fr) 54px;
+      gap: 12px;
+      align-items: center;
+    }
+    .bar-label { color: var(--text); font-weight: 700; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { height: 10px; border-radius: 999px; background: #0e151d; overflow: hidden; border: 1px solid rgba(255,255,255,.06); }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--red), var(--amber), var(--green)); }
+    .bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; }
+
+    .radar-wrap, .scatter-wrap { min-height: 360px; display: grid; place-items: center; }
+    svg.chart { width: 100%; height: auto; max-height: 410px; overflow: visible; }
+    .axis-label { fill: var(--muted); font-size: 11px; }
+    .chart-grid { stroke: rgba(255,255,255,.12); fill: none; }
+    .chart-line { stroke: var(--cyan); stroke-width: 2.4; fill: rgba(54,214,208,.18); }
+    .chart-line.secondary { stroke: var(--amber); fill: rgba(241,184,75,.12); }
+
+    .list { display: grid; gap: 10px; }
+    .finding {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr) 64px;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+    }
+    .finding .id { color: var(--cyan); font-weight: 800; font-size: 12px; }
+    .finding .q { color: var(--text); line-height: 1.35; font-size: 13px; }
+    .finding .meta { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    .score-badge {
+      justify-self: end;
+      display: inline-grid;
+      place-items: center;
+      width: 52px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .table-wrap { overflow: auto; border: 1px solid var(--line-soft); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: top; }
+    th {
+      position: sticky;
+      top: 0;
+      background: #111a25;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      z-index: 1;
+      cursor: pointer;
+    }
+    td { color: #d9e0e8; font-size: 13px; line-height: 1.35; }
+    td.small, th.small { width: 84px; white-space: nowrap; }
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
+
+    .empty {
+      min-height: 360px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: rgba(18,25,35,.52);
+      padding: 28px;
+    }
+    .empty h3 { margin: 0 0 8px; }
+    .empty p { color: var(--muted); margin: 0; max-width: 680px; line-height: 1.5; }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      min-height: 420px;
+    }
+    .quadrant {
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(255,255,255,.025);
+      min-height: 190px;
+    }
+    .quadrant h4 { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 100%;
+      margin: 0 6px 6px 0;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: #0f1720;
+      font-size: 12px;
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .compare-track {
+      position: relative;
+      height: 42px;
+      border-radius: 8px;
+      background: #0e151d;
+      border: 1px solid var(--line-soft);
+      overflow: hidden;
+    }
+    .compare-marker {
+      position: absolute;
+      top: 7px;
+      width: 3px;
+      height: 28px;
+      border-radius: 4px;
+      transform: translateX(-1px);
+    }
+    .compare-label {
+      position: absolute;
+      top: 5px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 12px; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: min(420px, calc(100vw - 36px));
+      background: #151f2b;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px 14px;
+      box-shadow: var(--shadow);
+      color: var(--text);
+      z-index: 30;
+    }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      aside { position: static; height: auto; }
+      .grid.kpis, .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .content { padding: 20px 14px 36px; }
+      .topbar { display: grid; }
+      .toolbar { grid-template-columns: 1fr; }
+      .matrix { grid-template-columns: 1fr; }
+      .finding { grid-template-columns: 1fr; }
+      .score-badge { justify-self: start; }
+      .bar-row, .compare-row { grid-template-columns: 1fr; gap: 7px; }
+      aside { padding: 18px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 4.5 6v5.5c0 4.7 3.1 7.5 7.5 9.5 4.4-2 7.5-4.8 7.5-9.5V6L12 3Z"></path>
+            <path d="m9 12 2 2 4-5"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>CyberBench Explorer</h1>
+          <p>Assessment dataviz</p>
+        </div>
+      </div>
+
+      <section class="side-section stack">
+        <div>
+          <label for="assessmentFile">Evaluation XLS/XLSM</label>
+          <input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb">
+          <p class="help">Chargement local dans le navigateur. Aucun fichier n’est envoyé.</p>
+        </div>
+        <div id="assessmentMeta" class="file-meta"></div>
+      </section>
+
+      <section class="side-section stack">
+        <div>
+          <label for="benchmarkFile">Référentiel benchmark</label>
+          <input id="benchmarkFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb,.csv">
+          <p class="help">Optionnel : moyenne globale, secteur, top 10. Les colonnes sont détectées automatiquement.</p>
+        </div>
+        <div id="benchmarkMeta" class="file-meta"></div>
+      </section>
+
+      <section class="side-section">
+        <nav class="nav" id="nav">
+          <button data-tab="overview" class="active" title="Vue synthétique">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Synthèse
+          </button>
+          <button data-tab="domains" title="Scores par domaine">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="M7 15v2"></path><path d="M12 9v8"></path><path d="M17 5v12"></path></svg>
+            Domaines
+          </button>
+          <button data-tab="findings" title="Forces et faiblesses">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"></path><path d="M7 8h10"></path><path d="M5 21h14"></path><path d="m6 8-3 7h6L6 8Z"></path><path d="m18 8-3 7h6l-3-7Z"></path></svg>
+            Forces / faiblesses
+          </button>
+          <button data-tab="questions" title="Exploration des questions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
+            Questions
+          </button>
+          <button data-tab="compare" title="Comparaison benchmark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M20 19V5"></path><path d="M8 7h8"></path><path d="M8 12h8"></path><path d="M8 17h8"></path></svg>
+            Comparaison
+          </button>
+        </nav>
+      </section>
+    </aside>
+
+    <main>
+      <div class="content">
+        <div class="topbar">
+          <div class="title">
+            <h2 id="pageTitle">Synthèse</h2>
+            <p id="pageIntro">Chargez un fichier W-CyberBenchmark rempli pour produire les indicateurs, les classements et les vues d’exploration.</p>
+          </div>
+          <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">En attente de fichier</span></div>
+        </div>
+
+        <section id="emptyState" class="empty">
+          <div>
+            <h3>Chargez un fichier d’évaluation</h3>
+            <p>Le fichier est analysé côté navigateur. Les feuilles de domaines, les niveaux de maturité, les commentaires et la fiabilité des réponses sont extraits pour générer les vues.</p>
+          </div>
+        </section>
+
+        <section id="overview" class="tab-panel">
+          <div class="grid kpis">
+            <div class="card kpi"><div class="label">Score moyen</div><div class="value" id="kpiScore">-</div><div class="sub" id="kpiScoreSub">Questions scorées</div></div>
+            <div class="card kpi"><div class="label">Couverture</div><div class="value" id="kpiCoverage">-</div><div class="sub" id="kpiCoverageSub">Hors N/A</div></div>
+            <div class="card kpi"><div class="label">Domaine fort</div><div class="value" id="kpiBest">-</div><div class="sub" id="kpiBestSub">Score le plus élevé</div></div>
+            <div class="card kpi"><div class="label">Priorité</div><div class="value" id="kpiWeak">-</div><div class="sub" id="kpiWeakSub">Score le plus faible</div></div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <div class="card-head">
+                <h3>Radar domaines</h3>
+                <div class="legend"><span><i style="background:var(--cyan)"></i>Evaluation</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
+              </div>
+              <div class="card-body radar-wrap" id="radarChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Distribution des maturités</h3></div>
+              <div class="card-body" id="distributionChart"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="domains" class="tab-panel hidden">
+          <div class="grid two">
+            <div class="card">
+              <div class="card-head">
+                <h3>Scores par domaine</h3>
+                <div class="segmented" id="domainSort">
+                  <button data-sort="asc" class="active">Asc</button>
+                  <button data-sort="desc">Desc</button>
+                  <button data-sort="alpha">A-Z</button>
+                </div>
+              </div>
+              <div class="card-body"><div class="bars" id="domainBars"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Matrice couverture / score</h3></div>
+              <div class="card-body scatter-wrap" id="domainScatter"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="findings" class="tab-panel hidden">
+          <div class="grid three">
+            <div class="card">
+              <div class="card-head"><h3>Forces</h3></div>
+              <div class="card-body"><div class="list" id="strengths"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Faiblesses</h3></div>
+              <div class="card-body"><div class="list" id="weaknesses"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Angles morts</h3></div>
+              <div class="card-body"><div class="list" id="blindspots"></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="questions" class="tab-panel hidden">
+          <div class="card">
+            <div class="card-head">
+              <h3>Exploration détaillée</h3>
+              <button class="ghost" id="exportCsv">Exporter CSV</button>
+            </div>
+            <div class="card-body">
+              <div class="toolbar">
+                <div><label for="search">Recherche</label><input id="search" type="search" placeholder="ID, thème, question, commentaire..."></div>
+                <div><label for="domainFilter">Domaine</label><select id="domainFilter"><option value="">Tous</option></select></div>
+                <div><label for="typeFilter">Type</label><select id="typeFilter"><option value="">Tous</option></select></div>
+                <div><label for="statusFilter">Statut</label><select id="statusFilter"><option value="">Tous</option><option value="scored">Scorées</option><option value="na">N/A</option><option value="missing">Non scorées</option></select></div>
+                <div><label for="scoreFilter">Score</label><select id="scoreFilter"><option value="">Tous</option><option value="weak">&lt; 40%</option><option value="medium">40-70%</option><option value="strong">&gt;= 70%</option></select></div>
+              </div>
+              <div class="table-wrap">
+                <table id="questionsTable">
+                  <thead>
+                    <tr>
+                      <th class="small" data-key="id">ID</th>
+                      <th class="small" data-key="domain">Domaine</th>
+                      <th data-key="subtopic">Sujet</th>
+                      <th data-key="question">Question</th>
+                      <th class="small" data-key="type">Type</th>
+                      <th class="small" data-key="score">Score</th>
+                      <th class="small" data-key="status">Statut</th>
+                      <th data-key="comment">Commentaire</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="compare" class="tab-panel hidden">
+          <div id="compareEmpty" class="empty">
+            <div>
+              <h3>Chargez un référentiel benchmark</h3>
+              <p>Le second fichier peut contenir des lignes par domaine ou par question. L’explorateur cherchera les colonnes de moyenne globale, secteur et top 10 puis alignera les valeurs avec l’évaluation chargée.</p>
+            </div>
+          </div>
+          <div id="compareContent" class="grid hidden">
+            <div class="grid kpis">
+              <div class="card kpi"><div class="label">Ecart moyenne</div><div class="value" id="cmpAll">-</div><div class="sub">Evaluation vs benchmark global</div></div>
+              <div class="card kpi"><div class="label">Ecart secteur</div><div class="value" id="cmpSector">-</div><div class="sub">Evaluation vs secteur</div></div>
+              <div class="card kpi"><div class="label">Ecart top 10</div><div class="value" id="cmpTop">-</div><div class="sub">Evaluation vs top performers</div></div>
+              <div class="card kpi"><div class="label">Domaines comparés</div><div class="value" id="cmpCount">-</div><div class="sub">Alignement domaine ou question</div></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Comparaison par domaine</h3>
+                <div class="legend">
+                  <span><i style="background:var(--cyan)"></i>Evaluation</span>
+                  <span><i style="background:var(--blue)"></i>Moyenne</span>
+                  <span><i style="background:var(--violet)"></i>Secteur</span>
+                  <span><i style="background:var(--amber)"></i>Top 10</span>
+                </div>
+              </div>
+              <div class="card-body" id="compareRows"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Mesures en retard</h3>
+                <div class="segmented" id="compareRef">
+                  <button data-ref="all">Moy.</button>
+                  <button data-ref="sector" class="active">Secteur</button>
+                  <button data-ref="top">Top 10</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="toolbar" style="grid-template-columns:minmax(180px,.4fr) minmax(220px,1fr);">
+                  <div>
+                    <label for="gapFilter">Retard minimum</label>
+                    <select id="gapFilter">
+                      <option value="0">Tout retard</option>
+                      <option value="5" selected>&gt;= 5 pts</option>
+                      <option value="10">&gt;= 10 pts</option>
+                      <option value="20">&gt;= 20 pts</option>
+                    </select>
+                  </div>
+                  <div class="help" style="align-self:end; margin:0;">Les mesures sont disponibles quand le benchmark contient des lignes avec le même ID que le questionnaire.</div>
+                </div>
+                <div class="table-wrap">
+                  <table id="lagTable">
+                    <thead>
+                      <tr>
+                        <th class="small">ID</th>
+                        <th class="small">Domaine</th>
+                        <th>Mesure</th>
+                        <th class="small">Client</th>
+                        <th class="small">Réf.</th>
+                        <th class="small">Ecart</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const DOMAIN_NAMES = {
+      GOV: "Governance",
+      RISK: "Risk Management",
+      TP: "Third-Party",
+      ASSET: "Asset Management",
+      OPS: "Operational Security",
+      ENDPT: "Endpoint Security",
+      NTW: "Network Security",
+      APP: "Application Security",
+      DATA: "Data Security",
+      IAM: "Identity & Access",
+      DET: "Detection",
+      INC: "Incident Response",
+      RES: "Resilience",
+      PHY: "Physical Security",
+      ICS: "Industrial Systems",
+      CLOUD: "Cloud Security",
+      AIS: "AI Security"
+    };
+
+    const state = {
+      assessment: null,
+      benchmark: null,
+      tab: "overview",
+      domainSort: "asc",
+      tableSort: { key: "score", dir: "asc" },
+      compareRef: "sector",
+      compareGap: 5,
+      filters: { search: "", domain: "", type: "", status: "", score: "" }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+    const pct = (v) => Number.isFinite(v) ? `${fmt.format(v)}%` : "-";
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const clean = (value) => String(value ?? "").replace(/_x000D_/g, " ").replace(/\s+/g, " ").trim();
+    const normalize = (value) => clean(value).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    const refs = {
+      nav: $("nav"),
+      emptyState: $("emptyState"),
+      assessmentFile: $("assessmentFile"),
+      benchmarkFile: $("benchmarkFile"),
+      assessmentMeta: $("assessmentMeta"),
+      benchmarkMeta: $("benchmarkMeta"),
+      statusDot: $("statusDot"),
+      statusText: $("statusText"),
+      pageTitle: $("pageTitle"),
+      pageIntro: $("pageIntro"),
+      panels: [...document.querySelectorAll(".tab-panel")]
+    };
+
+    function toast(message) {
+      const el = $("toast");
+      el.textContent = message;
+      el.classList.remove("hidden");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.add("hidden"), 5200);
+    }
+
+    function scoreColor(score) {
+      if (!Number.isFinite(score)) return "var(--muted-2)";
+      if (score < 40) return "var(--red)";
+      if (score < 70) return "var(--amber)";
+      return "var(--green)";
+    }
+
+    function parsePercent(value) {
+      if (value === null || value === undefined || value === "") return 0;
+      if (typeof value === "number") return value > 1 ? value / 100 : value;
+      const raw = String(value).trim().replace(",", ".");
+      if (!raw) return 0;
+      const n = Number(raw.replace("%", ""));
+      if (!Number.isFinite(n)) return 0;
+      return n > 1 ? n / 100 : n;
+    }
+
+    function parseScore(value) {
+      if (value === null || value === undefined || value === "") return null;
+      if (typeof value === "number") return value <= 1 ? value * 100 : value;
+      const n = Number(String(value).replace(",", ".").replace("%", "").trim());
+      if (!Number.isFinite(n)) return null;
+      return n <= 1 ? n * 100 : n;
+    }
+
+    function readWorkbook(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Lecture du fichier impossible."));
+        reader.onload = () => {
+          try {
+            const data = new Uint8Array(reader.result);
+            resolve(XLSX.read(data, { type: "array", cellDates: true }));
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function sheetRows(workbook, sheetName) {
+      const ws = workbook.Sheets[sheetName];
+      if (!ws) return [];
+      return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+    }
+
+    function headerIndex(headers, candidates) {
+      const normalized = headers.map(normalize);
+      for (const candidate of candidates) {
+        const target = normalize(candidate);
+        const exact = normalized.findIndex((h) => h === target);
+        if (exact >= 0) return exact;
+      }
+      for (const candidate of candidates) {
+        const target = normalize(candidate);
+        const partial = normalized.findIndex((h) => h.includes(target) || target.includes(h));
+        if (partial >= 0) return partial;
+      }
+      return -1;
+    }
+
+    function detectDomainSheets(workbook) {
+      return workbook.SheetNames.filter((name) => {
+        const code = name.trim().toUpperCase();
+        if (!DOMAIN_NAMES[code]) return false;
+        const rows = sheetRows(workbook, name);
+        const headers = rows[0] || [];
+        return headerIndex(headers, ["ID"]) >= 0 && headerIndex(headers, ["ASSESSMENT POINT"]) >= 0;
+      });
+    }
+
+    function parseAssessment(workbook) {
+      const domains = detectDomainSheets(workbook);
+      const questions = [];
+
+      domains.forEach((sheetName) => {
+        const rows = sheetRows(workbook, sheetName);
+        if (!rows.length) return;
+        const headers = rows[0].map(clean);
+        const idx = {
+          id: headerIndex(headers, ["ID"]),
+          order: headerIndex(headers, ["#"]),
+          iso2013: headerIndex(headers, ["ISO 27001/2 : 2013"]),
+          iso2022: headerIndex(headers, ["ISO 27001/2 : 2022"]),
+          nist11: headerIndex(headers, ["NIST SUBCATEGORY V1.1"]),
+          nist2: headerIndex(headers, ["NIST SUBCATEGORY V2"]),
+          function11: headerIndex(headers, ["NIST FUNCTION V1.1"]),
+          function2: headerIndex(headers, ["NIST FUNCTION V2"]),
+          type: headerIndex(headers, ["TYPE"]),
+          subtopic: headerIndex(headers, ["SUBTOPIC"]),
+          question: headerIndex(headers, ["ASSESSMENT POINT"]),
+          evidence: headerIndex(headers, ["EVIDENCE REQUIRED"]),
+          l1Text: headerIndex(headers, ["REQUIREMENTS L1"]),
+          l1: headerIndex(headers, ["(1) %"]),
+          l2Text: headerIndex(headers, ["REQUIREMENTS L2"]),
+          l2: headerIndex(headers, ["(2) %"]),
+          l3Text: headerIndex(headers, ["REQUIREMENTS L3"]),
+          l3: headerIndex(headers, ["(3) %"]),
+          l4Text: headerIndex(headers, ["REQUIREMENTS L4"]),
+          l4: headerIndex(headers, ["(4) %"]),
+          l5Text: headerIndex(headers, ["REQUIREMENTS L5"]),
+          l5: headerIndex(headers, ["(5) %"]),
+          na: headerIndex(headers, ["N/A"]),
+          comment: headerIndex(headers, ["COMMENT"]),
+          reliability: headerIndex(headers, ["ANSWER RELIABILITY"]),
+          control: headerIndex(headers, ["CONTROL"])
+        };
+
+        rows.slice(1).forEach((row) => {
+          const id = clean(row[idx.id]);
+          if (!id || !/^[A-Z]+[.\-]/i.test(id)) return;
+          const parts = [idx.l1, idx.l2, idx.l3, idx.l4, idx.l5].map((i) => i >= 0 ? parsePercent(row[i]) : 0);
+          const total = parts.reduce((a, b) => a + b, 0);
+          const isNa = idx.na >= 0 && normalize(row[idx.na]) === "x";
+          const rawScore = parts[0] * 25 + parts[1] * 50 + parts[2] * 75 + (parts[3] + parts[4]) * 100;
+          const score = isNa ? null : clamp(rawScore, 0, 100);
+          let status = "missing";
+          if (isNa) status = "na";
+          else if (total > 0) status = "scored";
+
+          questions.push({
+            id,
+            order: Number(row[idx.order]) || questions.length + 1,
+            domain: sheetName.trim().toUpperCase(),
+            domainName: DOMAIN_NAMES[sheetName.trim().toUpperCase()] || sheetName,
+            type: clean(row[idx.type]) || "-",
+            subtopic: clean(row[idx.subtopic]),
+            question: clean(row[idx.question]),
+            evidence: clean(row[idx.evidence]),
+            requirements: [idx.l1Text, idx.l2Text, idx.l3Text, idx.l4Text, idx.l5Text].map((i) => i >= 0 ? clean(row[i]) : ""),
+            levels: parts,
+            score,
+            status,
+            comment: clean(row[idx.comment]),
+            reliability: clean(row[idx.reliability]),
+            control: clean(row[idx.control]),
+            iso2013: clean(row[idx.iso2013]),
+            iso2022: clean(row[idx.iso2022]),
+            nist11: clean(row[idx.nist11]),
+            nist2: clean(row[idx.nist2]),
+            function11: clean(row[idx.function11]),
+            function2: clean(row[idx.function2])
+          });
+        });
+      });
+
+      const domainStats = buildDomainStats(questions);
+      return { questions, domainStats, sheetCount: domains.length };
+    }
+
+    function buildDomainStats(questions) {
+      const map = new Map();
+      questions.forEach((q) => {
+        if (!map.has(q.domain)) {
+          map.set(q.domain, {
+            id: q.domain,
+            name: q.domainName,
+            total: 0,
+            scored: 0,
+            na: 0,
+            missing: 0,
+            sum: 0,
+            orga: 0,
+            tech: 0
+          });
+        }
+        const d = map.get(q.domain);
+        d.total += 1;
+        if (q.type.toUpperCase().includes("ORGA")) d.orga += 1;
+        if (q.type.toUpperCase().includes("TECH")) d.tech += 1;
+        if (q.status === "na") d.na += 1;
+        else if (q.status === "scored") { d.scored += 1; d.sum += q.score; }
+        else d.missing += 1;
+      });
+      return [...map.values()].map((d) => ({
+        ...d,
+        score: d.scored ? d.sum / d.scored : null,
+        coverage: d.total ? (d.scored + d.na) / d.total * 100 : 0
+      }));
+    }
+
+    function parseBenchmark(workbook) {
+      const rowsBySheet = workbook.SheetNames.map((name) => ({ name, rows: sheetRows(workbook, name) }))
+        .filter((s) => s.rows.length >= 2);
+      let best = null;
+      for (const sheet of rowsBySheet) {
+        for (let headerRow = 0; headerRow < Math.min(10, sheet.rows.length - 1); headerRow++) {
+          const headers = sheet.rows[headerRow].map(clean);
+          const idIdx = headerIndex(headers, ["ID", "Question ID", "Assessment ID"]);
+          const domainIdx = headerIndex(headers, ["Domain", "Domaine", "Area", "Theme", "Thème"]);
+          const allIdx = headerIndex(headers, ["All companies", "Global average", "Average", "Moyenne globale", "Moyenne", "Benchmark"]);
+          const sectorIdx = headerIndex(headers, ["Sector", "Secteur", "Sector average", "Moyenne secteur"]);
+          const topIdx = headerIndex(headers, ["Top 10", "Top10", "Top performers", "Best performers"]);
+          const scoreLike = [allIdx, sectorIdx, topIdx].filter((i) => i >= 0).length;
+          if ((idIdx >= 0 || domainIdx >= 0) && scoreLike > 0) {
+            best = { sheet, headerRow, idx: { id: idIdx, domain: domainIdx, all: allIdx, sector: sectorIdx, top: topIdx } };
+            break;
+          }
+        }
+        if (best) break;
+      }
+      if (!best) throw new Error("Aucune table benchmark détectée. Colonnes attendues : ID ou Domain, puis Average/Moyenne, Sector/Secteur ou Top 10.");
+
+      const records = [];
+      const rows = best.sheet.rows.slice(best.headerRow + 1);
+      rows.forEach((row) => {
+        const rawId = best.idx.id >= 0 ? clean(row[best.idx.id]) : "";
+        const rawDomain = best.idx.domain >= 0 ? clean(row[best.idx.domain]) : "";
+        const domain = inferDomain(rawDomain || rawId);
+        const id = rawId || domain;
+        const rec = {
+          id,
+          domain,
+          all: best.idx.all >= 0 ? parseScore(row[best.idx.all]) : null,
+          sector: best.idx.sector >= 0 ? parseScore(row[best.idx.sector]) : null,
+          top: best.idx.top >= 0 ? parseScore(row[best.idx.top]) : null
+        };
+        if ((rec.id || rec.domain) && [rec.all, rec.sector, rec.top].some(Number.isFinite)) records.push(rec);
+      });
+
+      return {
+        sourceSheet: best.sheet.name,
+        records,
+        recordMap: new Map(records.map((r) => [normalize(r.id), r])),
+        domainStats: aggregateBenchmark(records)
+      };
+    }
+
+    function inferDomain(value) {
+      const text = normalize(value).toUpperCase();
+      const direct = String(value || "").trim().toUpperCase();
+      if (DOMAIN_NAMES[direct]) return direct;
+      const fromId = direct.match(/^([A-Z]+)[.\-]/);
+      if (fromId && DOMAIN_NAMES[fromId[1]]) return fromId[1];
+      for (const [code, name] of Object.entries(DOMAIN_NAMES)) {
+        if (text.includes(normalize(code).toUpperCase()) || text.includes(normalize(name).toUpperCase())) return code;
+      }
+      return direct || "";
+    }
+
+    function aggregateBenchmark(records) {
+      const grouped = new Map();
+      records.forEach((r) => {
+        if (!r.domain) return;
+        if (!grouped.has(r.domain)) grouped.set(r.domain, { id: r.domain, all: [], sector: [], top: [] });
+        const g = grouped.get(r.domain);
+        ["all", "sector", "top"].forEach((k) => { if (Number.isFinite(r[k])) g[k].push(r[k]); });
+      });
+      return [...grouped.values()].map((g) => ({
+        id: g.id,
+        name: DOMAIN_NAMES[g.id] || g.id,
+        all: average(g.all),
+        sector: average(g.sector),
+        top: average(g.top)
+      }));
+    }
+
+    const average = (values) => values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
+
+    async function handleAssessment(file) {
+      try {
+        if (!window.XLSX) throw new Error("La librairie SheetJS n’est pas chargée. Vérifiez l’accès au CDN.");
+        const workbook = await readWorkbook(file);
+        const assessment = parseAssessment(workbook);
+        if (!assessment.questions.length) throw new Error("Aucune feuille de domaine W-CyberBenchmark détectée.");
+        state.assessment = assessment;
+        refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${assessment.questions.length} questions · ${assessment.sheetCount} domaines`;
+        refs.statusDot.className = "dot ready";
+        refs.statusText.textContent = "Evaluation chargée";
+        render();
+      } catch (error) {
+        toast(error.message);
+      }
+    }
+
+    async function handleBenchmark(file) {
+      try {
+        if (!state.assessment) toast("Le benchmark sera affiché après chargement de l’évaluation.");
+        const workbook = await readWorkbook(file);
+        const benchmark = parseBenchmark(workbook);
+        state.benchmark = benchmark;
+        refs.benchmarkMeta.innerHTML = `<strong>${file.name}</strong><br>${benchmark.records.length} lignes · feuille ${benchmark.sourceSheet}`;
+        render();
+      } catch (error) {
+        toast(error.message);
+      }
+    }
+
+    function render() {
+      const ready = Boolean(state.assessment);
+      refs.emptyState.classList.toggle("hidden", ready);
+      refs.panels.forEach((panel) => panel.classList.toggle("hidden", !ready || panel.id !== state.tab));
+      document.querySelectorAll("[data-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.tab === state.tab));
+      updateTitle();
+      if (!ready) return;
+      renderFilters();
+      renderOverview();
+      renderDomains();
+      renderFindings();
+      renderQuestions();
+      renderCompare();
+    }
+
+    function updateTitle() {
+      const titles = {
+        overview: ["Synthèse", "Vue exécutive des scores, de la couverture et des domaines qui structurent le profil de maturité."],
+        domains: ["Domaines", "Classement des domaines et visualisation croisée score / couverture."],
+        findings: ["Forces / faiblesses", "Lecture rapide des meilleurs points, des priorités et des zones sans réponse."],
+        questions: ["Questions", "Table filtrable pour analyser chaque point d’évaluation, son score et les commentaires associés."],
+        compare: ["Comparaison", "Alignement de l’évaluation avec un référentiel de moyenne globale, secteur et top 10."]
+      };
+      const [title, intro] = titles[state.tab];
+      refs.pageTitle.textContent = title;
+      refs.pageIntro.textContent = intro;
+    }
+
+    function renderFilters() {
+      const domains = state.assessment.domainStats.map((d) => d.id);
+      const domainSelect = $("domainFilter");
+      if (domainSelect.options.length <= 1) {
+        domains.forEach((domain) => {
+          const option = new Option(`${domain} · ${DOMAIN_NAMES[domain] || domain}`, domain);
+          domainSelect.add(option);
+        });
+      }
+      const typeSelect = $("typeFilter");
+      if (typeSelect.options.length <= 1) {
+        [...new Set(state.assessment.questions.map((q) => q.type).filter(Boolean))].sort().forEach((type) => typeSelect.add(new Option(type, type)));
+      }
+    }
+
+    function renderOverview() {
+      const qs = state.assessment.questions;
+      const scored = qs.filter((q) => q.status === "scored");
+      const avg = average(scored.map((q) => q.score));
+      const covered = qs.filter((q) => q.status === "scored" || q.status === "na").length;
+      const domains = state.assessment.domainStats.filter((d) => Number.isFinite(d.score));
+      const best = [...domains].sort((a, b) => b.score - a.score)[0];
+      const weak = [...domains].sort((a, b) => a.score - b.score)[0];
+      $("kpiScore").textContent = pct(avg);
+      $("kpiScoreSub").textContent = `${scored.length} questions scorées sur ${qs.length}`;
+      $("kpiCoverage").textContent = pct(covered / qs.length * 100);
+      $("kpiCoverageSub").textContent = `${covered} questions couvertes, dont ${qs.filter((q) => q.status === "na").length} N/A`;
+      $("kpiBest").textContent = best ? best.id : "-";
+      $("kpiBestSub").textContent = best ? `${best.name} · ${pct(best.score)}` : "Score le plus élevé";
+      $("kpiWeak").textContent = weak ? weak.id : "-";
+      $("kpiWeakSub").textContent = weak ? `${weak.name} · ${pct(weak.score)}` : "Score le plus faible";
+      renderRadar();
+      renderDistribution();
+    }
+
+    function renderRadar() {
+      const domains = state.assessment.domainStats;
+      const benchmark = state.benchmark ? new Map(state.benchmark.domainStats.map((d) => [d.id, d])) : null;
+      $("radarBenchmarkLegend").classList.toggle("hidden", !benchmark);
+      const size = 390, center = size / 2, radius = 142;
+      const points = domains.map((d, i) => {
+        const angle = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+        const r = radius * ((d.score || 0) / 100);
+        return { x: center + Math.cos(angle) * r, y: center + Math.sin(angle) * r, angle, domain: d };
+      });
+      const grid = [25, 50, 75, 100].map((level) => {
+        const r = radius * level / 100;
+        return `<polygon class="chart-grid" points="${domains.map((_, i) => {
+          const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+          return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
+        }).join(" ")}"></polygon>`;
+      }).join("");
+      const axes = domains.map((d, i) => {
+        const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+        const x = center + Math.cos(a) * (radius + 26);
+        const y = center + Math.sin(a) * (radius + 26);
+        return `<line x1="${center}" y1="${center}" x2="${center + Math.cos(a) * radius}" y2="${center + Math.sin(a) * radius}" stroke="rgba(255,255,255,.08)"></line><text class="axis-label" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${d.id}</text>`;
+      }).join("");
+      const mainPoly = `<polygon class="chart-line" points="${points.map((p) => `${p.x},${p.y}`).join(" ")}"></polygon>`;
+      let secondary = "";
+      if (benchmark) {
+        const pts = domains.map((d, i) => {
+          const b = benchmark.get(d.id);
+          const val = b ? (b.sector ?? b.all ?? b.top ?? 0) : 0;
+          const a = -Math.PI / 2 + i * 2 * Math.PI / domains.length;
+          const r = radius * val / 100;
+          return `${center + Math.cos(a) * r},${center + Math.sin(a) * r}`;
+        });
+        secondary = `<polygon class="chart-line secondary" points="${pts.join(" ")}"></polygon>`;
+      }
+      $("radarChart").innerHTML = `<svg class="chart" viewBox="0 0 ${size} ${size}" role="img" aria-label="Radar des scores par domaine">${grid}${axes}${secondary}${mainPoly}</svg>`;
+    }
+
+    function renderDistribution() {
+      const buckets = [
+        { label: "0-20", min: 0, max: 20 },
+        { label: "20-40", min: 20, max: 40 },
+        { label: "40-60", min: 40, max: 60 },
+        { label: "60-80", min: 60, max: 80 },
+        { label: "80-100", min: 80, max: 101 }
+      ];
+      const scored = state.assessment.questions.filter((q) => q.status === "scored");
+      buckets.forEach((b) => b.count = scored.filter((q) => q.score >= b.min && q.score < b.max).length);
+      const max = Math.max(1, ...buckets.map((b) => b.count));
+      $("distributionChart").innerHTML = `<div class="bars">${buckets.map((b) => `
+        <div class="bar-row">
+          <div class="bar-label">${b.label}%</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${b.count / max * 100}%"></div></div>
+          <div class="bar-value">${b.count}</div>
+        </div>`).join("")}</div>`;
+    }
+
+    function renderDomains() {
+      let domains = [...state.assessment.domainStats];
+      if (state.domainSort === "asc") domains.sort((a, b) => (a.score ?? 999) - (b.score ?? 999));
+      if (state.domainSort === "desc") domains.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+      if (state.domainSort === "alpha") domains.sort((a, b) => a.id.localeCompare(b.id));
+      $("domainBars").innerHTML = domains.map((d) => `
+        <div class="bar-row" title="${d.name}">
+          <div class="bar-label">${d.id}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${d.score ?? 0}%; background:${scoreColor(d.score)}"></div></div>
+          <div class="bar-value">${pct(d.score)}</div>
+        </div>`).join("");
+      renderScatter(domains);
+    }
+
+    function renderScatter(domains) {
+      const w = 430, h = 330, pad = 42;
+      const dots = domains.map((d) => {
+        const x = pad + (w - pad * 2) * d.coverage / 100;
+        const y = h - pad - (h - pad * 2) * ((d.score ?? 0) / 100);
+        return `<g><circle cx="${x}" cy="${y}" r="7" fill="${scoreColor(d.score)}"></circle><text class="axis-label" x="${x + 10}" y="${y + 4}">${d.id}</text><title>${d.name}: ${pct(d.score)} · couverture ${pct(d.coverage)}</title></g>`;
+      }).join("");
+      $("domainScatter").innerHTML = `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Matrice score couverture">
+        <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
+        <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
+        <line x1="${pad}" y1="${h-pad-(h-pad*2)*.7}" x2="${w-pad}" y2="${h-pad-(h-pad*2)*.7}" stroke="rgba(255,255,255,.08)" stroke-dasharray="4 5"></line>
+        <line x1="${pad+(w-pad*2)*.8}" y1="${pad}" x2="${pad+(w-pad*2)*.8}" y2="${h-pad}" stroke="rgba(255,255,255,.08)" stroke-dasharray="4 5"></line>
+        <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">Couverture</text>
+        <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">Score</text>
+        ${dots}
+      </svg>`;
+    }
+
+    function findingItem(q) {
+      return `<div class="finding">
+        <div class="id">${q.id}</div>
+        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}</div></div>
+        <div class="score-badge" style="color:${scoreColor(q.score)}">${q.status === "na" ? "N/A" : pct(q.score)}</div>
+      </div>`;
+    }
+
+    function renderFindings() {
+      const scored = state.assessment.questions.filter((q) => q.status === "scored");
+      const strengths = [...scored].sort((a, b) => b.score - a.score).slice(0, 8);
+      const weaknesses = [...scored].sort((a, b) => a.score - b.score).slice(0, 8);
+      const blindspots = state.assessment.questions.filter((q) => q.status !== "scored").slice(0, 8);
+      $("strengths").innerHTML = strengths.length ? strengths.map(findingItem).join("") : `<p class="muted">Aucune question scorée.</p>`;
+      $("weaknesses").innerHTML = weaknesses.length ? weaknesses.map(findingItem).join("") : `<p class="muted">Aucune question scorée.</p>`;
+      $("blindspots").innerHTML = blindspots.length ? blindspots.map(findingItem).join("") : `<p class="muted">Aucun angle mort détecté.</p>`;
+    }
+
+    function filteredQuestions() {
+      let qs = [...state.assessment.questions];
+      const f = state.filters;
+      if (f.search) {
+        const term = normalize(f.search);
+        qs = qs.filter((q) => normalize([q.id, q.domain, q.subtopic, q.question, q.comment, q.reliability].join(" ")).includes(term));
+      }
+      if (f.domain) qs = qs.filter((q) => q.domain === f.domain);
+      if (f.type) qs = qs.filter((q) => q.type === f.type);
+      if (f.status) qs = qs.filter((q) => q.status === f.status);
+      if (f.score === "weak") qs = qs.filter((q) => q.status === "scored" && q.score < 40);
+      if (f.score === "medium") qs = qs.filter((q) => q.status === "scored" && q.score >= 40 && q.score < 70);
+      if (f.score === "strong") qs = qs.filter((q) => q.status === "scored" && q.score >= 70);
+
+      const { key, dir } = state.tableSort;
+      qs.sort((a, b) => {
+        const av = a[key], bv = b[key];
+        let result;
+        if (typeof av === "number" || typeof bv === "number") result = (av ?? -1) - (bv ?? -1);
+        else result = String(av ?? "").localeCompare(String(bv ?? ""), "fr");
+        return dir === "asc" ? result : -result;
+      });
+      return qs;
+    }
+
+    function renderQuestions() {
+      const rows = filteredQuestions();
+      const tbody = $("questionsTable").querySelector("tbody");
+      tbody.innerHTML = rows.map((q) => `
+        <tr>
+          <td class="small">${q.id}</td>
+          <td class="small">${q.domain}</td>
+          <td>${q.subtopic || "-"}</td>
+          <td>${q.question || "-"}</td>
+          <td class="small">${q.type}</td>
+          <td class="small" style="color:${scoreColor(q.score)}; font-weight:800">${q.status === "na" ? "N/A" : pct(q.score)}</td>
+          <td class="small">${q.status}</td>
+          <td>${q.comment || `<span class="muted">-</span>`}</td>
+        </tr>`).join("");
+    }
+
+    function renderCompare() {
+      const has = Boolean(state.assessment && state.benchmark);
+      $("compareEmpty").classList.toggle("hidden", has);
+      $("compareContent").classList.toggle("hidden", !has);
+      if (!has) return;
+
+      const benchMap = new Map(state.benchmark.domainStats.map((d) => [d.id, d]));
+      const rows = state.assessment.domainStats
+        .map((d) => ({ ...d, benchmark: benchMap.get(d.id) }))
+        .filter((d) => d.benchmark && Number.isFinite(d.score));
+
+      const diffs = (key) => rows.map((d) => Number.isFinite(d.benchmark[key]) ? d.score - d.benchmark[key] : null).filter(Number.isFinite);
+      $("cmpAll").textContent = signedPct(average(diffs("all")));
+      $("cmpSector").textContent = signedPct(average(diffs("sector")));
+      $("cmpTop").textContent = signedPct(average(diffs("top")));
+      $("cmpCount").textContent = String(rows.length);
+
+      $("compareRows").innerHTML = rows.length ? rows.map(compareRow).join("") : `<p class="muted">Aucun domaine commun entre l’évaluation et le benchmark.</p>`;
+      renderLaggingMeasures();
+    }
+
+    function signedPct(value) {
+      if (!Number.isFinite(value)) return "-";
+      return `${value >= 0 ? "+" : ""}${fmt.format(value)} pts`;
+    }
+
+    function compareRow(d) {
+      const markers = [
+        { key: "score", label: "Eval", value: d.score, color: "var(--cyan)" },
+        { key: "all", label: "Moy.", value: d.benchmark.all, color: "var(--blue)" },
+        { key: "sector", label: "Sect.", value: d.benchmark.sector, color: "var(--violet)" },
+        { key: "top", label: "Top", value: d.benchmark.top, color: "var(--amber)" }
+      ].filter((m) => Number.isFinite(m.value));
+      return `<div class="compare-row">
+        <div><strong>${d.id}</strong><div class="muted">${d.name}</div></div>
+        <div class="compare-track">
+          ${markers.map((m, i) => `<span class="compare-marker" style="left:${clamp(m.value,0,100)}%; background:${m.color}"></span><span class="compare-label" style="left:${clamp(m.value,4,96)}%; top:${4 + (i % 2) * 20}px">${m.label} ${pct(m.value)}</span>`).join("")}
+        </div>
+      </div>`;
+    }
+
+    function renderLaggingMeasures() {
+      const ref = state.compareRef;
+      const minGap = state.compareGap;
+      const tbody = $("lagTable").querySelector("tbody");
+      const rows = state.assessment.questions
+        .filter((q) => q.status === "scored")
+        .map((q) => {
+          const bench = state.benchmark.recordMap.get(normalize(q.id));
+          const refScore = bench ? bench[ref] : null;
+          const gap = Number.isFinite(refScore) ? q.score - refScore : null;
+          return { q, refScore, gap };
+        })
+        .filter((row) => Number.isFinite(row.gap) && row.gap < 0 && Math.abs(row.gap) >= minGap)
+        .sort((a, b) => a.gap - b.gap);
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">Aucune mesure en retard détectée pour ce référentiel, ou le benchmark n’est pas au niveau ID de question.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(({ q, refScore, gap }) => `
+        <tr>
+          <td class="small">${q.id}</td>
+          <td class="small">${q.domain}</td>
+          <td><strong>${q.subtopic || "-"}</strong><br><span class="muted">${q.question || "-"}</span></td>
+          <td class="small" style="color:${scoreColor(q.score)}; font-weight:800">${pct(q.score)}</td>
+          <td class="small">${pct(refScore)}</td>
+          <td class="small" style="color:var(--red); font-weight:800">${signedPct(gap)}</td>
+        </tr>`).join("");
+    }
+
+    function exportCsv() {
+      if (!state.assessment) return;
+      const rows = filteredQuestions();
+      const headers = ["ID", "Domaine", "Sujet", "Question", "Type", "Score", "Statut", "Fiabilite", "Commentaire"];
+      const data = rows.map((q) => [q.id, q.domain, q.subtopic, q.question, q.type, q.score ?? "", q.status, q.reliability, q.comment]);
+      const csv = [headers, ...data].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cyberbench-questions.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    refs.assessmentFile.addEventListener("change", (event) => {
+      const [file] = event.target.files;
+      if (file) handleAssessment(file);
+    });
+    refs.benchmarkFile.addEventListener("change", (event) => {
+      const [file] = event.target.files;
+      if (file) handleBenchmark(file);
+    });
+    document.querySelectorAll("[data-tab]").forEach((btn) => btn.addEventListener("click", () => {
+      state.tab = btn.dataset.tab;
+      render();
+    }));
+    document.querySelectorAll("#domainSort button").forEach((btn) => btn.addEventListener("click", () => {
+      state.domainSort = btn.dataset.sort;
+      document.querySelectorAll("#domainSort button").forEach((b) => b.classList.toggle("active", b === btn));
+      renderDomains();
+    }));
+    document.querySelectorAll("#compareRef button").forEach((btn) => btn.addEventListener("click", () => {
+      state.compareRef = btn.dataset.ref;
+      document.querySelectorAll("#compareRef button").forEach((b) => b.classList.toggle("active", b === btn));
+      if (state.assessment && state.benchmark) renderLaggingMeasures();
+    }));
+    $("gapFilter").addEventListener("input", (event) => {
+      state.compareGap = Number(event.target.value) || 0;
+      if (state.assessment && state.benchmark) renderLaggingMeasures();
+    });
+    ["search", "domainFilter", "typeFilter", "statusFilter", "scoreFilter"].forEach((id) => {
+      $(id).addEventListener("input", (event) => {
+        const key = id.replace("Filter", "");
+        state.filters[key] = event.target.value;
+        renderQuestions();
+      });
+    });
+    document.querySelectorAll("th[data-key]").forEach((th) => th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      state.tableSort = { key, dir: state.tableSort.key === key && state.tableSort.dir === "asc" ? "desc" : "asc" };
+      renderQuestions();
+    }));
+    $("exportCsv").addEventListener("click", exportCsv);
+
+    render();
+  </script>
+</body>
+</html>
