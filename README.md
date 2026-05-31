@@ -6,11 +6,13 @@ Dataviz HTML autonome pour explorer un fichier W-CyberBenchmark rempli depuis Gi
 
 1. Publier le repo avec GitHub Pages.
 2. Ouvrir `index.html`.
-3. Charger le fichier d'évaluation `.xlsm`, `.xlsx`, `.xls` ou `.xlsb`.
-4. Optionnellement charger un fichier benchmark contenant des colonnes de type `ID` ou `Domain`, puis `Average` / `Moyenne`, `Sector` / `Secteur`, `Top 10`.
+3. Un jeu de données fictif est affiché par défaut pour tester les vues sans fichier réel (`data/dummy-assessment.json` et `data/dummy-benchmark.json`).
+4. Charger le fichier d'évaluation `.xlsm`, `.xlsx`, `.xls` ou `.xlsb` pour remplacer l'exemple.
+5. Optionnellement charger un fichier benchmark contenant des colonnes de type `ID` ou `Domain`, puis `Average` / `Moyenne`, `Sector` / `Secteur`, `Top 10`.
 
 Les fichiers sont lus localement dans le navigateur. Aucun backend n'est utilisé.
 La librairie SheetJS est embarquée dans `vendor/` pour éviter une dépendance CDN à l'exécution.
+Les données de démonstration sont des fichiers JSON statiques. Si ces fichiers sont absents ou invalides, `index.html` charge un fallback minimal pour éviter un écran vide. Les fichiers chargés par l'utilisateur ne sont ni stockés dans le navigateur, ni envoyés à un serveur.
 
 ## Benchmark attendu
 

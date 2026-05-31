@@ -1,0 +1,418 @@
+{
+  "name": "Dummy assessment",
+  "questions": [
+    {
+      "id": "GOV.01",
+      "type": "ORGA",
+      "subtopic": "Pilotage",
+      "question": "Les rôles de gouvernance cybersécurité sont-ils formalisés et connus ?",
+      "score": 75,
+      "comment": "Comité sécurité mensuel et RACI disponibles, mais relais métiers encore inégaux.",
+      "reliability": "Haute",
+      "levels": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "GOV.02",
+      "type": "ORGA",
+      "subtopic": "Pilotage",
+      "question": "La stratégie cyber est-elle alignée avec les priorités business ?",
+      "score": 62,
+      "comment": "Feuille de route annuelle validée, arbitrages budgétaires encore opportunistes.",
+      "levels": [
+        0,
+        0.52,
+        0.48,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "GOV.03",
+      "type": "ORGA",
+      "subtopic": "Politiques",
+      "question": "Les politiques de sécurité sont-elles revues périodiquement ?",
+      "score": 88,
+      "comment": "Corpus documentaire revu en janvier avec validation RSSI et juridique.",
+      "reliability": "Haute",
+      "levels": [
+        0,
+        0,
+        0.48,
+        0.34,
+        0.18
+      ]
+    },
+    {
+      "id": "RISK.01",
+      "type": "ORGA",
+      "subtopic": "Analyse de risques",
+      "question": "Les risques cyber critiques sont-ils identifiés et priorisés ?",
+      "score": 55,
+      "comment": "Cartographie lancée sur les actifs majeurs, couverture encore partielle.",
+      "levels": [
+        0,
+        0.8,
+        0.2,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "RISK.02",
+      "type": "ORGA",
+      "subtopic": "Traitement",
+      "question": "Les plans de traitement sont-ils suivis jusqu'à clôture ?",
+      "score": 42,
+      "comment": "Plans existants mais dates d'échéance et propriétaires incomplets.",
+      "levels": [
+        0.32,
+        0.68,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "RISK.03",
+      "type": "ORGA",
+      "subtopic": "Acceptation",
+      "question": "Les acceptations de risque sont-elles documentées par le bon niveau hiérarchique ?",
+      "score": 30,
+      "comment": "Quelques dérogations non renouvelées formellement depuis plus d'un an.",
+      "reliability": "Faible",
+      "levels": [
+        0.8,
+        0.2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "IAM.01",
+      "type": "TECH",
+      "subtopic": "Authentification",
+      "question": "Le MFA est-il activé pour les accès sensibles ?",
+      "score": 80,
+      "comment": "MFA généralisé sur VPN, messagerie et consoles cloud.",
+      "reliability": "Haute",
+      "levels": [
+        0,
+        0,
+        0.8,
+        0.13,
+        0.07
+      ]
+    },
+    {
+      "id": "IAM.02",
+      "type": "TECH",
+      "subtopic": "Cycle de vie",
+      "question": "Les comptes sont-ils désactivés rapidement lors des départs ?",
+      "score": 67,
+      "comment": "Process RH connecté à l'IAM, exceptions manuelles sur deux filiales.",
+      "levels": [
+        0,
+        0.32,
+        0.68,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "IAM.03",
+      "type": "ORGA",
+      "subtopic": "Revue d'accès",
+      "question": "Les droits privilégiés font-ils l'objet de revues régulières ?",
+      "score": 38,
+      "comment": "Revue trimestrielle prévue mais pas encore systématique sur les administrateurs locaux.",
+      "levels": [
+        0.48,
+        0.52,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "NTW.01",
+      "type": "TECH",
+      "subtopic": "Segmentation",
+      "question": "Le réseau est-il segmenté selon la criticité des actifs ?",
+      "score": 48,
+      "comment": "Segmentation datacenter en place, segmentation bureautique limitée.",
+      "levels": [
+        0.08,
+        0.92,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "NTW.02",
+      "type": "TECH",
+      "subtopic": "Filtrage",
+      "question": "Les flux inter-zones sont-ils filtrés et journalisés ?",
+      "score": 72,
+      "comment": "Règles firewall documentées, revue des règles obsolètes en retard.",
+      "levels": [
+        0,
+        0.12,
+        0.88,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "NTW.03",
+      "type": "TECH",
+      "subtopic": "Accès distant",
+      "question": "Les accès distants tiers sont-ils contrôlés et tracés ?",
+      "score": 28,
+      "comment": "Bastion disponible mais encore contourné pour certains fournisseurs historiques.",
+      "levels": [
+        0.88,
+        0.12,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DATA.01",
+      "type": "ORGA",
+      "subtopic": "Classification",
+      "question": "Les données sensibles sont-elles classifiées ?",
+      "score": 58,
+      "comment": "Taxonomie validée, déploiement opérationnel en cours.",
+      "levels": [
+        0,
+        0.68,
+        0.32,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DATA.02",
+      "type": "TECH",
+      "subtopic": "Protection",
+      "question": "Le chiffrement est-il appliqué aux données critiques ?",
+      "score": 70,
+      "comment": "Chiffrement activé au repos sur les bases principales et les sauvegardes.",
+      "levels": [
+        0,
+        0.2,
+        0.8,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DATA.03",
+      "type": "TECH",
+      "subtopic": "DLP",
+      "question": "Des contrôles DLP couvrent-ils les canaux de sortie majeurs ?",
+      "score": 35,
+      "comment": "DLP messagerie en pilote, pas encore sur stockage cloud partagé.",
+      "levels": [
+        0.6,
+        0.4,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "CLOUD.01",
+      "type": "TECH",
+      "subtopic": "Configuration",
+      "question": "Les configurations cloud sont-elles contrôlées automatiquement ?",
+      "score": 64,
+      "comment": "CSPM actif sur le tenant principal, couverture multi-cloud à étendre.",
+      "levels": [
+        0,
+        0.44,
+        0.56,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "CLOUD.02",
+      "type": "TECH",
+      "subtopic": "Journalisation",
+      "question": "Les journaux cloud critiques sont-ils centralisés ?",
+      "score": 78,
+      "comment": "Logs IAM et réseau centralisés dans le SIEM avec alertes de base.",
+      "levels": [
+        0,
+        0,
+        0.88,
+        0.08,
+        0.04
+      ]
+    },
+    {
+      "id": "CLOUD.03",
+      "type": "ORGA",
+      "subtopic": "Responsabilités",
+      "question": "Le modèle de responsabilité partagée est-il compris par les équipes projets ?",
+      "score": 50,
+      "comment": "Support de formation prêt, adoption encore variable selon les squads.",
+      "levels": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DET.01",
+      "type": "TECH",
+      "subtopic": "Supervision",
+      "question": "Les événements de sécurité sont-ils corrélés dans un SIEM ?",
+      "score": 74,
+      "comment": "Cas d'usage prioritaires actifs, tuning régulier du SOC.",
+      "reliability": "Haute",
+      "levels": [
+        0,
+        0.04,
+        0.96,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DET.02",
+      "type": "TECH",
+      "subtopic": "Détection endpoint",
+      "question": "Les postes et serveurs sont-ils couverts par une solution EDR ?",
+      "score": 84,
+      "comment": "EDR déployé sur 92 % du parc connu.",
+      "levels": [
+        0,
+        0,
+        0.64,
+        0.23,
+        0.13
+      ]
+    },
+    {
+      "id": "DET.03",
+      "type": "ORGA",
+      "subtopic": "Qualité des alertes",
+      "question": "La performance de détection est-elle mesurée ?",
+      "score": 46,
+      "comment": "MTTD suivi, mais peu de tests d'efficacité adversary emulation.",
+      "levels": [
+        0.16,
+        0.84,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "INC.01",
+      "type": "ORGA",
+      "subtopic": "Préparation",
+      "question": "Le plan de réponse à incident est-il testé ?",
+      "score": 52,
+      "comment": "Table-top annuel réalisé, exercice technique complet à planifier.",
+      "levels": [
+        0,
+        0.92,
+        0.08,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "INC.02",
+      "type": "ORGA",
+      "subtopic": "Communication",
+      "question": "Les circuits de crise et d'escalade sont-ils définis ?",
+      "score": 68,
+      "comment": "Annuaire de crise disponible, doublures à confirmer pour les astreintes.",
+      "levels": [
+        0,
+        0.28,
+        0.72,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "INC.03",
+      "type": "TECH",
+      "subtopic": "Forensic",
+      "question": "Les capacités de collecte forensic sont-elles disponibles ?",
+      "status": "missing",
+      "score": null,
+      "comment": "Non évalué dans cet exemple fictif.",
+      "levels": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "RES.01",
+      "type": "ORGA",
+      "subtopic": "Continuité",
+      "question": "Les scénarios cyber sont-ils intégrés au plan de continuité ?",
+      "score": 60,
+      "comment": "Scénario ransomware inclus, dépendances fournisseurs à compléter.",
+      "levels": [
+        0,
+        0.6,
+        0.4,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "RES.02",
+      "type": "TECH",
+      "subtopic": "Sauvegardes",
+      "question": "Les sauvegardes critiques sont-elles isolées et testées ?",
+      "score": 82,
+      "comment": "Sauvegardes immuables sur les applications critiques, tests trimestriels concluants.",
+      "reliability": "Haute",
+      "levels": [
+        0,
+        0,
+        0.72,
+        0.18,
+        0.1
+      ]
+    },
+    {
+      "id": "RES.03",
+      "type": "TECH",
+      "subtopic": "Reprise",
+      "question": "Les objectifs RTO/RPO sont-ils vérifiés par exercice ?",
+      "status": "na",
+      "score": null,
+      "comment": "N/A pour le périmètre fictif de démonstration.",
+      "levels": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}
