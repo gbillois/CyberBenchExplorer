@@ -145,7 +145,17 @@
       border-radius: 10px;
       font-size: 11px;
     }
+    .side-section select {
+      min-height: 28px;
+      height: 28px;
+      margin-top: 3px;
+      padding: 0 7px;
+      font-size: 11px;
+      border-color: rgba(255,255,255,.24);
+    }
+    .side-section .target-label { margin-top: 5px; }
     .help { color: rgba(237,251,255,.82); font-size: 11px; line-height: 1.25; margin: 4px 0 0; }
+    .template-link { color: #fff; font-size: 11px; font-weight: 800; text-underline-offset: 2px; }
     .file-meta { color: rgba(237,251,255,.86); font-size: 11px; line-height: 1.25; overflow-wrap: anywhere; max-height: 42px; overflow: hidden; }
 
     .nav { display: flex; align-items: stretch; gap: 0; min-width: 0; height: 100%; }
@@ -261,6 +271,7 @@
     }
     .card-head h3 { margin: 0; font-size: 14px; letter-spacing: .02em; color: #12314a; }
     .card-body { padding: 16px; }
+    .png-export { min-height: 30px; padding: 0 9px; font-size: 11px; }
 
     .kpi { padding: 15px 16px; }
     .kpi .label { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
@@ -673,6 +684,9 @@
           <label for="benchmarkFile">Benchmark referential</label>
           <input id="benchmarkFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb,.csv">
           <p class="help" id="benchmarkHelp">Optional: global average, sector, top 10. Columns are detected automatically.</p>
+          <a class="template-link" id="benchmarkTemplate" href="data/Scores-CyberBenchmark-03062026.xlsx" download>Download import template</a>
+          <label class="target-label" for="benchmarkTarget">Comparison target</label>
+          <select id="benchmarkTarget"></select>
         </div>
         <div id="benchmarkMeta" class="file-meta"></div>
       </section>
@@ -745,7 +759,7 @@
             <div class="card-body"><div class="thumb-grid" id="thumbGrid"></div></div>
           </div>
           <div class="card">
-            <div class="card-head"><h3 id="distributionTitle">Maturity distribution</h3></div>
+            <div class="card-head"><h3 id="distributionTitle">Maturity distribution</h3><button class="ghost png-export" data-export-target="distributionChart" data-export-name="maturity-distribution">PNG</button></div>
             <div class="card-body" id="distributionChart"></div>
           </div>
         </section>
@@ -761,6 +775,7 @@
                     <span id="legendMaturity"><i style="background:#4db8b4"></i>Maturity</span>
                     <span id="legendLag"><i style="background:#f17778"></i>Lag</span>
                   </div>
+                  <button class="ghost png-export" data-export-target="bubbleChart" data-export-name="maturity-by-theme">PNG</button>
                 </div>
               </div>
               <div class="card-body scatter-stage" id="bubbleChart"></div>
@@ -779,6 +794,7 @@
               <div class="radar-head-tools">
                 <button class="ghost hidden" id="radarBack">Back</button>
                 <div class="legend"><span id="radarEvalLegend"><i style="background:var(--cyan)"></i>Assessment</span><span id="radarBenchmarkLegend" class="hidden"><i style="background:var(--amber)"></i>Benchmark</span></div>
+                <button class="ghost png-export" data-export-target="radarChart" data-export-name="domain-radar">PNG</button>
               </div>
             </div>
             <div class="card-body radar-wrap" id="radarChart"></div>
@@ -791,16 +807,19 @@
             <div class="card">
               <div class="card-head">
                 <h3 id="domainScoresTitle">Scores by domain</h3>
-                <div class="segmented" id="domainSort">
-                  <button data-sort="asc" class="active">Asc</button>
-                  <button data-sort="desc">Desc</button>
-                  <button data-sort="alpha">A-Z</button>
+                <div class="card-actions">
+                  <div class="segmented" id="domainSort">
+                    <button data-sort="asc" class="active">Asc</button>
+                    <button data-sort="desc">Desc</button>
+                    <button data-sort="alpha">A-Z</button>
+                  </div>
+                  <button class="ghost png-export" data-export-target="domainBars" data-export-name="scores-by-domain">PNG</button>
                 </div>
               </div>
               <div class="card-body"><div class="bars" id="domainBars"></div></div>
             </div>
             <div class="card">
-              <div class="card-head"><h3 id="domainScatterTitle">Coverage / score matrix</h3></div>
+              <div class="card-head"><h3 id="domainScatterTitle">Coverage / score matrix</h3><button class="ghost png-export" data-export-target="domainScatter" data-export-name="coverage-score-matrix">PNG</button></div>
               <div class="card-body scatter-wrap" id="domainScatter"></div>
             </div>
           </div>
@@ -886,11 +905,13 @@
             <div class="card">
               <div class="card-head">
                 <h3 id="compareRowsTitle">Comparison by domain</h3>
-                <div class="legend">
-                  <span id="compareLegendEval"><i style="background:var(--cyan)"></i>Assessment</span>
-                  <button type="button" data-compare-chart-ref="all" id="compareLegendAll"><i style="background:var(--blue)"></i>All</button>
-                  <button type="button" data-compare-chart-ref="sector" id="compareLegendSector"><i style="background:var(--violet)"></i>Sector</button>
-                  <button type="button" data-compare-chart-ref="top" id="compareLegendTop"><i style="background:var(--amber)"></i>Top 10</button>
+                <div class="card-actions">
+                  <div class="legend">
+                    <span id="compareLegendEval"><i style="background:var(--cyan)"></i>Assessment</span>
+                    <span id="compareLegendTarget"><i style="background:var(--amber)"></i>Top 10</span>
+                  </div>
+                  <select id="compareTarget" aria-label="Comparison target"></select>
+                  <button class="ghost png-export" data-export-target="compareRows" data-export-name="benchmark-comparison">PNG</button>
                 </div>
               </div>
               <div class="card-body" id="compareRows"></div>
@@ -898,11 +919,7 @@
             <div class="card">
               <div class="card-head">
                 <h3 id="lagTitle">Lagging measures</h3>
-                <div class="segmented" id="compareRef">
-                  <button data-ref="all">All</button>
-                  <button data-ref="sector">Sector</button>
-                  <button data-ref="top" class="active">Top 10</button>
-                </div>
+                <select id="lagTarget" aria-label="Comparison target"></select>
               </div>
               <div class="card-body">
                 <div class="toolbar" style="grid-template-columns:minmax(180px,.4fr) minmax(220px,1fr);">
@@ -973,7 +990,13 @@
         assessmentLabel: "Assessment XLS/XLSM",
         assessmentHelp: "Local browser parsing. No file is sent.",
         benchmarkLabel: "Benchmark referential",
-        benchmarkHelp: "Optional: global average, sector, top 10. Columns are detected automatically.",
+        benchmarkHelp: "Default benchmark loaded. Import another workbook using the same template.",
+        benchmarkTemplate: "Download import template",
+        comparisonTarget: "Comparison target",
+        selectedTargetGap: "Selected target gap",
+        assessmentVsSelected: "Assessment vs selected target",
+        exportPng: "Export PNG",
+        exportPngError: "The visual could not be exported as PNG.",
         navHome: "Summary",
         navDashboard: "Matrix",
         navOverview: "Radar",
@@ -1101,14 +1124,20 @@
         avgShortMarker: "Avg.",
         sectorShort: "Sector",
         topShort: "Top",
-        localDisplayNotice: "W-CyberBenchmark Explorer: dummy data displayed for tests. Upload your own data and benchmark referential at the top of the window. Nothing is stored or shared on the Internet; it is only a local display."
+        localDisplayNotice: "W-CyberBenchmark Explorer: an example assessment and the default benchmark are displayed. Upload your own assessment at the top of the window. Nothing is stored or shared on the Internet; it is only a local display."
       },
       fr: {
         all: "Tous",
         assessmentLabel: "Evaluation XLS/XLSM",
         assessmentHelp: "Chargement local dans le navigateur. Aucun fichier n'est envoyé.",
         benchmarkLabel: "Référentiel benchmark",
-        benchmarkHelp: "Optionnel : moyenne globale, secteur, top 10. Les colonnes sont détectées automatiquement.",
+        benchmarkHelp: "Benchmark par défaut chargé. Importez un autre classeur en suivant le même modèle.",
+        benchmarkTemplate: "Télécharger le modèle d'import",
+        comparisonTarget: "Cible de comparaison",
+        selectedTargetGap: "Ecart cible sélectionnée",
+        assessmentVsSelected: "Evaluation vs cible sélectionnée",
+        exportPng: "Exporter en PNG",
+        exportPngError: "Le visuel n'a pas pu être exporté en PNG.",
         navHome: "Synthèse",
         navDashboard: "Matrice",
         navOverview: "Rosace",
@@ -1236,7 +1265,7 @@
         avgShortMarker: "Moy.",
         sectorShort: "Sect.",
         topShort: "Top",
-        localDisplayNotice: "W-CyberBenchmark Explorer: données factices affichées pour les tests. Chargez vos propres données et votre référentiel benchmark en haut de la fenêtre. Rien n'est stocké ni partagé sur Internet ; il s'agit uniquement d'un affichage local."
+        localDisplayNotice: "W-CyberBenchmark Explorer : une évaluation exemple et le benchmark par défaut sont affichés. Chargez votre propre évaluation en haut de la fenêtre. Rien n'est stocké ni partagé sur Internet ; il s'agit uniquement d'un affichage local."
       }
     };
 
@@ -1294,6 +1323,7 @@
       const labelMap = {
         assessmentFile: "assessmentLabel",
         benchmarkFile: "benchmarkLabel",
+        benchmarkTarget: "comparisonTarget",
         search: "search",
         domainFilter: "domain",
         typeFilter: "type",
@@ -1322,6 +1352,8 @@
 
       const noticeText = $("dummyNotice")?.querySelector("span:last-child");
       if (noticeText) noticeText.textContent = t("localDisplayNotice");
+      $("benchmarkTemplate").textContent = t("benchmarkTemplate");
+      document.querySelectorAll(".png-export").forEach((button) => button.title = t("exportPng"));
       $("search").placeholder = t("searchPlaceholder");
       [
         ["home", "navHome"], ["dashboard", "navDashboard"], ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"]
@@ -1339,12 +1371,9 @@
       const scoreOptions = $("scoreFilter").options;
       if (scoreOptions.length >= 4) scoreOptions[0].text = t("all");
       $("dashboardBack").textContent = t("back");
-      document.querySelector('#compareRef [data-ref="all"]').textContent = t("all");
-      document.querySelector('#compareRef [data-ref="sector"]').textContent = t("sector");
       $("compareLegendEval").innerHTML = `<i style="background:var(--cyan)"></i>${t("assessment")}`;
-      document.querySelector('[data-compare-chart-ref="all"]').innerHTML = `<i style="background:var(--blue)"></i>${t("all")}`;
-      document.querySelector('[data-compare-chart-ref="sector"]').innerHTML = `<i style="background:var(--violet)"></i>${t("sector")}`;
-      document.querySelector('[data-compare-chart-ref="top"]').innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
+      $("compareTarget").ariaLabel = t("comparisonTarget");
+      $("lagTarget").ariaLabel = t("comparisonTarget");
 
       const questionHeaders = $("questionsTable").querySelectorAll("th");
       const questionHeaderLabels = ["ID", "domain", "topic", "question", "type", "N1", "N2", "N3", "N4", "N5", "Top 10", "Top Lvl", "gap", "status", "comment"];
@@ -1391,6 +1420,15 @@
       const n = Number(String(value).replace(",", ".").replace("%", "").trim());
       if (!Number.isFinite(n)) return null;
       return n <= 1 ? n * 100 : n;
+    }
+
+    function referenceKey(label, index) {
+      const value = normalize(label);
+      if (["marche", "market", "all companies", "global average", "moyenne globale", "moyenne", "average", "benchmark"].includes(value)) return "all";
+      if (["sector", "secteur", "sector average", "moyenne secteur"].includes(value)) return "sector";
+      if (["top 10", "top10", "top performers", "best performers"].includes(value)) return "top";
+      const slug = value.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      return slug || `reference-${index + 1}`;
     }
 
     function normalizeLevels(levels, fallbackScore = null, status = "scored") {
@@ -1487,7 +1525,7 @@
       }
       for (const candidate of candidates) {
         const target = normalize(candidate);
-        const partial = normalized.findIndex((h) => h.includes(target) || target.includes(h));
+        const partial = normalized.findIndex((h) => h && (h.includes(target) || target.includes(h)));
         if (partial >= 0) return partial;
       }
       return -1;
@@ -1623,13 +1661,17 @@
           const idIdx = headerIndex(headers, ["ID", "Question ID", "Assessment ID"]);
           const domainIdx = headerIndex(headers, ["Domain", "Domaine", "Area", "Theme", "Thème", "Category", "Categories", "Catégorie", "Catégories", "Functions", "Subcategories"]);
           const allIdx = headerIndex(headers, ["All companies", "Global average", "Average", "Moyenne globale", "Moyenne", "Benchmark"]);
-          const sectorIdx = headerIndex(headers, ["Sector", "Secteur", "Sector average", "Moyenne secteur"]);
+          const marketIdx = headerIndex(headers, ["Marché", "Market"]);
+          const sectorIdx = headerIndex(headers, ["Sector", "Secteur", "Sector average", "Moyenne secteur", "Grandes Entreprises", "Large companies"]);
           const topIdx = headerIndex(headers, ["Top 10", "Top10", "Top performers", "Best performers"]);
           const topLevelIdx = headerIndex(headers, ["Top 10 maturity", "Top maturity", "Top level", "Top 10 level", "Niveau Top 10", "Maturité Top 10"]);
           const scoreIdx = headerIndex(headers, ["Score", "Scores"]);
-          const scoreLike = [allIdx, sectorIdx, topIdx, scoreIdx].filter((i) => i >= 0).length;
-          if ((idIdx >= 0 || domainIdx >= 0) && scoreLike > 0) {
-            best = { sheet, headerRow, idx: { id: idIdx, domain: domainIdx, all: allIdx, sector: sectorIdx, top: topIdx, topLevel: topLevelIdx, score: scoreIdx } };
+          const effectiveAllIdx = allIdx >= 0 ? allIdx : marketIdx;
+          const matrixDomainIdx = domainIdx < 0 && idIdx < 0 && !headers[0] && topIdx >= 0 ? 0 : domainIdx;
+          const scoreLike = [effectiveAllIdx, sectorIdx, topIdx, scoreIdx].filter((i) => i >= 0).length;
+          if ((idIdx >= 0 || matrixDomainIdx >= 0) && scoreLike > 0) {
+            const isMatrix = idIdx < 0 && domainIdx < 0 && matrixDomainIdx === 0;
+            best = { sheet, headerRow, headers, isMatrix, idx: { id: idIdx, domain: matrixDomainIdx, all: effectiveAllIdx, sector: sectorIdx, top: topIdx, topLevel: topLevelIdx, score: scoreIdx } };
             break;
           }
         }
@@ -1640,30 +1682,46 @@
       const records = [];
       const rows = best.sheet.rows.slice(best.headerRow + 1);
       const genericTarget = normalize(`${fileName} ${best.sheet.name}`).includes("top10") || normalize(`${fileName} ${best.sheet.name}`).includes("top 10") ? "top" : "all";
+      const fixedColumns = [
+        { index: best.idx.all, key: "all", fallbackLabel: t("average") },
+        { index: best.idx.sector, key: "sector", fallbackLabel: t("sector") },
+        { index: best.idx.top, key: "top", fallbackLabel: "Top 10" }
+      ];
+      if (best.idx.score >= 0) fixedColumns.push({ index: best.idx.score, key: genericTarget, fallbackLabel: genericTarget === "top" ? "Top 10" : t("average") });
+      const referenceColumns = (best.isMatrix
+        ? best.headers.map((label, index) => ({ index, key: referenceKey(label, index), fallbackLabel: clean(label) })).filter((column) => column.index !== best.idx.domain && clean(best.headers[column.index]))
+        : fixedColumns
+      ).filter((column, index, columns) => column.index >= 0 && columns.findIndex((candidate) => candidate.key === column.key) === index)
+        .map((column) => ({ ...column, label: clean(best.headers[column.index]) || column.fallbackLabel }));
       rows.forEach((row) => {
         const rawId = best.idx.id >= 0 ? clean(row[best.idx.id]) : "";
         const rawDomain = best.idx.domain >= 0 ? clean(row[best.idx.domain]) : "";
         const domain = inferDomain(rawDomain || rawId);
         const genericScore = best.idx.score >= 0 ? parseScore(row[best.idx.score]) : null;
         const id = rawId || domain;
+        const references = Object.fromEntries(referenceColumns.map((column) => [column.key, parseScore(row[column.index])]).filter(([, value]) => Number.isFinite(value)));
         const rec = {
           id,
           domain,
-          all: best.idx.all >= 0 ? parseScore(row[best.idx.all]) : (genericTarget === "all" ? genericScore : null),
-          sector: best.idx.sector >= 0 ? parseScore(row[best.idx.sector]) : null,
-          top: best.idx.top >= 0 ? parseScore(row[best.idx.top]) : (genericTarget === "top" ? genericScore : null),
+          references,
+          all: references.all ?? (genericTarget === "all" ? genericScore : null),
+          sector: references.sector ?? null,
+          top: references.top ?? (genericTarget === "top" ? genericScore : null),
           topMaturityLevel: best.idx.topLevel >= 0 ? parseMaturityLevel(row[best.idx.topLevel]) : null
         };
         if (!Number.isFinite(rec.topMaturityLevel)) rec.topMaturityLevel = maturityLevelFromScore(rec.top);
-        if ((rec.id || rec.domain) && [rec.all, rec.sector, rec.top].some(Number.isFinite)) records.push(rec);
+        if ((rec.id || rec.domain) && Object.values(rec.references).some(Number.isFinite)) records.push(rec);
       });
 
+      const referenceOptions = referenceColumns.filter((column) => records.some((record) => Number.isFinite(record.references[column.key])));
+      const preferredRef = referenceOptions.some((option) => option.key === "top") ? "top" : referenceOptions[0]?.key || genericTarget;
       return {
         sourceSheet: best.sheet.name,
         records,
         recordMap: new Map(records.map((r) => [normalize(r.id), r])),
         domainStats: aggregateBenchmark(records),
-        preferredRef: genericTarget
+        referenceOptions,
+        preferredRef
       };
     }
 
@@ -1683,17 +1741,18 @@
       const grouped = new Map();
       records.forEach((r) => {
         if (!r.domain) return;
-        if (!grouped.has(r.domain)) grouped.set(r.domain, { id: r.domain, all: [], sector: [], top: [] });
+        if (!grouped.has(r.domain)) grouped.set(r.domain, { id: r.domain, references: {} });
         const g = grouped.get(r.domain);
-        ["all", "sector", "top"].forEach((k) => { if (Number.isFinite(r[k])) g[k].push(r[k]); });
+        Object.entries(r.references || {}).forEach(([key, value]) => {
+          if (!Number.isFinite(value)) return;
+          if (!g.references[key]) g.references[key] = [];
+          g.references[key].push(value);
+        });
       });
-      return [...grouped.values()].map((g) => ({
-        id: g.id,
-        name: DOMAIN_NAMES[g.id] || g.id,
-        all: average(g.all),
-        sector: average(g.sector),
-        top: average(g.top)
-      }));
+      return [...grouped.values()].map((g) => {
+        const references = Object.fromEntries(Object.entries(g.references).map(([key, values]) => [key, average(values)]));
+        return { id: g.id, name: DOMAIN_NAMES[g.id] || g.id, references, all: references.all ?? null, sector: references.sector ?? null, top: references.top ?? null };
+      });
     }
 
     const average = (values) => values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
@@ -1753,11 +1812,13 @@
         { id: "IAM.01", domain: "IAM", all: 60, sector: 66, top: 86, topMaturityLevel: 4, topLevels: [0, 0, 0.56, 0.27, 0.17] },
         { id: "DET.01", domain: "DET", all: 58, sector: 64, top: 82, topMaturityLevel: 4, topLevels: [0, 0, 0.72, 0.17, 0.11] }
       ];
+      records.forEach((record) => record.references = { all: record.all, sector: record.sector, top: record.top });
       return {
         sourceSheet: "Fallback benchmark",
         records,
         recordMap: new Map(records.map((r) => [normalize(r.id), r])),
         domainStats: aggregateBenchmark(records),
+        referenceOptions: [{ key: "all", label: t("average") }, { key: "sector", label: t("sector") }, { key: "top", label: "Top 10" }],
         preferredRef: "top"
       };
     }
@@ -1767,6 +1828,13 @@
       const response = await fetch(path, { cache: "no-store" });
       if (!response.ok) throw new Error(`${path} introuvable.`);
       return response.json();
+    }
+
+    async function fetchWorkbook(path) {
+      if (!window.fetch || !window.XLSX) throw new Error(t("missingSheetJs"));
+      const response = await fetch(path, { cache: "no-store" });
+      if (!response.ok) throw new Error(`${path} introuvable.`);
+      return XLSX.read(new Uint8Array(await response.arrayBuffer()), { type: "array", cellDates: true });
     }
 
     function normalizeDummyAssessment(payload) {
@@ -1784,6 +1852,7 @@
       const records = (payload.records || []).map((item) => ({
         id: clean(item.id),
         domain: inferDomain(item.domain || item.id),
+        references: { all: parseScore(item.all), sector: parseScore(item.sector), top: parseScore(item.top) },
         all: parseScore(item.all),
         sector: parseScore(item.sector),
         top: parseScore(item.top),
@@ -1799,6 +1868,7 @@
         records,
         recordMap: new Map(records.map((r) => [normalize(r.id), r])),
         domainStats: aggregateBenchmark(records),
+        referenceOptions: [{ key: "all", label: t("average") }, { key: "sector", label: t("sector") }, { key: "top", label: "Top 10" }],
         preferredRef: payload.preferredRef || "top"
       };
     }
@@ -1806,12 +1876,12 @@
     async function loadDummyData() {
       let usedFallback = false;
       try {
-        const [assessmentPayload, benchmarkPayload] = await Promise.all([
+        const [assessmentPayload, benchmarkWorkbook] = await Promise.all([
           fetchJson("data/dummy-assessment.json"),
-          fetchJson("data/dummy-benchmark.json")
+          fetchWorkbook("data/Scores-CyberBenchmark-03062026.xlsx")
         ]);
         state.assessment = normalizeDummyAssessment(assessmentPayload);
-        state.benchmark = normalizeDummyBenchmark(benchmarkPayload);
+        state.benchmark = parseBenchmark(benchmarkWorkbook, "Scores-CyberBenchmark-03062026.xlsx");
       } catch (error) {
         usedFallback = true;
         state.assessment = createDummyAssessment();
@@ -1819,10 +1889,11 @@
         toast(t("fallbackToast"));
       }
       state.dummyAssessment = true;
-      state.dummyBenchmark = true;
-      state.compareRef = "top";
+      state.dummyBenchmark = usedFallback;
+      state.compareRef = state.benchmark.preferredRef;
+      populateBenchmarkSelectors();
       refs.assessmentMeta.innerHTML = `<strong>${state.assessment.sourceName || (usedFallback ? "Fallback assessment" : "Dummy assessment")}</strong><br>${t("comparedQuestionCount", { count: state.assessment.questions.length })} · ${t("domainsCount", { count: state.assessment.sheetCount })}`;
-      refs.benchmarkMeta.innerHTML = `<strong>Dummy benchmark</strong><br>${t("rowsSheet", { rows: state.benchmark.records.length, sheet: state.benchmark.sourceSheet })}`;
+      refs.benchmarkMeta.innerHTML = `<strong>${usedFallback ? "Fallback benchmark" : "Scores CyberBenchmark 03062026"}</strong><br>${t("rowsSheet", { rows: state.benchmark.records.length, sheet: state.benchmark.sourceSheet })}`;
       refs.statusDot.className = "dot warn";
       refs.statusText.textContent = t("dummyData");
     }
@@ -1861,9 +1932,8 @@
         const benchmark = parseBenchmark(workbook, file.name);
         state.benchmark = benchmark;
         state.dummyBenchmark = false;
-        const hasRef = (key) => benchmark.domainStats.some((d) => Number.isFinite(d[key]));
-        if (hasRef("top")) state.compareRef = "top";
-        else if (!hasRef(state.compareRef)) state.compareRef = ["sector", "all", "top"].find(hasRef) || "sector";
+        if (!benchmark.referenceOptions.some((option) => option.key === state.compareRef)) state.compareRef = benchmark.preferredRef;
+        populateBenchmarkSelectors();
         refs.benchmarkMeta.innerHTML = `<strong>${file.name}</strong><br>${t("rowsSheet", { rows: benchmark.records.length, sheet: benchmark.sourceSheet })}`;
         render();
       } catch (error) {
@@ -1927,28 +1997,54 @@
       $("scoreFilter").value = state.filters.score;
     }
 
+    function benchmarkValue(record, key = state.compareRef) {
+      if (!record) return null;
+      const value = record.references?.[key] ?? record[key];
+      return Number.isFinite(value) ? value : null;
+    }
+
+    function referenceLabel(key = state.compareRef) {
+      return state.benchmark?.referenceOptions?.find((option) => option.key === key)?.label || key;
+    }
+
+    function populateBenchmarkSelectors() {
+      const options = state.benchmark?.referenceOptions || [];
+      ["benchmarkTarget", "compareTarget", "lagTarget"].forEach((id) => {
+        const select = $(id);
+        const current = state.compareRef;
+        select.innerHTML = "";
+        options.forEach((option) => select.add(new Option(option.label, option.key)));
+        select.value = options.some((option) => option.key === current) ? current : (options[0]?.key || "");
+      });
+    }
+
+    function setComparisonTarget(key) {
+      if (!state.benchmark?.referenceOptions?.some((option) => option.key === key)) return;
+      state.compareRef = key;
+      populateBenchmarkSelectors();
+      if (state.assessment) render();
+    }
+
     function benchmarkReference(domainId) {
       if (!state.benchmark) return null;
       const bench = state.benchmark.domainStats.find((d) => d.id === domainId);
       if (!bench) return null;
-      const order = ["top", "sector", "all"];
-      const key = order.find((candidate) => Number.isFinite(bench[candidate]));
+      const order = [state.compareRef, state.benchmark.preferredRef, ...state.benchmark.referenceOptions.map((option) => option.key)];
+      const key = order.find((candidate) => Number.isFinite(benchmarkValue(bench, candidate)));
       if (!key) return null;
-      const labels = { all: t("average").toLowerCase(), sector: t("sector").toLowerCase(), top: "top 10" };
-      return { key, label: labels[key], value: bench[key], maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
+      return { key, label: referenceLabel(key), value: benchmarkValue(bench, key), maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
     }
 
-    function questionReference(question, order = ["top", "sector", "all"]) {
+    function questionReference(question, order = [state.compareRef]) {
       if (!state.benchmark) return null;
       const bench = state.benchmark.recordMap.get(normalize(question.id));
       if (!bench) return null;
-      const key = order.find((candidate) => Number.isFinite(bench[candidate]));
+      const key = order.find((candidate) => Number.isFinite(benchmarkValue(bench, candidate)));
       if (!key) return null;
-      const labels = { all: t("average").toLowerCase(), sector: t("sector").toLowerCase(), top: "top 10" };
-      return { key, label: labels[key], value: bench[key], maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
+      return { key, label: referenceLabel(key), value: benchmarkValue(bench, key), maturityLevel: key === "top" ? bench.topMaturityLevel : null, levels: key === "top" ? bench.topLevels : null };
     }
 
-    function questionGap(question, order = ["top", "sector", "all"]) {
+    function questionGap(question, order = [state.compareRef]) {
       const ref = questionReference(question, order);
       const gap = ref && Number.isFinite(question.score) ? question.score - ref.value : null;
       return { ref, gap };
@@ -2100,10 +2196,10 @@
     }
 
     function questionDetailCard(question) {
-      const top = questionGap(question, ["top"]);
+      const top = questionGap(question);
       return `<div class="question-card">
         <div class="q-title">${html(question.question || question.subtopic || question.id)}</div>
-        <div class="q-meta">${html(question.id)} · ${html(question.type)} · ${html(question.status)}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
+        <div class="q-meta">${html(question.id)} · ${html(question.type)} · ${html(question.status)}${top.ref ? ` · ${html(top.ref.label)} ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div>
         ${levelStrip(question)}
         <div class="q-comment">${html(question.comment || "-")}</div>
         <h4 style="margin:12px 0 0; font-size:12px; color:var(--muted);">${t("levelDetails")}</h4>
@@ -2233,7 +2329,7 @@
         const x = 10 + i * 22;
         const evalH = (d.score || 0) / 100 * 56;
         const b = benchMap ? benchMap.get(d.id) : null;
-        const refVal = b ? (b.top ?? b.sector ?? b.all ?? 0) : 0;
+        const refVal = benchmarkValue(b) ?? 0;
         const refH = refVal / 100 * 56;
         const refBar = benchMap ? `<rect x="${x + 8}" y="${68 - refH}" width="7" height="${refH}" rx="1.5" fill="var(--amber)"></rect>` : "";
         return `<rect x="${x}" y="${68 - evalH}" width="7" height="${evalH}" rx="1.5" fill="var(--cyan)"></rect>${refBar}`;
@@ -2273,7 +2369,7 @@
       }
       const hasBenchmark = Boolean(state.benchmark);
       $("radarBenchmarkLegend").classList.toggle("hidden", !hasBenchmark);
-      if (hasBenchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>Top 10`;
+      if (hasBenchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>${html(referenceLabel())}`;
 
       let items, ariaLabel, selectedQuestion = null;
       if (state.overviewDomain) {
@@ -2287,7 +2383,7 @@
         $("radarBack").textContent = selectedQuestion ? `← ${name}` : t("backToThemes");
         items = questions.map((q) => {
           const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
-          const refVal = ref ? (ref.top ?? ref.sector ?? ref.all ?? null) : null;
+          const refVal = benchmarkValue(ref);
           return {
             label: q.id,
             value: Number.isFinite(q.score) ? q.score : 0,
@@ -2304,7 +2400,7 @@
         $("radarBack").textContent = t("backToThemes");
         items = domains.map((d) => {
           const b = benchMap ? benchMap.get(d.id) : null;
-          const refVal = b ? (b.top ?? b.sector ?? b.all ?? null) : null;
+          const refVal = benchmarkValue(b);
           return {
             label: d.id,
             value: Number.isFinite(d.score) ? d.score : 0,
@@ -2481,12 +2577,12 @@
         <text class="axis-label" x="${x(q.gap) + 10}" y="${y(q.score) + 4}">${html(q.id)}</text>
         <title>${html(q.question)} · ${pct(q.score)} · ${q.gapLabel} ${signedPct(q.gap)}</title>
       </g>`).join("");
-      $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(t("domainQuestionsTop", { domain: domain.id }))}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div>
-        <svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Questions du domaine vs top 10">
+      $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(t("questionsVs", { domain: domain.id, ref: referenceLabel() }))}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div>
+        <svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${html(t("questionsVs", { domain: domain.id, ref: referenceLabel() }))}">
           <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${x(0)}" y1="${pad}" x2="${x(0)}" y2="${h-pad}" stroke="rgba(255,255,255,.18)" stroke-dasharray="4 5"></line>
-          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${t("top10GapAxis")}</text>
+          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${html(t("gapWith", { ref: referenceLabel() }))}</text>
           <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">${t("questionScoreAxis")}</text>
           ${dots}
         </svg>`;
@@ -2513,10 +2609,10 @@
     }
 
     function findingItem(q) {
-      const top = questionGap(q, ["top"]);
+      const top = questionGap(q);
       return `<div class="finding">
         <div class="id">${q.id}</div>
-        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${top.ref ? ` · Top 10 ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div></div>
+        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${top.ref ? ` · ${html(top.ref.label)} ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div></div>
         <div class="score-badge" style="color:${scoreColor(q.score)}">${q.status === "na" ? "N/A" : pct(q.score)}</div>
       </div>`;
     }
@@ -2573,8 +2669,9 @@
     function renderQuestions() {
       const rows = filteredQuestions();
       const tbody = $("questionsTable").querySelector("tbody");
+      $("questionsTable").querySelectorAll("th")[10].textContent = referenceLabel();
       tbody.innerHTML = rows.map((q) => {
-        const top = questionGap(q, ["top"]);
+        const top = questionGap(q);
         return `
           <tr>
             <td class="small">${q.id}</td>
@@ -2607,15 +2704,20 @@
         .map((d) => ({ ...d, benchmark: benchMap.get(d.id) }))
         .filter((d) => d.benchmark && Number.isFinite(d.score));
 
-      const diffs = (key) => rows.map((d) => Number.isFinite(d.benchmark[key]) ? d.score - d.benchmark[key] : null).filter(Number.isFinite);
+      const diffs = (key) => rows.map((d) => {
+        const value = benchmarkValue(d.benchmark, key);
+        return Number.isFinite(value) ? d.score - value : null;
+      }).filter(Number.isFinite);
       $("cmpAll").textContent = signedPct(average(diffs("all")));
-      $("cmpSector").textContent = signedPct(average(diffs("sector")));
+      $("cmpSectorLabel").textContent = t("selectedTargetGap");
+      $("cmpSectorSub").textContent = `${t("assessmentVsSelected")} · ${referenceLabel()}`;
+      $("cmpSector").textContent = signedPct(average(diffs(state.compareRef)));
       $("cmpTop").textContent = signedPct(average(diffs("top")));
       $("cmpCount").textContent = String(rows.length);
+      $("compareLegendTarget").innerHTML = `<i style="background:var(--amber)"></i>${html(referenceLabel())}`;
 
       $("compareRows").innerHTML = rows.length ? rows.map(compareRow).join("") : `<p class="muted">${t("noCommonDomain")}</p>`;
-      document.querySelectorAll("#compareRef button").forEach((btn) => btn.classList.toggle("active", btn.dataset.ref === state.compareRef));
-      document.querySelectorAll("[data-compare-chart-ref]").forEach((btn) => btn.classList.toggle("active", btn.dataset.compareChartRef === state.compareRef));
+      populateBenchmarkSelectors();
       renderLaggingMeasures();
     }
 
@@ -2627,10 +2729,8 @@
     function compareRow(d) {
       const markers = [
         { key: "score", label: t("evalShort"), value: d.score, color: "var(--cyan)" },
-        { key: "all", label: t("all"), value: d.benchmark.all, color: "var(--blue)" },
-        { key: "sector", label: t("sectorShort"), value: d.benchmark.sector, color: "var(--violet)" },
-        { key: "top", label: t("topShort"), value: d.benchmark.top, color: "var(--amber)" }
-      ].filter((m) => Number.isFinite(m.value) && (m.key === "score" || m.key === state.compareRef));
+        { key: state.compareRef, label: referenceLabel(), value: benchmarkValue(d.benchmark), color: "var(--amber)" }
+      ].filter((m) => Number.isFinite(m.value));
       return `<div class="compare-row">
         <div><strong>${d.id}</strong><div class="muted">${d.name}</div></div>
         <div class="compare-track">
@@ -2647,7 +2747,7 @@
         .filter((q) => q.status === "scored")
         .map((q) => {
           const bench = state.benchmark.recordMap.get(normalize(q.id));
-          const refScore = bench ? bench[ref] : null;
+          const refScore = benchmarkValue(bench, ref);
           const gap = Number.isFinite(refScore) ? q.score - refScore : null;
           return { q, refScore, gap };
         })
@@ -2673,9 +2773,9 @@
     function exportCsv() {
       if (!state.assessment) return;
       const rows = filteredQuestions();
-      const headers = ["ID", t("domain"), t("topic"), t("question"), t("type"), "N1", "N2", "N3", "N4", "N5", "Top 10", "Top 10 maturity", t("top10GapAxis"), t("status"), t("reliability"), t("comment")];
+      const headers = ["ID", t("domain"), t("topic"), t("question"), t("type"), "N1", "N2", "N3", "N4", "N5", referenceLabel(), `${referenceLabel()} maturity`, t("gap"), t("status"), t("reliability"), t("comment")];
       const data = rows.map((q) => {
-        const top = questionGap(q, ["top"]);
+        const top = questionGap(q);
         return [q.id, q.domain, q.subtopic, q.question, q.type, ...[0, 1, 2, 3, 4].map((index) => Number.isFinite(q.levels?.[index]) ? q.levels[index] * 100 : ""), top.ref?.value ?? "", maturityLabel(top.ref?.maturityLevel), top.gap ?? "", q.status, q.reliability, q.comment];
       });
       const csv = [headers, ...data].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
@@ -2686,6 +2786,50 @@
       a.download = "cyberbench-questions.csv";
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    async function exportVisualPng(button) {
+      const target = $(button.dataset.exportTarget);
+      if (!target) return;
+      button.disabled = true;
+      try {
+        const width = Math.max(1, Math.ceil(target.scrollWidth || target.getBoundingClientRect().width));
+        const height = Math.max(1, Math.ceil(target.scrollHeight || target.getBoundingClientRect().height));
+        const clone = target.cloneNode(true);
+        clone.querySelectorAll("button").forEach((element) => element.removeAttribute("tabindex"));
+        const css = [...document.styleSheets].map((sheet) => {
+          try { return [...sheet.cssRules].map((rule) => rule.cssText).join("\n"); }
+          catch (error) { return ""; }
+        }).join("\n");
+        const serialized = new XMLSerializer().serializeToString(clone);
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#ffffff"/><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;background:#ffffff;color:#112b43;"><style>${css}</style>${serialized}</div></foreignObject></svg>`;
+        const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        const image = new Image();
+        await new Promise((resolve, reject) => {
+          image.onload = resolve;
+          image.onerror = reject;
+          image.src = url;
+        });
+        const scale = 2;
+        const canvas = document.createElement("canvas");
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        const context = canvas.getContext("2d");
+        context.scale(scale, scale);
+        context.drawImage(image, 0, 0, width, height);
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+        if (!blob) throw new Error(t("exportPngError"));
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = `${button.dataset.exportName || button.dataset.exportTarget}.png`;
+        link.click();
+        URL.revokeObjectURL(downloadUrl);
+      } catch (error) {
+        toast(t("exportPngError"));
+      } finally {
+        button.disabled = false;
+      }
     }
 
     refs.assessmentFile.addEventListener("change", (event) => {
@@ -2705,15 +2849,9 @@
       document.querySelectorAll("#domainSort button").forEach((b) => b.classList.toggle("active", b === btn));
       renderDomains();
     }));
-    document.querySelectorAll("#compareRef button").forEach((btn) => btn.addEventListener("click", () => {
-      state.compareRef = btn.dataset.ref;
-      document.querySelectorAll("#compareRef button").forEach((b) => b.classList.toggle("active", b === btn));
-      if (state.assessment && state.benchmark) renderCompare();
-    }));
-    document.querySelectorAll("[data-compare-chart-ref]").forEach((btn) => btn.addEventListener("click", () => {
-      state.compareRef = btn.dataset.compareChartRef;
-      if (state.assessment && state.benchmark) renderCompare();
-    }));
+    ["benchmarkTarget", "compareTarget", "lagTarget"].forEach((id) => {
+      $(id).addEventListener("change", (event) => setComparisonTarget(event.target.value));
+    });
     $("gapFilter").addEventListener("input", (event) => {
       state.compareGap = Number(event.target.value) || 0;
       if (state.assessment && state.benchmark) renderLaggingMeasures();
@@ -2735,6 +2873,7 @@
       renderQuestions();
     }));
     $("exportCsv").addEventListener("click", exportCsv);
+    document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
 
     applyLocale();
     loadDummyData().finally(render);

@@ -7,17 +7,20 @@ The UI defaults to English and automatically switches to French when the browser
 
 1. Publish the repository with GitHub Pages.
 2. Open `index.html`.
-3. A complete synthetic data set is displayed by default for testing without a real file (`data/dummy-assessment.json`: 220 questions whose IDs, subtopics, and assessment points mirror the real W-CyberBenchmark question bank, and `data/dummy-benchmark.json`: question-level Top 10 referential). Only the scores, maturity levels, comments, and reliability are synthetic.
+3. A synthetic assessment is displayed by default (`data/dummy-assessment.json`: 220 questions whose IDs, subtopics, and assessment points mirror the real W-CyberBenchmark question bank), together with the default benchmark (`data/Scores-CyberBenchmark-03062026.xlsx`). Only the assessment scores, maturity levels, comments, and reliability are synthetic.
 4. Upload an assessment `.xlsm`, `.xlsx`, `.xls`, or `.xlsb` file to replace the example.
-5. Optionally upload a benchmark file with columns such as `ID` or `Domain`, then `Average`, `Sector`, and `Top 10`.
+5. Optionally upload another benchmark file. Use `data/Scores-CyberBenchmark-03062026.xlsx` as the import template.
+6. Use the PNG buttons to export each main visual.
 
 Files are read locally in the browser. No backend is used.
 SheetJS is vendored in `vendor/` to avoid a runtime CDN dependency.
-Demo data is stored as static JSON files. If those files are missing or invalid, `index.html` loads a minimal fallback to avoid an empty screen. User-uploaded files are neither stored in the browser nor sent to a server.
+Default data is stored as a static assessment JSON file and a benchmark workbook. If either file is missing or invalid, `index.html` loads a minimal fallback to avoid an empty screen. User-uploaded files are neither stored in the browser nor sent to a server.
 
 ## Expected Benchmark
 
-The referential can be at domain level or question level.
+The default and recommended import format is the `Score par catégorie` matrix in `data/Scores-CyberBenchmark-03062026.xlsx`: domains in the first column, then `Marché`, `Grandes Entreprises`, sector columns, and `Top 10`. Every numeric reference column is exposed automatically in the comparison-target selectors.
+
+The referential can also be at domain level or question level using the tabular format below.
 
 Colonnes recommandées :
 
