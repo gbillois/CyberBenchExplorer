@@ -43,7 +43,7 @@
       color: var(--text);
     }
 
-    button, input, select { font: inherit; }
+    button, input, select, textarea { font: inherit; }
 
     button {
       border: 1px solid #c4d8e4;
@@ -65,7 +65,7 @@
     button.active { background: var(--panel-3); border-color: #54cdb2; color: #0b7582; }
     button:disabled { opacity: .45; cursor: not-allowed; }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       min-height: 36px;
       color: var(--text);
@@ -75,7 +75,8 @@
       padding: 0 10px;
       outline: none;
     }
-    input:focus, select:focus { outline: 2px solid rgba(46,211,155,.24); border-color: #54cdb2; }
+    textarea { min-height: 180px; padding: 10px; resize: vertical; line-height: 1.45; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid rgba(46,211,155,.24); border-color: #54cdb2; }
 
     input[type="file"] {
       height: auto;
@@ -562,6 +563,66 @@
     .question-card .q-title { font-size: 13px; line-height: 1.35; font-weight: 750; }
     .question-card .q-meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
     .question-card .q-comment { color: #4c657a; font-size: 12px; margin-top: 8px; line-height: 1.4; }
+    .recommendation-toolbar {
+      display: grid;
+      grid-template-columns: minmax(180px, .5fr) minmax(180px, .5fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+    .recommendation-list { display: grid; gap: 14px; }
+    .recommendation-card { overflow: hidden; }
+    .recommendation-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      padding: 15px 16px 12px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .recommendation-title { font-size: 14px; font-weight: 800; line-height: 1.35; }
+    .recommendation-meta { margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .priority-badge {
+      align-self: start;
+      min-width: 84px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .priority-critical { color: #991b1b; background: #fee2e2; border: 1px solid #fecaca; }
+    .priority-high { color: #9a4b00; background: #fff0ce; border: 1px solid #f6d48a; }
+    .priority-medium { color: #155e75; background: #cffafe; border: 1px solid #a5f3fc; }
+    .recommendation-body { padding: 14px 16px 16px; }
+    .recommendation-scores { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .recommendation-score { padding: 6px 8px; border-radius: 8px; background: #f1f7f8; color: var(--muted); font-size: 12px; }
+    .recommendation-score strong { color: var(--text); }
+    .action-list { margin: 8px 0 0; padding-left: 20px; color: #23415b; font-size: 13px; line-height: 1.45; }
+    .action-list li + li { margin-top: 6px; }
+    .api-future {
+      padding: 14px 16px;
+      border: 1px dashed #a9c8d5;
+      border-radius: 12px;
+      background: #f3fafb;
+      color: #36566b;
+    }
+    .api-future strong { color: var(--text); }
+    .api-future p { margin: 5px 0 0; font-size: 12px; line-height: 1.45; }
+    .ingest-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: 16px; align-items: start; }
+    .ingest-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .ingest-fields .wide { grid-column: 1 / -1; }
+    .ingest-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .ingest-warning { border: 1px solid #f6d48a; border-radius: 10px; background: #fff8df; color: #6b4e00; padding: 11px 12px; font-size: 12px; line-height: 1.45; }
+    .ingest-progress { display: grid; gap: 8px; margin-top: 14px; }
+    .ingest-progress-line { height: 9px; overflow: hidden; border: 1px solid var(--line); border-radius: 999px; background: #edf3f6; }
+    .ingest-progress-line span { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--green)); transition: width .2s ease; }
+    .ingest-log { max-height: 260px; overflow: auto; padding: 10px 12px; border: 1px solid var(--line-soft); border-radius: 10px; background: #f8fbfc; color: #36566b; font-size: 12px; line-height: 1.5; }
+    .ingest-review { display: grid; gap: 10px; margin-top: 16px; }
+    .ingest-review-card { padding: 12px; border: 1px solid var(--line-soft); border-radius: 12px; background: #fff; }
+    .ingest-review-card strong { font-size: 13px; }
+    .ingest-review-card p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
     .level-detail {
       display: grid;
       gap: 8px;
@@ -647,6 +708,9 @@
       .finding { grid-template-columns: 1fr; }
       .score-badge { justify-self: start; }
       .bar-row, .compare-row { grid-template-columns: 1fr; gap: 7px; }
+      .recommendation-toolbar, .recommendation-head { grid-template-columns: 1fr; }
+      .ingest-grid, .ingest-fields { grid-template-columns: 1fr; }
+      .ingest-fields .wide { grid-column: auto; }
       .scatter-stage { min-height: 380px; }
       .slide-chart { min-height: 320px; }
       aside { padding: 0; }
@@ -716,6 +780,14 @@
           <button data-tab="compare" title="Comparaison au benchmark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M20 19V5"></path><path d="M8 7h8"></path><path d="M8 12h8"></path><path d="M8 17h8"></path></svg>
             Comparaison
+          </button>
+          <button data-tab="recommendations" title="Recommandations">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M8.5 14.5A7 7 0 1 1 15.5 14.5C14.5 15.3 14 16 14 18h-4c0-2-.5-2.7-1.5-3.5Z"></path><path d="m9 10 2 2 4-4"></path></svg>
+            Recommandations
+          </button>
+          <button data-tab="ingest" title="Ingestion de transcription">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path><path d="M4 5h5"></path><path d="M15 5h5"></path></svg>
+            Ingest
           </button>
           <button data-tab="questions" title="Détails des réponses">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
@@ -953,6 +1025,68 @@
             </div>
           </div>
         </section>
+
+        <section id="recommendations" class="tab-panel hidden">
+          <div class="card">
+            <div class="card-head"><h3 id="recommendationsListTitle">Priority remediation actions</h3></div>
+            <div class="card-body">
+              <div class="recommendation-toolbar">
+                <div><label for="recommendationDomain">Domain</label><select id="recommendationDomain"><option value="">All</option></select></div>
+                <div><label for="recommendationLimit">Priorities displayed</label><select id="recommendationLimit"><option value="10">Top 10</option><option value="20">Top 20</option><option value="50">Top 50</option></select></div>
+                <div class="api-future">
+                  <strong id="recommendationApiTitle">Future API enrichment</strong>
+                  <p id="recommendationApiText">A secure API proxy will be able to use assessment comments to suggest owners, milestones, and tailored next steps.</p>
+                  <button type="button" class="ghost" id="recommendationEnrich" disabled>API key required</button>
+                </div>
+              </div>
+              <div id="recommendationSummary" class="muted"></div>
+              <div id="recommendationList" class="recommendation-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="ingest" class="tab-panel hidden">
+          <div class="ingest-grid">
+            <div class="card">
+              <div class="card-head"><h3 id="ingestTranscriptTitle">Meeting transcript</h3></div>
+              <div class="card-body">
+                <label for="ingestTranscript" id="ingestTranscriptLabel">Transcript to analyze</label>
+                <textarea id="ingestTranscript" placeholder="Paste the complete meeting transcript here..."></textarea>
+                <div class="ingest-actions">
+                  <button class="primary" id="ingestRun">Run extraction + check &amp; challenge</button>
+                  <button id="ingestApply" disabled>Apply reviewed results</button>
+                  <button id="ingestExport" disabled>Download completed Excel</button>
+                </div>
+                <div class="ingest-progress hidden" id="ingestProgress">
+                  <div class="ingest-progress-line"><span id="ingestProgressBar" style="width:0%"></span></div>
+                  <strong id="ingestProgressText"></strong>
+                  <div class="ingest-log" id="ingestLog"></div>
+                </div>
+                <div class="ingest-review" id="ingestReview"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3 id="ingestConfigTitle">LLM configuration</h3></div>
+              <div class="card-body">
+                <div class="ingest-warning" id="ingestWarning">The transcript and selected questionnaire requirements are sent to the configured provider. Obtain authorization before processing confidential data. API keys remain in memory and are never saved.</div>
+                <div class="ingest-fields" style="margin-top:14px;">
+                  <div><label for="ingestProvider">Provider</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
+                  <div><label for="ingestModel">Model</label><input id="ingestModel" value="claude-sonnet-4-20250514"></div>
+                  <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">API key</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
+                  <div class="wide hidden" id="ingestAzureFields">
+                    <div class="ingest-fields">
+                      <div class="wide"><label for="ingestAzureEndpoint">Azure endpoint</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
+                      <div><label for="ingestAzureDeployment">Deployment</label><input id="ingestAzureDeployment"></div>
+                      <div><label for="ingestAzureKey">Azure API key</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
+                    </div>
+                  </div>
+                  <div class="wide"><label for="ingestDomain">Scope</label><select id="ingestDomain"><option value="">All domains, sequentially</option></select></div>
+                </div>
+                <div class="ingest-actions"><button id="ingestTest">Test connection</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   </div>
@@ -1004,6 +1138,22 @@
         navFindings: "Findings",
         navQuestions: "Response details",
         navCompare: "Comparison",
+        navRecommendations: "Recommendations",
+        navIngest: "Ingest",
+        ingestTranscriptTitle: "Meeting transcript",
+        ingestTranscriptLabel: "Transcript to analyze",
+        ingestTranscriptPlaceholder: "Paste the complete meeting transcript here...",
+        ingestRun: "Run extraction + check & challenge",
+        ingestApply: "Apply reviewed results",
+        ingestExport: "Download completed Excel",
+        ingestConfigTitle: "LLM configuration",
+        ingestWarning: "The transcript and selected questionnaire requirements are sent to the configured provider. Obtain authorization before processing confidential data. API keys remain in memory and are never saved.",
+        ingestProvider: "Provider",
+        ingestModel: "Model",
+        ingestApiKey: "API key",
+        ingestScope: "Scope",
+        ingestAllDomains: "All domains, sequentially",
+        ingestTest: "Test connection",
         exploreTitle: "Explore the analyses",
         waitingFile: "Waiting for file",
         dummyData: "Dummy data",
@@ -1076,6 +1226,8 @@
         findingsIntro: "Quick reading of best points, priorities, and unanswered areas.",
         questionsIntro: "Filterable table to analyze each assessment point, levels 1 to 5, and comments.",
         compareIntro: "Alignment of the assessment with global average, sector, and top 10 benchmarks.",
+        recommendationsIntro: "Prioritized remediation actions based on the largest gaps to the market benchmark and the questionnaire requirements.",
+        ingestIntro: "Analyze a meeting transcript with a configurable LLM, then independently check and challenge every proposed score.",
         homeTitle: "Summary",
         dashboardTitle: "Matrix",
         overviewTitle: "Radar",
@@ -1083,6 +1235,23 @@
         findingsTitle: "Strengths / weaknesses",
         questionsTitle: "Response details",
         compareTitle: "Comparison",
+        recommendationsTitle: "Recommendations",
+        ingestTitle: "Transcript ingest",
+        recommendationsListTitle: "Priority remediation actions",
+        recommendationDomain: "Domain",
+        recommendationLimit: "Priorities displayed",
+        recommendationApiTitle: "Future API enrichment",
+        recommendationApiText: "A secure API proxy will be able to use assessment comments to suggest owners, milestones, and tailored next steps.",
+        recommendationApiButton: "API key required",
+        recommendationSummary: "{shown} priorities displayed out of {total} questions below the market.",
+        recommendationEmpty: "No scored question is below the market benchmark.",
+        marketScore: "Market",
+        currentScore: "Current score",
+        targetLevel: "Target level",
+        remediationActions: "Remediation actions from requirements",
+        priorityCritical: "Critical",
+        priorityHigh: "High",
+        priorityMedium: "Medium",
         themes: "Themes",
         categories: "Categories",
         noScoredDomain: "No scored domain.",
@@ -1145,6 +1314,22 @@
         navFindings: "Constats",
         navQuestions: "Détails réponse",
         navCompare: "Comparaison",
+        navRecommendations: "Recommandations",
+        navIngest: "Ingest",
+        ingestTranscriptTitle: "Transcription de réunion",
+        ingestTranscriptLabel: "Transcription à analyser",
+        ingestTranscriptPlaceholder: "Collez ici la transcription complète de la réunion...",
+        ingestRun: "Lancer l'extraction + check & challenge",
+        ingestApply: "Appliquer les résultats revus",
+        ingestExport: "Télécharger l'Excel complété",
+        ingestConfigTitle: "Configuration du LLM",
+        ingestWarning: "La transcription et les exigences sélectionnées sont envoyées au fournisseur configuré. Obtenez une autorisation avant de traiter des données confidentielles. Les clés API restent en mémoire et ne sont jamais enregistrées.",
+        ingestProvider: "Fournisseur",
+        ingestModel: "Modèle",
+        ingestApiKey: "Clé API",
+        ingestScope: "Périmètre",
+        ingestAllDomains: "Tous les domaines, séquentiellement",
+        ingestTest: "Tester la connexion",
         exploreTitle: "Explorer les analyses",
         waitingFile: "En attente de fichier",
         dummyData: "Données exemple",
@@ -1217,6 +1402,8 @@
         findingsIntro: "Lecture rapide des meilleurs points, des priorités et des zones sans réponse.",
         questionsIntro: "Table filtrable pour analyser chaque point d'évaluation, ses niveaux 1 à 5 et les commentaires associés.",
         compareIntro: "Alignement de l'évaluation avec un référentiel de moyenne globale, secteur et top 10.",
+        recommendationsIntro: "Actions de remédiation priorisées selon les plus grands écarts au marché et les exigences du questionnaire.",
+        ingestIntro: "Analyse d'une transcription de réunion par un LLM configurable, suivie d'un contrôle critique indépendant de chaque score proposé.",
         homeTitle: "Synthèse",
         dashboardTitle: "Matrice",
         overviewTitle: "Rosace",
@@ -1224,6 +1411,23 @@
         findingsTitle: "Forces / faiblesses",
         questionsTitle: "Détails réponse",
         compareTitle: "Comparaison",
+        recommendationsTitle: "Recommandations",
+        ingestTitle: "Ingestion de transcription",
+        recommendationsListTitle: "Actions de remédiation prioritaires",
+        recommendationDomain: "Domaine",
+        recommendationLimit: "Priorités affichées",
+        recommendationApiTitle: "Enrichissement API futur",
+        recommendationApiText: "Un proxy API sécurisé pourra exploiter les commentaires d'évaluation pour proposer des responsables, jalons et prochaines étapes adaptées.",
+        recommendationApiButton: "Clé API requise",
+        recommendationSummary: "{shown} priorités affichées sur {total} questions sous le niveau du marché.",
+        recommendationEmpty: "Aucune question scorée n'est sous le benchmark marché.",
+        marketScore: "Marché",
+        currentScore: "Score actuel",
+        targetLevel: "Niveau cible",
+        remediationActions: "Actions de remédiation issues des exigences",
+        priorityCritical: "Critique",
+        priorityHigh: "Haute",
+        priorityMedium: "Moyenne",
         themes: "Thèmes",
         categories: "Catégories",
         noScoredDomain: "Aucun domaine scoré.",
@@ -1291,9 +1495,39 @@
       overviewDomain: "",
       overviewQuestion: "",
       findingsDomain: "",
+      recommendationDomain: "",
+      recommendationLimit: 10,
+      recommendationPayload: null,
+      ingest: {
+        provider: "anthropic",
+        model: "claude-sonnet-4-20250514",
+        domain: "",
+        running: false,
+        progress: 0,
+        log: [],
+        results: [],
+        challenges: [],
+        applied: false
+      },
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
       dummyBenchmark: false
+    };
+
+    const RECOMMENDATION_ENRICHMENT = {
+      enabled: false,
+      endpoint: "",
+      // Keep API keys server-side. Configure this endpoint as a secure proxy when enrichment is enabled.
+      async enrich(payload) {
+        if (!this.enabled || !this.endpoint) throw new Error("Recommendation enrichment is not configured.");
+        const response = await fetch(this.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error("Recommendation enrichment failed.");
+        return response.json();
+      }
     };
 
     const $ = (id) => document.getElementById(id);
@@ -1330,7 +1564,9 @@
         statusFilter: "status",
         scoreFilter: "overallMaturity",
         gapFilter: "minimumLag",
-        findingsDomainFilter: "domain"
+        findingsDomainFilter: "domain",
+        recommendationDomain: "recommendationDomain",
+        recommendationLimit: "recommendationLimit"
       };
       Object.entries(labelMap).forEach(([forId, key]) => {
         const label = document.querySelector(`label[for="${forId}"]`);
@@ -1347,8 +1583,19 @@
         ["cmpAllSub", "assessmentVsGlobal"], ["cmpSectorLabel", "sectorGap"], ["cmpSectorSub", "assessmentVsSector"], ["cmpTopLabel", "topGap"],
         ["cmpTopSub", "assessmentVsTop"], ["cmpCountLabel", "comparedDomains"], ["cmpCountSub", "alignment"], ["compareRowsTitle", "comparisonByDomain"],
         ["lagTitle", "laggingMeasures"],
-        ["lagHelp", "lagHelp"], ["exploreTitle", "exploreTitle"]
+        ["lagHelp", "lagHelp"], ["exploreTitle", "exploreTitle"], ["recommendationsListTitle", "recommendationsListTitle"],
+        ["recommendationApiTitle", "recommendationApiTitle"], ["recommendationApiText", "recommendationApiText"], ["recommendationEnrich", "recommendationApiButton"]
       ].forEach(([id, key]) => setText(id, key));
+      [
+        ["ingestTranscriptTitle", "ingestTranscriptTitle"], ["ingestTranscriptLabel", "ingestTranscriptLabel"], ["ingestRun", "ingestRun"],
+        ["ingestApply", "ingestApply"], ["ingestExport", "ingestExport"], ["ingestConfigTitle", "ingestConfigTitle"],
+        ["ingestWarning", "ingestWarning"], ["ingestTest", "ingestTest"]
+      ].forEach(([id, key]) => setText(id, key));
+      $("ingestTranscript").placeholder = t("ingestTranscriptPlaceholder");
+      document.querySelector('label[for="ingestProvider"]').textContent = t("ingestProvider");
+      document.querySelector('label[for="ingestModel"]').textContent = t("ingestModel");
+      document.querySelector('label[for="ingestApiKey"]').textContent = t("ingestApiKey");
+      document.querySelector('label[for="ingestDomain"]').textContent = t("ingestScope");
 
       const noticeText = $("dummyNotice")?.querySelector("span:last-child");
       if (noticeText) noticeText.textContent = t("localDisplayNotice");
@@ -1356,7 +1603,7 @@
       document.querySelectorAll(".png-export").forEach((button) => button.title = t("exportPng"));
       $("search").placeholder = t("searchPlaceholder");
       [
-        ["home", "navHome"], ["dashboard", "navDashboard"], ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"]
+        ["home", "navHome"], ["dashboard", "navDashboard"], ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"], ["recommendations", "navRecommendations"], ["ingest", "navIngest"]
       ].forEach(([tab, key]) => {
         const button = document.querySelector(`[data-tab="${tab}"]`);
         if (button?.lastChild) button.lastChild.textContent = t(key);
@@ -1915,6 +2162,11 @@
         state.overviewDomain = "";
         state.overviewQuestion = "";
         state.findingsDomain = "";
+        state.recommendationDomain = "";
+        state.ingest.results = [];
+        state.ingest.challenges = [];
+        state.ingest.log = [];
+        state.ingest.applied = false;
         state.filters = { search: "", domain: "", type: "", status: "", score: "" };
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
         refs.statusDot.className = "dot ready";
@@ -1941,6 +2193,250 @@
       }
     }
 
+    function ingestConfig() {
+      return {
+        provider: $("ingestProvider").value,
+        model: clean($("ingestModel").value),
+        apiKey: $("ingestApiKey").value.trim(),
+        azureEndpoint: $("ingestAzureEndpoint").value.trim(),
+        azureDeployment: $("ingestAzureDeployment").value.trim(),
+        azureKey: $("ingestAzureKey").value.trim()
+      };
+    }
+
+    function parseLLMJson(text) {
+      const trimmed = String(text || "").trim();
+      if (!trimmed) throw new Error("Empty LLM response.");
+      try { return JSON.parse(trimmed); }
+      catch (error) {
+        const match = trimmed.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+        if (!match) throw new Error("The LLM response is not valid JSON.");
+        return JSON.parse(match[0]);
+      }
+    }
+
+    async function callIngestLLM(systemPrompt, userPrompt, config = ingestConfig()) {
+      if (!config.model && config.provider !== "azure_openai") throw new Error("A model name is required.");
+      let response;
+      if (config.provider === "anthropic") {
+        if (!config.apiKey) throw new Error("Anthropic API key missing.");
+        response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-api-key": config.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+          body: JSON.stringify({ model: config.model, max_tokens: 8000, system: systemPrompt, messages: [{ role: "user", content: userPrompt }] })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || `Anthropic HTTP ${response.status}`);
+        return parseLLMJson(data.content?.map((part) => part.text || "").join("") || "");
+      }
+      if (config.provider === "openai") {
+        if (!config.apiKey) throw new Error("OpenAI API key missing.");
+        response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}` },
+          body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || `OpenAI HTTP ${response.status}`);
+        return parseLLMJson(data.choices?.[0]?.message?.content || "");
+      }
+      if (config.provider === "azure_openai") {
+        if (!config.azureEndpoint || !config.azureDeployment || !config.azureKey) throw new Error("Azure endpoint, deployment, and API key are required.");
+        const endpoint = config.azureEndpoint.replace(/\/+$/, "");
+        if (!endpoint.startsWith("https://")) throw new Error("Azure endpoint must use HTTPS.");
+        response = await fetch(`${endpoint}/openai/deployments/${encodeURIComponent(config.azureDeployment)}/chat/completions?api-version=2024-02-01`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "api-key": config.azureKey },
+          body: JSON.stringify({ messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || `Azure OpenAI HTTP ${response.status}`);
+        return parseLLMJson(data.choices?.[0]?.message?.content || "");
+      }
+      if (config.provider === "google_gemini") {
+        if (!config.apiKey) throw new Error("Google Gemini API key missing.");
+        response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(config.model)}:generateContent?key=${encodeURIComponent(config.apiKey)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+            generationConfig: { responseMimeType: "application/json", maxOutputTokens: 8000 }
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || `Google Gemini HTTP ${response.status}`);
+        return parseLLMJson(data.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "");
+      }
+      throw new Error(`Unsupported provider: ${config.provider}`);
+    }
+
+    function ingestQuestionPayload(questions) {
+      return questions.map((q) => ({
+        id: q.id,
+        domain: q.domain,
+        type: q.type,
+        subtopic: q.subtopic,
+        assessmentPoint: q.question,
+        evidenceRequired: q.evidence,
+        requirements: Object.fromEntries(q.requirements.map((requirement, index) => [`L${index + 1}`, requirement]))
+      }));
+    }
+
+    function extractionPrompts(transcript, questions) {
+      return {
+        system: `You are a senior cybersecurity assessor. Assess only what is explicitly supported by the meeting transcript. Never invent evidence.
+For each questionnaire item, evaluate the five maturity requirements independently. "levels" contains five completion ratios from 0 to 1.
+Use status "scored" only when the transcript supports at least one requirement, "na" only when explicitly declared not applicable, otherwise "missing".
+Reliability must be High, Medium, or Low. Keep citations short and verbatim. Return strict JSON only:
+Write comments in the transcript's primary language.
+{"assessments":[{"id":"...","status":"scored|na|missing","levels":[0,0,0,0,0],"comment":"concise evidence-based rationale","reliability":"High|Medium|Low","citations":["short quote"]}]}`,
+        user: `QUESTIONNAIRE:\n${JSON.stringify(ingestQuestionPayload(questions))}\n\nMEETING TRANSCRIPT:\n${transcript}`
+      };
+    }
+
+    function challengePrompts(transcript, questions, draft) {
+      return {
+        system: `You are an independent lead auditor performing check and challenge on a draft cybersecurity assessment.
+Challenge every score against the transcript and exact maturity requirements. Correct over-scoring, unsupported N/A decisions, weak citations, and invented claims.
+Be conservative: unsupported answers must become "missing"; partial evidence must reduce levels and reliability. Preserve valid evidence.
+Write comments and challenges in the transcript's primary language.
+Return strict JSON only:
+{"assessments":[{"id":"...","status":"scored|na|missing","levels":[0,0,0,0,0],"comment":"reviewed evidence-based rationale","reliability":"High|Medium|Low","citations":["short quote"]}],"challenges":[{"id":"...","issue":"what was challenged","correction":"what changed or why retained"}]}`,
+        user: `QUESTIONNAIRE:\n${JSON.stringify(ingestQuestionPayload(questions))}\n\nDRAFT ASSESSMENT:\n${JSON.stringify(draft)}\n\nMEETING TRANSCRIPT:\n${transcript}`
+      };
+    }
+
+    function normalizeIngestAssessments(payload, questions) {
+      const rows = Array.isArray(payload?.assessments) ? payload.assessments : [];
+      const returned = new Map(rows.map((row) => [clean(row.id), row]));
+      return questions.map((question) => {
+        const row = returned.get(question.id) || { id: question.id, status: "missing", levels: [], comment: "No sufficiently supported answer returned by the LLM.", reliability: "Low", citations: [] };
+        const status = ["scored", "na", "missing"].includes(row.status) ? row.status : "missing";
+        const levels = status === "scored" ? normalizeLevels(row.levels) : [0, 0, 0, 0, 0];
+        const citations = Array.isArray(row.citations) ? row.citations.map(clean).filter(Boolean).slice(0, 4) : [];
+        const rationale = clean(row.comment);
+        return {
+          id: clean(row.id),
+          status: levels.some((value) => value > 0) ? status : (status === "na" ? "na" : "missing"),
+          levels,
+          comment: [rationale, citations.length ? `Transcript: ${citations.map((quote) => `"${quote}"`).join(" | ")}` : ""].filter(Boolean).join(" "),
+          reliability: ["High", "Medium", "Low"].includes(row.reliability) ? row.reliability : "Low",
+          citations
+        };
+      });
+    }
+
+    function setIngestProgress(message, progress = state.ingest.progress) {
+      state.ingest.progress = progress;
+      state.ingest.log.push(message);
+      renderIngest();
+    }
+
+    async function testIngestConnection() {
+      $("ingestTest").disabled = true;
+      try {
+        await callIngestLLM("Return strict JSON only.", 'Reply with {"ok":true}.');
+        toast("LLM connection confirmed.");
+      } catch (error) {
+        toast(`LLM connection failed: ${error.message}`);
+      } finally {
+        $("ingestTest").disabled = false;
+      }
+    }
+
+    async function runIngest() {
+      const transcript = $("ingestTranscript").value.trim();
+      if (!transcript) return toast("Paste a meeting transcript before starting ingestion.");
+      if (state.ingest.running) return;
+      const selectedDomain = $("ingestDomain").value;
+      const groups = [...new Set(state.assessment.questions.map((q) => q.domain))]
+        .filter((domain) => !selectedDomain || domain === selectedDomain)
+        .map((domain) => ({ domain, questions: state.assessment.questions.filter((q) => q.domain === domain) }));
+      state.ingest.running = true;
+      state.ingest.results = [];
+      state.ingest.challenges = [];
+      state.ingest.log = [];
+      state.ingest.applied = false;
+      try {
+        for (let index = 0; index < groups.length; index++) {
+          const group = groups[index];
+          const base = index / groups.length * 100;
+          setIngestProgress(`${group.domain}: analyst extraction started.`, base);
+          const extraction = extractionPrompts(transcript, group.questions);
+          const draftPayload = await callIngestLLM(extraction.system, extraction.user);
+          const draft = normalizeIngestAssessments(draftPayload, group.questions);
+          setIngestProgress(`${group.domain}: ${draft.length} draft answers extracted; check & challenge started.`, base + 45 / groups.length);
+          const challenge = challengePrompts(transcript, group.questions, draft);
+          const reviewedPayload = await callIngestLLM(challenge.system, challenge.user);
+          const reviewed = normalizeIngestAssessments(reviewedPayload, group.questions);
+          state.ingest.results.push(...reviewed);
+          state.ingest.challenges.push(...(Array.isArray(reviewedPayload?.challenges) ? reviewedPayload.challenges : []));
+          setIngestProgress(`${group.domain}: ${reviewed.length} reviewed answers ready.`, (index + 1) / groups.length * 100);
+        }
+        toast(`${state.ingest.results.length} reviewed answers ready to apply.`);
+      } catch (error) {
+        setIngestProgress(`Stopped: ${error.message}`, state.ingest.progress);
+        toast(`Ingestion failed: ${error.message}`);
+      } finally {
+        state.ingest.running = false;
+        renderIngest();
+      }
+    }
+
+    function applyIngestResults() {
+      const resultMap = new Map(state.ingest.results.map((row) => [row.id, row]));
+      state.assessment.questions.forEach((question) => {
+        const result = resultMap.get(question.id);
+        if (!result) return;
+        question.status = result.status;
+        question.levels = result.levels;
+        question.score = result.status === "scored" ? scoreFromLevels(result.levels) : null;
+        question.comment = result.comment;
+        question.reliability = result.reliability;
+      });
+      state.assessment.domainStats = buildDomainStats(state.assessment.questions);
+      state.ingest.applied = true;
+      render();
+      toast("Reviewed results applied to the assessment.");
+    }
+
+    function exportAssessmentWorkbook() {
+      if (!window.XLSX) return toast(t("missingSheetJs"));
+      const headers = ["#", "ID", "TYPE", "SUBTOPIC", "ASSESSMENT POINT", "EVIDENCE REQUIRED", "REQUIREMENTS L1", "(1) %", "REQUIREMENTS L2", "(2) %", "REQUIREMENTS L3", "(3) %", "REQUIREMENTS L4", "(4) %", "REQUIREMENTS L5", "(5) %", "N/A", "COMMENT", "ANSWER RELIABILITY", "CONTROL"];
+      const workbook = XLSX.utils.book_new();
+      [...new Set(state.assessment.questions.map((q) => q.domain))].forEach((domain) => {
+        const rows = state.assessment.questions.filter((q) => q.domain === domain).map((q) => [
+          q.order, q.id, q.type, q.subtopic, q.question, q.evidence,
+          q.requirements[0], q.levels[0], q.requirements[1], q.levels[1], q.requirements[2], q.levels[2],
+          q.requirements[3], q.levels[3], q.requirements[4], q.levels[4],
+          q.status === "na" ? "x" : "", q.comment, q.reliability, q.control
+        ]);
+        const sheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+        sheet["!cols"] = headers.map((header) => ({ wch: header.includes("REQUIREMENTS") || header === "COMMENT" ? 45 : 18 }));
+        XLSX.utils.book_append_sheet(workbook, sheet, domain);
+      });
+      XLSX.writeFile(workbook, `CyberBenchmark-ingested-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    function renderIngest() {
+      const domains = state.assessment?.domainStats?.map((domain) => domain.id) || [];
+      const domainSelect = $("ingestDomain");
+      const current = domainSelect.value || state.ingest.domain;
+      domainSelect.innerHTML = `<option value="">${html(t("ingestAllDomains"))}</option>`;
+      domains.forEach((domain) => domainSelect.add(new Option(`${domain} · ${DOMAIN_NAMES[domain] || domain}`, domain)));
+      domainSelect.value = domains.includes(current) ? current : "";
+      $("ingestProgress").classList.toggle("hidden", !state.ingest.running && !state.ingest.log.length);
+      $("ingestProgressBar").style.width = `${state.ingest.progress}%`;
+      $("ingestProgressText").textContent = state.ingest.running ? "Two-pass ingestion in progress..." : `${state.ingest.results.length} reviewed answers ready`;
+      $("ingestLog").innerHTML = state.ingest.log.map((line) => `<div>${html(line)}</div>`).join("");
+      $("ingestRun").disabled = state.ingest.running;
+      $("ingestApply").disabled = state.ingest.running || !state.ingest.results.length;
+      $("ingestExport").disabled = !state.ingest.applied;
+      $("ingestReview").innerHTML = state.ingest.challenges.slice(0, 20).map((challenge) => `
+        <div class="ingest-review-card"><strong>${html(challenge.id || "Review")}</strong><p>${html(challenge.issue || "")}</p><p><b>Correction:</b> ${html(challenge.correction || "")}</p></div>`).join("");
+    }
+
     function render() {
       const ready = Boolean(state.assessment);
       refs.dummyNotice.classList.toggle("hidden", !(state.dummyAssessment || state.dummyBenchmark));
@@ -1955,6 +2451,8 @@
       renderOverview();
       renderDomains();
       renderFindings();
+      renderRecommendations();
+      renderIngest();
       renderQuestions();
       renderCompare();
     }
@@ -1966,6 +2464,8 @@
         overview: [t("overviewTitle"), t("overviewIntro")],
         domains: [t("domainsTitle"), t("domainsIntro")],
         findings: [t("findingsTitle"), t("findingsIntro")],
+        recommendations: [t("recommendationsTitle"), t("recommendationsIntro")],
+        ingest: [t("ingestTitle"), t("ingestIntro")],
         questions: [t("questionsTitle"), t("questionsIntro")],
         compare: [t("compareTitle"), t("compareIntro")]
       };
@@ -2274,6 +2774,8 @@
         { tab: "domains", title: t("navDomains"), text: t("domainsIntro"), preview: miniBars() },
         { tab: "findings", title: t("navFindings"), text: t("findingsIntro"), preview: miniFindings() },
         { tab: "compare", title: t("navCompare"), text: t("compareIntro"), preview: miniCompare() },
+        { tab: "recommendations", title: t("navRecommendations"), text: t("recommendationsIntro"), preview: miniRecommendations() },
+        { tab: "ingest", title: t("navIngest"), text: t("ingestIntro"), preview: miniTable() },
         { tab: "questions", title: t("navQuestions"), text: t("questionsIntro"), preview: miniTable() }
       ];
       $("thumbGrid").innerHTML = tiles.map((tile) => `
@@ -2353,6 +2855,14 @@
       const rows = [0, 1, 2, 3].map((i) => `
         <rect x="8" y="${8 + i * 15}" width="14" height="9" rx="2" fill="rgba(22,153,168,.5)"></rect>
         <rect x="28" y="${10 + i * 15}" width="84" height="5" rx="2.5" fill="rgba(0,0,0,.1)"></rect>`).join("");
+      return `<svg viewBox="0 0 120 76">${rows}</svg>`;
+    }
+
+    function miniRecommendations() {
+      const rows = [0, 1, 2].map((i) => `
+        <circle cx="13" cy="${15 + i * 20}" r="5" fill="${i === 0 ? "#f17778" : "var(--amber)"}"></circle>
+        <rect x="25" y="${11 + i * 20}" width="${82 - i * 8}" height="5" rx="2.5" fill="rgba(0,0,0,.12)"></rect>
+        <rect x="25" y="${19 + i * 20}" width="${58 - i * 5}" height="4" rx="2" fill="rgba(22,153,168,.25)"></rect>`).join("");
       return `<svg viewBox="0 0 120 76">${rows}</svg>`;
     }
 
@@ -2641,6 +3151,114 @@
       else state.findingsDomain = "";
     }
 
+    function recommendationActions(question, targetLevel) {
+      const currentLevel = maturityLevelFromLevels(question.levels) || maturityLevelFromScore(question.score) || 1;
+      const start = clamp(currentLevel, 1, 5);
+      const end = clamp(Math.max(start + 1, targetLevel), 1, 5);
+      const actions = [];
+      for (let level = start + 1; level <= end; level++) {
+        const requirement = question.requirements?.[level - 1];
+        String(requirement || "").split(/\n+/).forEach((line) => {
+          const action = clean(line).replace(/^[-*•]\s*/, "");
+          if (action && !actions.includes(action)) actions.push(action);
+        });
+      }
+      if (!actions.length) {
+        const fallback = clean(question.requirements?.[end - 1] || question.evidence || question.question);
+        if (fallback) actions.push(fallback);
+      }
+      return { currentLevel, targetLevel: end, actions: actions.slice(0, 8) };
+    }
+
+    function recommendationPriority(gap) {
+      if (gap <= -30) return { key: "critical", label: t("priorityCritical") };
+      if (gap <= -15) return { key: "high", label: t("priorityHigh") };
+      return { key: "medium", label: t("priorityMedium") };
+    }
+
+    function recommendationRows() {
+      if (!state.assessment || !state.benchmark) return [];
+      const marketByDomain = new Map(state.benchmark.domainStats.map((domain) => [domain.id, benchmarkValue(domain, "all")]));
+      return state.assessment.questions
+        .filter((question) => question.status === "scored" && (!state.recommendationDomain || question.domain === state.recommendationDomain))
+        .map((question) => {
+          const market = marketByDomain.get(question.domain);
+          const gap = Number.isFinite(market) ? question.score - market : null;
+          const targetLevel = maturityLevelFromScore(market);
+          const remediation = recommendationActions(question, targetLevel);
+          return { question, market, gap, ...remediation, priority: recommendationPriority(gap) };
+        })
+        .filter((row) => Number.isFinite(row.gap) && row.gap < 0)
+        .sort((a, b) => a.gap - b.gap);
+    }
+
+    function buildRecommendationEnrichmentPayload(rows) {
+      return {
+        version: 1,
+        objective: "Enrich static remediation recommendations with owners, milestones, dependencies, and tailored actions.",
+        requestedOutputs: ["suggestedOwner", "supportingTeams", "milestones", "dependencies", "tailoredActions", "rationale"],
+        security: "Send this payload only to a secure server-side proxy. Never expose provider API keys in the browser.",
+        comparisonTarget: { key: "all", label: referenceLabel("all") },
+        recommendations: rows.map((row) => ({
+          id: row.question.id,
+          domain: row.question.domain,
+          subtopic: row.question.subtopic,
+          question: row.question.question,
+          score: row.question.score,
+          marketScore: row.market,
+          gap: row.gap,
+          currentLevel: row.currentLevel,
+          targetLevel: row.targetLevel,
+          staticActions: row.actions,
+          assessmentContext: {
+            comment: clean(row.question.comment),
+            reliability: clean(row.question.reliability),
+            evidenceExpected: clean(row.question.evidence),
+            control: clean(row.question.control)
+          }
+        }))
+      };
+    }
+
+    function renderRecommendations() {
+      const domainSelect = $("recommendationDomain");
+      const domains = state.assessment.domainStats.map((domain) => domain.id);
+      domainSelect.innerHTML = "";
+      domainSelect.add(new Option(t("all"), ""));
+      domains.forEach((domain) => domainSelect.add(new Option(`${domain} · ${DOMAIN_NAMES[domain] || domain}`, domain)));
+      domainSelect.value = domains.includes(state.recommendationDomain) ? state.recommendationDomain : "";
+      $("recommendationLimit").value = String(state.recommendationLimit);
+
+      const rows = recommendationRows();
+      const visible = rows.slice(0, state.recommendationLimit);
+      $("recommendationSummary").textContent = rows.length
+        ? t("recommendationSummary", { shown: visible.length, total: rows.length })
+        : t("recommendationEmpty");
+      $("recommendationList").innerHTML = visible.map((row) => `
+        <article class="card recommendation-card">
+          <div class="recommendation-head">
+            <div>
+              <div class="recommendation-title">${html(row.question.id)} · ${html(row.question.question || row.question.subtopic)}</div>
+              <div class="recommendation-meta">${html(row.question.domain)} · ${html(row.question.subtopic || "-")} · ${html(row.question.type)}</div>
+            </div>
+            <div class="priority-badge priority-${row.priority.key}">${html(row.priority.label)}</div>
+          </div>
+          <div class="recommendation-body">
+            <div class="recommendation-scores">
+              <span class="recommendation-score">${t("currentScore")} <strong>${pct(row.question.score)}</strong></span>
+              <span class="recommendation-score">${t("marketScore")} <strong>${pct(row.market)}</strong></span>
+              <span class="recommendation-score">${t("gap")} <strong style="color:var(--red)">${signedPct(row.gap)}</strong></span>
+              <span class="recommendation-score">${t("targetLevel")} <strong>L${row.targetLevel}</strong></span>
+            </div>
+            <strong>${t("remediationActions")}</strong>
+            <ul class="action-list">${row.actions.map((action) => `<li>${html(action)}</li>`).join("")}</ul>
+          </div>
+        </article>`).join("");
+
+      // The payload stays in memory; sending it requires a configured secure API proxy.
+      state.recommendationPayload = buildRecommendationEnrichmentPayload(visible);
+    }
+
     function filteredQuestions() {
       let qs = [...state.assessment.questions];
       const f = state.filters;
@@ -2860,6 +3478,26 @@
       state.findingsDomain = event.target.value;
       if (state.assessment) renderFindings();
     });
+    $("recommendationDomain").addEventListener("input", (event) => {
+      state.recommendationDomain = event.target.value;
+      if (state.assessment) renderRecommendations();
+    });
+    $("recommendationLimit").addEventListener("input", (event) => {
+      state.recommendationLimit = Number(event.target.value) || 10;
+      if (state.assessment) renderRecommendations();
+    });
+    $("ingestProvider").addEventListener("change", (event) => {
+      const defaults = { anthropic: "claude-sonnet-4-20250514", openai: "gpt-4.1", azure_openai: "", google_gemini: "gemini-2.5-pro" };
+      state.ingest.provider = event.target.value;
+      $("ingestModel").value = defaults[event.target.value];
+      $("ingestAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
+      $("ingestApiKeyField").classList.toggle("hidden", event.target.value === "azure_openai");
+    });
+    $("ingestDomain").addEventListener("change", (event) => { state.ingest.domain = event.target.value; });
+    $("ingestTest").addEventListener("click", testIngestConnection);
+    $("ingestRun").addEventListener("click", runIngest);
+    $("ingestApply").addEventListener("click", applyIngestResults);
+    $("ingestExport").addEventListener("click", exportAssessmentWorkbook);
     ["search", "domainFilter", "typeFilter", "statusFilter", "scoreFilter"].forEach((id) => {
       $(id).addEventListener("input", (event) => {
         const key = id.replace("Filter", "");
