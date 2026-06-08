@@ -7,7 +7,7 @@ The UI defaults to English and automatically switches to French when the browser
 
 1. Publish the repository with GitHub Pages.
 2. Open `index.html`.
-3. A complete synthetic assessment is displayed by default for testing without a real file (`data/dummy-assessment.json`: 221 questions), together with the default Top 10 benchmark (`data/Scores-CyberBenchmark-03062026.xlsx`).
+3. A synthetic assessment is displayed by default (`data/dummy-assessment.json`: 220 questions whose IDs, subtopics, and assessment points mirror the real W-CyberBenchmark question bank), together with the default benchmark (`data/Scores-CyberBenchmark-03062026.xlsx`). Only the assessment scores, maturity levels, comments, and reliability are synthetic.
 4. Upload an assessment `.xlsm`, `.xlsx`, `.xls`, or `.xlsb` file to replace the example.
 5. Optionally upload another benchmark file. Use `data/Scores-CyberBenchmark-03062026.xlsx` as the import template.
 6. Use the PNG buttons to export each main visual.

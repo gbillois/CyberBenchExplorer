@@ -2,7 +2,7 @@
   "name": "Dummy benchmark - question-level top 10 referential",
   "sourceSheet": "Dummy question-level benchmark",
   "preferredRef": "top",
-  "description": "Synthetic benchmark with deliberately varied global, sector, top 10 score, and top 10 maturity levels for every question.",
+  "description": "Synthetic question-level benchmark for CyberBench Explorer tests. IDs match the real W-CyberBenchmark question bank; global, sector, top 10 scores and top 10 maturity levels are invented.",
   "records": [
     {
       "id": "GOV.01",
@@ -137,66 +137,6 @@
         0.42,
         0.35,
         0.23
-      ]
-    },
-    {
-      "id": "GOV.10",
-      "domain": "GOV",
-      "all": 70.5,
-      "sector": 77.5,
-      "top": 85.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.58,
-        0.25,
-        0.17
-      ]
-    },
-    {
-      "id": "GOV.11",
-      "domain": "GOV",
-      "all": 70.5,
-      "sector": 78.5,
-      "top": 87.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.5,
-        0.3,
-        0.2
-      ]
-    },
-    {
-      "id": "GOV.12",
-      "domain": "GOV",
-      "all": 45.5,
-      "sector": 54.5,
-      "top": 64.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.42,
-        0.58,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "GOV.13",
-      "domain": "GOV",
-      "all": 52.5,
-      "sector": 62.5,
-      "top": 73.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.06,
-        0.94,
-        0,
-        0
       ]
     },
     {
@@ -470,126 +410,6 @@
       ]
     },
     {
-      "id": "TP.06",
-      "domain": "TP",
-      "all": 58.5,
-      "sector": 65.5,
-      "top": 80.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.78,
-        0.13,
-        0.09
-      ]
-    },
-    {
-      "id": "TP.07",
-      "domain": "TP",
-      "all": 48.5,
-      "sector": 56.5,
-      "top": 72.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.1,
-        0.9,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "TP.08",
-      "domain": "TP",
-      "all": 67.5,
-      "sector": 76.5,
-      "top": 84.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.62,
-        0.23,
-        0.15
-      ]
-    },
-    {
-      "id": "TP.09",
-      "domain": "TP",
-      "all": 61.5,
-      "sector": 71.5,
-      "top": 80.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.78,
-        0.13,
-        0.09
-      ]
-    },
-    {
-      "id": "TP.10",
-      "domain": "TP",
-      "all": 55.5,
-      "sector": 66.5,
-      "top": 76.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.94,
-        0.04,
-        0.02
-      ]
-    },
-    {
-      "id": "TP.11",
-      "domain": "TP",
-      "all": 62.5,
-      "sector": 67.5,
-      "top": 78.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.86,
-        0.08,
-        0.06
-      ]
-    },
-    {
-      "id": "TP.12",
-      "domain": "TP",
-      "all": 37.5,
-      "sector": 43.5,
-      "top": 55.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0,
-        0.78,
-        0.22,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "TP.13",
-      "domain": "TP",
-      "all": 44.5,
-      "sector": 51.5,
-      "top": 64.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.42,
-        0.58,
-        0,
-        0
-      ]
-    },
-    {
       "id": "ASSET.01",
       "domain": "ASSET",
       "all": 45.5,
@@ -737,246 +557,6 @@
         0.78,
         0,
         0
-      ]
-    },
-    {
-      "id": "ASSET.11",
-      "domain": "ASSET",
-      "all": 52.5,
-      "sector": 59.5,
-      "top": 71.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.14,
-        0.86,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "ASSET.12",
-      "domain": "ASSET",
-      "all": 27.5,
-      "sector": 35.5,
-      "top": 48.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0.06,
-        0.94,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "ASSET.13",
-      "domain": "ASSET",
-      "all": 34.5,
-      "sector": 43.5,
-      "top": 57.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0,
-        0.7,
-        0.3,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "OPS.01",
-      "domain": "OPS",
-      "all": 74.5,
-      "sector": 80.5,
-      "top": 92.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.3,
-        0.42,
-        0.28
-      ]
-    },
-    {
-      "id": "OPS.02",
-      "domain": "OPS",
-      "all": 69.5,
-      "sector": 76.5,
-      "top": 89.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.42,
-        0.35,
-        0.23
-      ]
-    },
-    {
-      "id": "OPS.03",
-      "domain": "OPS",
-      "all": 67.5,
-      "sector": 75.5,
-      "top": 89.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.42,
-        0.35,
-        0.23
-      ]
-    },
-    {
-      "id": "OPS.04",
-      "domain": "OPS",
-      "all": 65.5,
-      "sector": 74.5,
-      "top": 89.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.42,
-        0.35,
-        0.23
-      ]
-    },
-    {
-      "id": "OPS.05",
-      "domain": "OPS",
-      "all": 55.5,
-      "sector": 65.5,
-      "top": 81.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.74,
-        0.16,
-        0.1
-      ]
-    },
-    {
-      "id": "OPS.06",
-      "domain": "OPS",
-      "all": 79.5,
-      "sector": 90.5,
-      "top": 98.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.06,
-        0.56,
-        0.38
-      ]
-    },
-    {
-      "id": "OPS.07",
-      "domain": "OPS",
-      "all": 76.5,
-      "sector": 81.5,
-      "top": 90.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.38,
-        0.37,
-        0.25
-      ]
-    },
-    {
-      "id": "OPS.08",
-      "domain": "OPS",
-      "all": 83,
-      "sector": 89,
-      "top": 99,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.04,
-        0.58,
-        0.38
-      ]
-    },
-    {
-      "id": "OPS.09",
-      "domain": "OPS",
-      "all": 80.5,
-      "sector": 87.5,
-      "top": 98.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.06,
-        0.56,
-        0.38
-      ]
-    },
-    {
-      "id": "OPS.10",
-      "domain": "OPS",
-      "all": 74.5,
-      "sector": 82.5,
-      "top": 94.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.22,
-        0.47,
-        0.31
-      ]
-    },
-    {
-      "id": "OPS.11",
-      "domain": "OPS",
-      "all": 74.5,
-      "sector": 83.5,
-      "top": 96.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.14,
-        0.52,
-        0.34
-      ]
-    },
-    {
-      "id": "OPS.12",
-      "domain": "OPS",
-      "all": 49.5,
-      "sector": 59.5,
-      "top": 73.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.06,
-        0.94,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "OPS.13",
-      "domain": "OPS",
-      "all": 56.5,
-      "sector": 67.5,
-      "top": 82.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.7,
-        0.18,
-        0.12
       ]
     },
     {
@@ -1157,21 +737,6 @@
         0.86,
         0,
         0
-      ]
-    },
-    {
-      "id": "ENDPT.13",
-      "domain": "ENDPT",
-      "all": 58.5,
-      "sector": 64.5,
-      "top": 80.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.78,
-        0.13,
-        0.09
       ]
     },
     {
@@ -1370,6 +935,51 @@
       ]
     },
     {
+      "id": "NTW.14",
+      "domain": "NTW",
+      "all": 50,
+      "sector": 59,
+      "top": 73,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.48,
+        0.31,
+        0.21
+      ]
+    },
+    {
+      "id": "NTW.15",
+      "domain": "NTW",
+      "all": 58,
+      "sector": 65,
+      "top": 74,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "NTW.16",
+      "domain": "NTW",
+      "all": 55,
+      "sector": 65,
+      "top": 72,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.41,
+        0.35,
+        0.24
+      ]
+    },
+    {
       "id": "APP.01",
       "domain": "APP",
       "all": 63.5,
@@ -1505,66 +1115,6 @@
       ]
     },
     {
-      "id": "APP.10",
-      "domain": "APP",
-      "all": 63.5,
-      "sector": 70.5,
-      "top": 85.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.58,
-        0.25,
-        0.17
-      ]
-    },
-    {
-      "id": "APP.11",
-      "domain": "APP",
-      "all": 63.5,
-      "sector": 71.5,
-      "top": 87.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.5,
-        0.3,
-        0.2
-      ]
-    },
-    {
-      "id": "APP.12",
-      "domain": "APP",
-      "all": 47.5,
-      "sector": 56.5,
-      "top": 64.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.42,
-        0.58,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "APP.13",
-      "domain": "APP",
-      "all": 54.5,
-      "sector": 64.5,
-      "top": 73.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.06,
-        0.94,
-        0,
-        0
-      ]
-    },
-    {
       "id": "DATA.01",
       "domain": "DATA",
       "all": 58.5,
@@ -1625,21 +1175,6 @@
       ]
     },
     {
-      "id": "DATA.05",
-      "domain": "DATA",
-      "all": 48.5,
-      "sector": 59.5,
-      "top": 70.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.18,
-        0.82,
-        0,
-        0
-      ]
-    },
-    {
       "id": "DATA.06",
       "domain": "DATA",
       "all": 70.5,
@@ -1655,36 +1190,6 @@
       ]
     },
     {
-      "id": "DATA.07",
-      "domain": "DATA",
-      "all": 60.5,
-      "sector": 66.5,
-      "top": 79.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.82,
-        0.11,
-        0.07
-      ]
-    },
-    {
-      "id": "DATA.08",
-      "domain": "DATA",
-      "all": 70.5,
-      "sector": 77.5,
-      "top": 91.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.34,
-        0.4,
-        0.26
-      ]
-    },
-    {
       "id": "DATA.09",
       "domain": "DATA",
       "all": 64.5,
@@ -1697,66 +1202,6 @@
         0.5,
         0.3,
         0.2
-      ]
-    },
-    {
-      "id": "DATA.10",
-      "domain": "DATA",
-      "all": 58.5,
-      "sector": 67.5,
-      "top": 83.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.66,
-        0.2,
-        0.14
-      ]
-    },
-    {
-      "id": "DATA.11",
-      "domain": "DATA",
-      "all": 67.5,
-      "sector": 77.5,
-      "top": 85.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.58,
-        0.25,
-        0.17
-      ]
-    },
-    {
-      "id": "DATA.12",
-      "domain": "DATA",
-      "all": 42.5,
-      "sector": 53.5,
-      "top": 62.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0,
-        0.5,
-        0.5,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "DATA.13",
-      "domain": "DATA",
-      "all": 56.5,
-      "sector": 61.5,
-      "top": 71.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.14,
-        0.86,
-        0,
-        0
       ]
     },
     {
@@ -1802,21 +1247,6 @@
         0.82,
         0.11,
         0.07
-      ]
-    },
-    {
-      "id": "IAM.04",
-      "domain": "IAM",
-      "all": 57.5,
-      "sector": 62.5,
-      "top": 73.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.06,
-        0.94,
-        0,
-        0
       ]
     },
     {
@@ -1907,51 +1337,6 @@
         0.62,
         0.23,
         0.15
-      ]
-    },
-    {
-      "id": "IAM.11",
-      "domain": "IAM",
-      "all": 69.5,
-      "sector": 74.5,
-      "top": 83.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.66,
-        0.2,
-        0.14
-      ]
-    },
-    {
-      "id": "IAM.12",
-      "domain": "IAM",
-      "all": 47.5,
-      "sector": 53.5,
-      "top": 63.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.46,
-        0.54,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "IAM.13",
-      "domain": "IAM",
-      "all": 54.5,
-      "sector": 61.5,
-      "top": 72.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.1,
-        0.9,
-        0,
-        0
       ]
     },
     {
@@ -2105,48 +1490,213 @@
       ]
     },
     {
-      "id": "DET.11",
-      "domain": "DET",
+      "id": "OPS.01",
+      "domain": "OPS",
+      "all": 74.5,
+      "sector": 80.5,
+      "top": 92.5,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.3,
+        0.42,
+        0.28
+      ]
+    },
+    {
+      "id": "OPS.02",
+      "domain": "OPS",
       "all": 69.5,
       "sector": 76.5,
-      "top": 86.5,
+      "top": 89.5,
       "topMaturityLevel": 3,
       "topLevels": [
         0,
         0,
-        0.54,
-        0.28,
-        0.18
+        0.42,
+        0.35,
+        0.23
       ]
     },
     {
-      "id": "DET.12",
-      "domain": "DET",
-      "all": 44.5,
-      "sector": 52.5,
-      "top": 63.5,
+      "id": "OPS.03",
+      "domain": "OPS",
+      "all": 67.5,
+      "sector": 75.5,
+      "top": 89.5,
       "topMaturityLevel": 3,
       "topLevels": [
+        0,
+        0,
+        0.42,
+        0.35,
+        0.23
+      ]
+    },
+    {
+      "id": "OPS.04",
+      "domain": "OPS",
+      "all": 65.5,
+      "sector": 74.5,
+      "top": 89.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.42,
+        0.35,
+        0.23
+      ]
+    },
+    {
+      "id": "OPS.05",
+      "domain": "OPS",
+      "all": 55.5,
+      "sector": 65.5,
+      "top": 81.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.74,
+        0.16,
+        0.1
+      ]
+    },
+    {
+      "id": "OPS.06",
+      "domain": "OPS",
+      "all": 79.5,
+      "sector": 90.5,
+      "top": 98.5,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.06,
+        0.56,
+        0.38
+      ]
+    },
+    {
+      "id": "OPS.07",
+      "domain": "OPS",
+      "all": 76.5,
+      "sector": 81.5,
+      "top": 90.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.38,
+        0.37,
+        0.25
+      ]
+    },
+    {
+      "id": "OPS.08",
+      "domain": "OPS",
+      "all": 83,
+      "sector": 89,
+      "top": 99,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.04,
+        0.58,
+        0.38
+      ]
+    },
+    {
+      "id": "OPS.09",
+      "domain": "OPS",
+      "all": 80.5,
+      "sector": 87.5,
+      "top": 98.5,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.06,
+        0.56,
+        0.38
+      ]
+    },
+    {
+      "id": "OPS.10",
+      "domain": "OPS",
+      "all": 74.5,
+      "sector": 82.5,
+      "top": 94.5,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.22,
+        0.47,
+        0.31
+      ]
+    },
+    {
+      "id": "OPS.11",
+      "domain": "OPS",
+      "all": 74.5,
+      "sector": 83.5,
+      "top": 96.5,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.14,
+        0.52,
+        0.34
+      ]
+    },
+    {
+      "id": "OPS.12",
+      "domain": "OPS",
+      "all": 49.5,
+      "sector": 59.5,
+      "top": 73.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.06,
+        0.94,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "OPS.13",
+      "domain": "OPS",
+      "all": 56.5,
+      "sector": 67.5,
+      "top": 82.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.7,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "id": "OPS.14",
+      "domain": "OPS",
+      "all": 55,
+      "sector": 62,
+      "top": 71,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
         0,
         0.46,
-        0.54,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "DET.13",
-      "domain": "DET",
-      "all": 51.5,
-      "sector": 60.5,
-      "top": 72.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.1,
-        0.9,
-        0,
-        0
+        0.32,
+        0.22
       ]
     },
     {
@@ -2255,96 +1805,6 @@
       ]
     },
     {
-      "id": "INC.08",
-      "domain": "INC",
-      "all": 68.5,
-      "sector": 74.5,
-      "top": 82.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.7,
-        0.18,
-        0.12
-      ]
-    },
-    {
-      "id": "INC.09",
-      "domain": "INC",
-      "all": 62.5,
-      "sector": 69.5,
-      "top": 78.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.86,
-        0.08,
-        0.06
-      ]
-    },
-    {
-      "id": "INC.10",
-      "domain": "INC",
-      "all": 56.5,
-      "sector": 64.5,
-      "top": 74.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.02,
-        0.98,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "INC.11",
-      "domain": "INC",
-      "all": 56.5,
-      "sector": 65.5,
-      "top": 76.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.94,
-        0.04,
-        0.02
-      ]
-    },
-    {
-      "id": "INC.12",
-      "domain": "INC",
-      "all": 36.5,
-      "sector": 46.5,
-      "top": 58.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0,
-        0.66,
-        0.34,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "INC.13",
-      "domain": "INC",
-      "all": 38.5,
-      "sector": 49.5,
-      "top": 62.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0,
-        0.5,
-        0.5,
-        0,
-        0
-      ]
-    },
-    {
       "id": "RES.01",
       "domain": "RES",
       "all": 58.5,
@@ -2420,21 +1880,6 @@
       ]
     },
     {
-      "id": "RES.06",
-      "domain": "RES",
-      "all": 61.5,
-      "sector": 67.5,
-      "top": 83.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.66,
-        0.2,
-        0.14
-      ]
-    },
-    {
       "id": "RES.07",
       "domain": "RES",
       "all": 60.5,
@@ -2450,18 +1895,18 @@
       ]
     },
     {
-      "id": "RES.08",
-      "domain": "RES",
-      "all": 70.5,
-      "sector": 78.5,
-      "top": 87.5,
+      "id": "INC.08",
+      "domain": "INC",
+      "all": 68.5,
+      "sector": 74.5,
+      "top": 82.5,
       "topMaturityLevel": 3,
       "topLevels": [
         0,
         0,
-        0.5,
-        0.3,
-        0.2
+        0.7,
+        0.18,
+        0.12
       ]
     },
     {
@@ -2540,6 +1985,21 @@
       ]
     },
     {
+      "id": "RES.14",
+      "domain": "RES",
+      "all": 56,
+      "sector": 60,
+      "top": 66,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.43,
+        0.34,
+        0.23
+      ]
+    },
+    {
       "id": "PHY.01",
       "domain": "PHY",
       "all": 63.5,
@@ -2595,141 +2055,6 @@
         0,
         0.18,
         0.82,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "PHY.05",
-      "domain": "PHY",
-      "all": 51.5,
-      "sector": 58.5,
-      "top": 74.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.02,
-        0.98,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "PHY.06",
-      "domain": "PHY",
-      "all": 69.5,
-      "sector": 77.5,
-      "top": 85.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.58,
-        0.25,
-        0.17
-      ]
-    },
-    {
-      "id": "PHY.07",
-      "domain": "PHY",
-      "all": 65.5,
-      "sector": 74.5,
-      "top": 83.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.66,
-        0.2,
-        0.14
-      ]
-    },
-    {
-      "id": "PHY.08",
-      "domain": "PHY",
-      "all": 56.5,
-      "sector": 66.5,
-      "top": 76.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.94,
-        0.04,
-        0.02
-      ]
-    },
-    {
-      "id": "PHY.09",
-      "domain": "PHY",
-      "all": 69.5,
-      "sector": 80.5,
-      "top": 91.5,
-      "topMaturityLevel": 4,
-      "topLevels": [
-        0,
-        0,
-        0.34,
-        0.4,
-        0.26
-      ]
-    },
-    {
-      "id": "PHY.10",
-      "domain": "PHY",
-      "all": 70.5,
-      "sector": 75.5,
-      "top": 87.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.5,
-        0.3,
-        0.2
-      ]
-    },
-    {
-      "id": "PHY.11",
-      "domain": "PHY",
-      "all": 61.5,
-      "sector": 67.5,
-      "top": 80.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.78,
-        0.13,
-        0.09
-      ]
-    },
-    {
-      "id": "PHY.12",
-      "domain": "PHY",
-      "all": 45.5,
-      "sector": 52.5,
-      "top": 66.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.34,
-        0.66,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "PHY.13",
-      "domain": "PHY",
-      "all": 49.5,
-      "sector": 57.5,
-      "top": 72.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0.1,
-        0.9,
         0,
         0
       ]
@@ -2870,6 +2195,261 @@
       ]
     },
     {
+      "id": "GOV.10",
+      "domain": "GOV",
+      "all": 70.5,
+      "sector": 77.5,
+      "top": 85.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.58,
+        0.25,
+        0.17
+      ]
+    },
+    {
+      "id": "GOV.11",
+      "domain": "GOV",
+      "all": 70.5,
+      "sector": 78.5,
+      "top": 87.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.5,
+        0.3,
+        0.2
+      ]
+    },
+    {
+      "id": "OPS.15",
+      "domain": "OPS",
+      "all": 64,
+      "sector": 67,
+      "top": 77,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "OPS.16",
+      "domain": "OPS",
+      "all": 54,
+      "sector": 63,
+      "top": 78,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.37,
+        0.38,
+        0.25
+      ]
+    },
+    {
+      "id": "OPS.17",
+      "domain": "OPS",
+      "all": 49,
+      "sector": 54,
+      "top": 69,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.37,
+        0.38,
+        0.25
+      ]
+    },
+    {
+      "id": "OPS.18",
+      "domain": "OPS",
+      "all": 51,
+      "sector": 61,
+      "top": 72,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.4,
+        0.36,
+        0.24
+      ]
+    },
+    {
+      "id": "OPS.19",
+      "domain": "OPS",
+      "all": 60,
+      "sector": 68,
+      "top": 83,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.36,
+        0.38,
+        0.26
+      ]
+    },
+    {
+      "id": "OPS.20",
+      "domain": "OPS",
+      "all": 50,
+      "sector": 56,
+      "top": 69,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "ENDPT.13",
+      "domain": "ENDPT",
+      "all": 58.5,
+      "sector": 64.5,
+      "top": 80.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.78,
+        0.13,
+        0.09
+      ]
+    },
+    {
+      "id": "ENDPT.14",
+      "domain": "ENDPT",
+      "all": 51,
+      "sector": 54,
+      "top": 71,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.34,
+        0.4,
+        0.26
+      ]
+    },
+    {
+      "id": "APP.10",
+      "domain": "APP",
+      "all": 63.5,
+      "sector": 70.5,
+      "top": 85.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.58,
+        0.25,
+        0.17
+      ]
+    },
+    {
+      "id": "DATA.10",
+      "domain": "DATA",
+      "all": 58.5,
+      "sector": 67.5,
+      "top": 83.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.66,
+        0.2,
+        0.14
+      ]
+    },
+    {
+      "id": "DET.11",
+      "domain": "DET",
+      "all": 69.5,
+      "sector": 76.5,
+      "top": 86.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.54,
+        0.28,
+        0.18
+      ]
+    },
+    {
+      "id": "DET.12",
+      "domain": "DET",
+      "all": 44.5,
+      "sector": 52.5,
+      "top": 63.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.46,
+        0.54,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "RES.16",
+      "domain": "RES",
+      "all": 66,
+      "sector": 76,
+      "top": 84,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.32,
+        0.41,
+        0.27
+      ]
+    },
+    {
+      "id": "INC.09",
+      "domain": "INC",
+      "all": 62.5,
+      "sector": 69.5,
+      "top": 78.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.86,
+        0.08,
+        0.06
+      ]
+    },
+    {
+      "id": "RES.17",
+      "domain": "RES",
+      "all": 61,
+      "sector": 71,
+      "top": 83,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.49,
+        0.31,
+        0.2
+      ]
+    },
+    {
       "id": "ICS.10",
       "domain": "ICS",
       "all": 58.5,
@@ -2930,6 +2510,126 @@
       ]
     },
     {
+      "id": "ICS.14",
+      "domain": "ICS",
+      "all": 64,
+      "sector": 69,
+      "top": 76,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "ICS.15",
+      "domain": "ICS",
+      "all": 46,
+      "sector": 52,
+      "top": 60,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.46,
+        0.32,
+        0.22
+      ]
+    },
+    {
+      "id": "ICS.16",
+      "domain": "ICS",
+      "all": 67,
+      "sector": 71,
+      "top": 78,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.44,
+        0.34,
+        0.22
+      ]
+    },
+    {
+      "id": "ICS.17",
+      "domain": "ICS",
+      "all": 47,
+      "sector": 51,
+      "top": 67,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.47,
+        0.32,
+        0.21
+      ]
+    },
+    {
+      "id": "ICS.18",
+      "domain": "ICS",
+      "all": 67,
+      "sector": 70,
+      "top": 87,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "ICS.19",
+      "domain": "ICS",
+      "all": 73,
+      "sector": 76,
+      "top": 92,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "ICS.20",
+      "domain": "ICS",
+      "all": 76,
+      "sector": 80,
+      "top": 89,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "ICS.21",
+      "domain": "ICS",
+      "all": 57,
+      "sector": 63,
+      "top": 71,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.38,
+        0.37,
+        0.25
+      ]
+    },
+    {
       "id": "CLOUD.01",
       "domain": "CLOUD",
       "all": 65.5,
@@ -2987,21 +2687,6 @@
         0.66,
         0.2,
         0.14
-      ]
-    },
-    {
-      "id": "CLOUD.05",
-      "domain": "CLOUD",
-      "all": 55.5,
-      "sector": 66.5,
-      "top": 75.5,
-      "topMaturityLevel": 3,
-      "topLevels": [
-        0,
-        0,
-        0.98,
-        0.01,
-        0.01
       ]
     },
     {
@@ -3095,6 +2780,36 @@
       ]
     },
     {
+      "id": "APP.11",
+      "domain": "APP",
+      "all": 63.5,
+      "sector": 71.5,
+      "top": 87.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.5,
+        0.3,
+        0.2
+      ]
+    },
+    {
+      "id": "APP.12",
+      "domain": "APP",
+      "all": 47.5,
+      "sector": 56.5,
+      "top": 64.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.42,
+        0.58,
+        0,
+        0
+      ]
+    },
+    {
       "id": "CLOUD.12",
       "domain": "CLOUD",
       "all": 40.5,
@@ -3122,6 +2837,291 @@
         0.94,
         0.04,
         0.02
+      ]
+    },
+    {
+      "id": "CLOUD.14",
+      "domain": "CLOUD",
+      "all": 78,
+      "sector": 85,
+      "top": 99,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "CLOUD.15",
+      "domain": "CLOUD",
+      "all": 64,
+      "sector": 73,
+      "top": 80,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "DATA.11",
+      "domain": "DATA",
+      "all": 67.5,
+      "sector": 77.5,
+      "top": 85.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.58,
+        0.25,
+        0.17
+      ]
+    },
+    {
+      "id": "DATA.12",
+      "domain": "DATA",
+      "all": 42.5,
+      "sector": 53.5,
+      "top": 62.5,
+      "topMaturityLevel": 2,
+      "topLevels": [
+        0,
+        0.5,
+        0.5,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DATA.13",
+      "domain": "DATA",
+      "all": 56.5,
+      "sector": 61.5,
+      "top": 71.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.14,
+        0.86,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "DATA.14",
+      "domain": "DATA",
+      "all": 46,
+      "sector": 53,
+      "top": 65,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "DATA.15",
+      "domain": "DATA",
+      "all": 61,
+      "sector": 65,
+      "top": 77,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.4,
+        0.36,
+        0.24
+      ]
+    },
+    {
+      "id": "DATA.16",
+      "domain": "DATA",
+      "all": 56,
+      "sector": 60,
+      "top": 74,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.39,
+        0.37,
+        0.24
+      ]
+    },
+    {
+      "id": "IAM.11",
+      "domain": "IAM",
+      "all": 69.5,
+      "sector": 74.5,
+      "top": 83.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.66,
+        0.2,
+        0.14
+      ]
+    },
+    {
+      "id": "IAM.12",
+      "domain": "IAM",
+      "all": 47.5,
+      "sector": 53.5,
+      "top": 63.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.46,
+        0.54,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "IAM.13",
+      "domain": "IAM",
+      "all": 54.5,
+      "sector": 61.5,
+      "top": 72.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.1,
+        0.9,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "RES.18",
+      "domain": "RES",
+      "all": 58,
+      "sector": 64,
+      "top": 78,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.41,
+        0.35,
+        0.24
+      ]
+    },
+    {
+      "id": "RES.19",
+      "domain": "RES",
+      "all": 79,
+      "sector": 88,
+      "top": 99,
+      "topMaturityLevel": 4,
+      "topLevels": [
+        0,
+        0,
+        0.46,
+        0.32,
+        0.22
+      ]
+    },
+    {
+      "id": "RES.20",
+      "domain": "RES",
+      "all": 61,
+      "sector": 69,
+      "top": 80,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.2,
+        0.5,
+        0.3,
+        0
+      ]
+    },
+    {
+      "id": "TP.06",
+      "domain": "TP",
+      "all": 58.5,
+      "sector": 65.5,
+      "top": 80.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.78,
+        0.13,
+        0.09
+      ]
+    },
+    {
+      "id": "TP.07",
+      "domain": "TP",
+      "all": 48.5,
+      "sector": 56.5,
+      "top": 72.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.1,
+        0.9,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "ASSET.11",
+      "domain": "ASSET",
+      "all": 52.5,
+      "sector": 59.5,
+      "top": 71.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.14,
+        0.86,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "GOV.12",
+      "domain": "GOV",
+      "all": 45.5,
+      "sector": 54.5,
+      "top": 64.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0.42,
+        0.58,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "TP.08",
+      "domain": "TP",
+      "all": 67.5,
+      "sector": 76.5,
+      "top": 84.5,
+      "topMaturityLevel": 3,
+      "topLevels": [
+        0,
+        0,
+        0.62,
+        0.23,
+        0.15
       ]
     },
     {
@@ -3290,32 +3290,17 @@
       ]
     },
     {
-      "id": "AIS.12",
-      "domain": "AIS",
-      "all": 46.5,
-      "sector": 52.5,
-      "top": 60.5,
-      "topMaturityLevel": 2,
-      "topLevels": [
-        0,
-        0.58,
-        0.42,
-        0,
-        0
-      ]
-    },
-    {
-      "id": "AIS.13",
-      "domain": "AIS",
-      "all": 53.5,
-      "sector": 60.5,
-      "top": 69.5,
+      "id": "DATA.17",
+      "domain": "DATA",
+      "all": 74,
+      "sector": 82,
+      "top": 90,
       "topMaturityLevel": 3,
       "topLevels": [
         0,
-        0.22,
-        0.78,
-        0,
+        0.2,
+        0.5,
+        0.3,
         0
       ]
     }
