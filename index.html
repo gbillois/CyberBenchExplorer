@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wavestone Cyberbenchmark Explorer</title>
   <script src="vendor/xlsx.full.min.js"></script>
+  <script src="vendor/pptxgen.bundle.js"></script>
   <style>
     :root {
       color-scheme: light;
@@ -246,6 +247,8 @@
       background: rgba(255,255,255,.84);
       box-shadow: 0 1px 2px rgba(15,70,90,.08);
     }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .pptx-export { min-height: 34px; white-space: nowrap; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
     .dot.ready { background: var(--green); box-shadow: 0 0 0 5px rgba(99,210,124,.1); }
     .dot.warn { background: var(--amber); box-shadow: 0 0 0 5px rgba(241,184,75,.1); }
@@ -809,7 +812,10 @@
             <h2 id="pageTitle">Overview</h2>
             <p id="pageIntro">Upload a completed W-CyberBenchmark file to generate indicators, rankings, and exploration views.</p>
           </div>
-          <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div>
+          <div class="topbar-actions">
+            <button class="primary pptx-export" id="exportPptx">Export all visuals to PPTX</button>
+            <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div>
+          </div>
         </div>
 
         <section id="emptyState" class="empty">
@@ -1131,6 +1137,9 @@
         assessmentVsSelected: "Assessment vs selected target",
         exportPng: "Export PNG",
         exportPngError: "The visual could not be exported as PNG.",
+        exportPptx: "Export all visuals to PPTX",
+        exportPptxWorking: "Creating PPTX...",
+        exportPptxError: "The PowerPoint export could not be created.",
         navHome: "Summary",
         navDashboard: "Matrix",
         navOverview: "Radar",
@@ -1174,6 +1183,7 @@
         assessment: "Assessment",
         benchmark: "Benchmark",
         maturityDistribution: "Maturity distribution",
+        maturityByTheme: "Maturity by theme",
         questionRadarTitle: "{name} · questions",
         backToThemes: "← All themes",
         scoresByDomain: "Scores by domain",
@@ -1307,6 +1317,9 @@
         assessmentVsSelected: "Evaluation vs cible sélectionnée",
         exportPng: "Exporter en PNG",
         exportPngError: "Le visuel n'a pas pu être exporté en PNG.",
+        exportPptx: "Exporter tous les visuels en PPTX",
+        exportPptxWorking: "Création du PPTX...",
+        exportPptxError: "L'export PowerPoint n'a pas pu être généré.",
         navHome: "Synthèse",
         navDashboard: "Matrice",
         navOverview: "Rosace",
@@ -1350,6 +1363,7 @@
         assessment: "Evaluation",
         benchmark: "Benchmark",
         maturityDistribution: "Distribution des maturités",
+        maturityByTheme: "Maturité par thème",
         questionRadarTitle: "{name} · questions",
         backToThemes: "← Tous les thèmes",
         scoresByDomain: "Scores par domaine",
@@ -1600,6 +1614,7 @@
       const noticeText = $("dummyNotice")?.querySelector("span:last-child");
       if (noticeText) noticeText.textContent = t("localDisplayNotice");
       $("benchmarkTemplate").textContent = t("benchmarkTemplate");
+      $("exportPptx").textContent = t("exportPptx");
       document.querySelectorAll(".png-export").forEach((button) => button.title = t("exportPng"));
       $("search").placeholder = t("searchPlaceholder");
       [
@@ -3406,47 +3421,121 @@ Return strict JSON only:
       URL.revokeObjectURL(url);
     }
 
+    async function captureVisual(target) {
+      const width = Math.max(1, Math.ceil(target.scrollWidth || target.getBoundingClientRect().width));
+      const height = Math.max(1, Math.ceil(target.scrollHeight || target.getBoundingClientRect().height));
+      const clone = target.cloneNode(true);
+      clone.querySelectorAll("button").forEach((element) => element.removeAttribute("tabindex"));
+      const css = [...document.styleSheets].map((sheet) => {
+        try { return [...sheet.cssRules].map((rule) => rule.cssText).join("\n"); }
+        catch (error) { return ""; }
+      }).join("\n");
+      const serialized = new XMLSerializer().serializeToString(clone);
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#ffffff"/><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;background:#ffffff;color:#112b43;"><style>${css}</style>${serialized}</div></foreignObject></svg>`;
+      const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      await new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+        image.src = url;
+      });
+      const scale = 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const context = canvas.getContext("2d");
+      context.scale(scale, scale);
+      context.drawImage(image, 0, 0, width, height);
+      return { data: canvas.toDataURL("image/png"), width, height };
+    }
+
     async function exportVisualPng(button) {
       const target = $(button.dataset.exportTarget);
       if (!target) return;
       button.disabled = true;
       try {
-        const width = Math.max(1, Math.ceil(target.scrollWidth || target.getBoundingClientRect().width));
-        const height = Math.max(1, Math.ceil(target.scrollHeight || target.getBoundingClientRect().height));
-        const clone = target.cloneNode(true);
-        clone.querySelectorAll("button").forEach((element) => element.removeAttribute("tabindex"));
-        const css = [...document.styleSheets].map((sheet) => {
-          try { return [...sheet.cssRules].map((rule) => rule.cssText).join("\n"); }
-          catch (error) { return ""; }
-        }).join("\n");
-        const serialized = new XMLSerializer().serializeToString(clone);
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#ffffff"/><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;background:#ffffff;color:#112b43;"><style>${css}</style>${serialized}</div></foreignObject></svg>`;
-        const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-        const image = new Image();
-        await new Promise((resolve, reject) => {
-          image.onload = resolve;
-          image.onerror = reject;
-          image.src = url;
-        });
-        const scale = 2;
-        const canvas = document.createElement("canvas");
-        canvas.width = width * scale;
-        canvas.height = height * scale;
-        const context = canvas.getContext("2d");
-        context.scale(scale, scale);
-        context.drawImage(image, 0, 0, width, height);
-        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-        if (!blob) throw new Error(t("exportPngError"));
-        const downloadUrl = URL.createObjectURL(blob);
+        const image = await captureVisual(target);
         const link = document.createElement("a");
-        link.href = downloadUrl;
+        link.href = image.data;
         link.download = `${button.dataset.exportName || button.dataset.exportTarget}.png`;
         link.click();
-        URL.revokeObjectURL(downloadUrl);
       } catch (error) {
         toast(t("exportPngError"));
       } finally {
         button.disabled = false;
+      }
+    }
+
+    function addPptxHeader(slide, title, subtitle = "") {
+      slide.background = { color: "F7FBFE" };
+      slide.addShape("rect", { x: 0, y: 0, w: 13.333, h: 0.12, line: { color: "1699A8", transparency: 100 }, fill: { color: "1699A8" } });
+      slide.addText(title, { x: 0.55, y: 0.28, w: 12.2, h: 0.42, fontFace: "Aptos Display", fontSize: 22, bold: true, color: "112B43", margin: 0 });
+      if (subtitle) slide.addText(subtitle, { x: 0.57, y: 0.76, w: 12, h: 0.24, fontFace: "Aptos", fontSize: 9, color: "64788B", margin: 0 });
+    }
+
+    function addPptxImage(slide, image) {
+      const box = { x: 0.55, y: 1.15, w: 12.23, h: 5.85 };
+      const ratio = image.width / image.height;
+      let width = box.w;
+      let height = width / ratio;
+      if (height > box.h) {
+        height = box.h;
+        width = height * ratio;
+      }
+      slide.addImage({ data: image.data, x: box.x + (box.w - width) / 2, y: box.y + (box.h - height) / 2, w: width, h: height });
+    }
+
+    async function exportAllVisualsPptx() {
+      if (!state.assessment) return;
+      if (!window.PptxGenJS) return toast(t("exportPptxError"));
+      const button = $("exportPptx");
+      const originalTab = state.tab;
+      const visuals = [
+        { tab: "home", target: "distributionChart", title: t("maturityDistribution") },
+        { tab: "dashboard", target: "bubbleChart", title: t("maturityByTheme") },
+        { tab: "overview", target: "radarChart", title: t("domainRadar") },
+        { tab: "domains", target: "domainBars", title: t("scoresByDomain") },
+        { tab: "domains", target: "domainScatter", title: t("coverageScoreMatrix") },
+        { tab: "compare", target: "compareRows", title: t("comparisonByDomain"), enabled: Boolean(state.benchmark) }
+      ].filter((visual) => visual.enabled !== false);
+      button.disabled = true;
+      button.textContent = t("exportPptxWorking");
+      try {
+        const pptx = new PptxGenJS();
+        pptx.layout = "LAYOUT_WIDE";
+        pptx.author = "Wavestone Cyberbenchmark Explorer";
+        pptx.company = "Wavestone";
+        pptx.subject = "Cyberbenchmark assessment visuals";
+        pptx.title = "Cyberbenchmark assessment";
+        pptx.lang = lang === "fr" ? "fr-FR" : "en-US";
+
+        const titleSlide = pptx.addSlide();
+        titleSlide.background = { color: "0D3F61" };
+        titleSlide.addShape("rect", { x: 0, y: 5.92, w: 13.333, h: 1.58, line: { color: "1699A8", transparency: 100 }, fill: { color: "1699A8" } });
+        titleSlide.addText("Wavestone Cyberbenchmark Explorer", { x: 0.72, y: 1.48, w: 11.9, h: 0.7, fontFace: "Aptos Display", fontSize: 30, bold: true, color: "FFFFFF", margin: 0 });
+        titleSlide.addText(lang === "fr" ? "Export de tous les visuels" : "All visuals export", { x: 0.74, y: 2.32, w: 11.5, h: 0.45, fontFace: "Aptos", fontSize: 18, color: "BFEDEF", margin: 0 });
+        titleSlide.addText(new Date().toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US"), { x: 0.74, y: 6.52, w: 4, h: 0.3, fontFace: "Aptos", fontSize: 12, color: "FFFFFF", margin: 0 });
+
+        for (const visual of visuals) {
+          state.tab = visual.tab;
+          render();
+          await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const target = $(visual.target);
+          if (!target) continue;
+          const image = await captureVisual(target);
+          const slide = pptx.addSlide();
+          addPptxHeader(slide, visual.title, `${t("assessment")} · ${new Date().toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US")}`);
+          addPptxImage(slide, image);
+        }
+        await pptx.writeFile({ fileName: `CyberBenchmark-visuals-${new Date().toISOString().slice(0, 10)}.pptx` });
+      } catch (error) {
+        console.error(error);
+        toast(t("exportPptxError"));
+      } finally {
+        state.tab = originalTab;
+        render();
+        button.disabled = false;
+        button.textContent = t("exportPptx");
       }
     }
 
@@ -3511,6 +3600,7 @@ Return strict JSON only:
       renderQuestions();
     }));
     $("exportCsv").addEventListener("click", exportCsv);
+    $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
 
     applyLocale();

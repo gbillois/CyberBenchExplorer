@@ -11,11 +11,13 @@ The UI defaults to English and automatically switches to French when the browser
 4. Upload an assessment `.xlsm`, `.xlsx`, `.xls`, or `.xlsb` file to replace the example.
 5. Optionally upload another benchmark file. Use `data/Scores-CyberBenchmark-03062026.xlsx` as the import template.
 6. Use the PNG buttons to export each main visual.
-7. Open the Recommendations tab to review the questions with the largest gaps to the market and static remediation actions derived from the questionnaire requirements.
-8. Open the Ingest tab to paste a meeting transcript and configure Anthropic, OpenAI, Azure OpenAI, or Google Gemini. The app runs one assessment call and one independent check-and-challenge call per selected domain before results can be applied and exported to Excel.
+7. Use **Export all visuals to PPTX** to generate a 16:9 PowerPoint containing a title slide and every main chart.
+8. Open the Recommendations tab to review the questions with the largest gaps to the market and static remediation actions derived from the questionnaire requirements.
+9. Open the Ingest tab to paste a meeting transcript and configure Anthropic, OpenAI, Azure OpenAI, or Google Gemini. The app runs one assessment call and one independent check-and-challenge call per selected domain before results can be applied and exported to Excel.
 
 Files are read locally in the browser. No backend is used.
 SheetJS is vendored in `vendor/` to avoid a runtime CDN dependency.
+PptxGenJS is also vendored in `vendor/` so PowerPoint exports work without a runtime CDN dependency.
 Default data is stored as a static assessment JSON file and a benchmark workbook. If either file is missing or invalid, `index.html` loads a minimal fallback to avoid an empty screen. User-uploaded files are neither stored in the browser nor sent to a server.
 
 Transcript ingestion is the exception: the transcript and selected questionnaire requirements are sent directly from the browser to the configured LLM provider. API keys are held only in memory and are not persisted. Obtain authorization before processing confidential data. For production use, route calls through an approved secure proxy.
