@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wavestone Cyberbenchmark Explorer</title>
+  <title>Wavestone Cyberbenchmark Workspace</title>
   <script src="vendor/xlsx.full.min.js"></script>
   <script src="vendor/pptxgen.bundle.js"></script>
   <style>
@@ -113,7 +113,7 @@
       padding: 0;
       overflow: visible;
       display: grid;
-      grid-template-columns: minmax(220px, .72fr) minmax(240px, .82fr) minmax(240px, .82fr) minmax(460px, 1.55fr);
+      grid-template-columns: minmax(250px, .7fr) minmax(680px, 2.3fr);
       align-items: stretch;
     }
 
@@ -196,6 +196,33 @@
     .nav button:hover, .nav button.active { background: rgba(255,255,255,.09); color: #fff; }
     .nav button.active::after { background: var(--green); }
     .nav svg { width: 17px; height: 17px; color: currentColor; }
+    .workflow-nav button { min-width: 96px; }
+    .explore-nav {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; padding: 7px;
+      border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.86); box-shadow: var(--shadow);
+    }
+    .explore-nav button { min-height: 34px; padding: 0 11px; font-size: 12px; }
+    .arrival-hero {
+      min-height: 430px; display: grid; place-items: center; text-align: center; padding: 40px;
+      background: linear-gradient(145deg, #0d3f61, #0f8794 62%, #249b83); color: #fff;
+      border-radius: 22px; box-shadow: 0 22px 50px rgba(9,53,76,.28);
+    }
+    .arrival-hero h3 { margin: 0; font-size: clamp(30px, 5vw, 58px); letter-spacing: -.03em; }
+    .arrival-hero p { max-width: 760px; margin: 16px auto 0; color: rgba(255,255,255,.82); font-size: 16px; line-height: 1.6; }
+    .workflow-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+    .workflow-step { padding: 18px; border: 1px solid rgba(255,255,255,.22); border-radius: 14px; background: rgba(255,255,255,.1); text-align: left; }
+    .workflow-step b { display: block; font-size: 16px; margin-bottom: 6px; }
+    .workflow-step span { color: rgba(255,255,255,.78); font-size: 12px; line-height: 1.45; }
+    .source-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .source-card { padding: 14px; border: 1px solid var(--line-soft); border-radius: 12px; background: #f8fbfc; }
+    .source-card h4 { margin: 0 0 10px; font-size: 13px; }
+    .check-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .check-ok { color: #067647; }
+    .check-error { color: #b42318; }
+    .export-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .export-card { padding: 20px; }
+    .export-card h3 { margin: 0 0 8px; }
+    .export-card p { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 58px; }
 
     .content { padding: 28px clamp(18px, 3vw, 36px) 44px; }
     .dummy-notice {
@@ -713,6 +740,7 @@
       .bar-row, .compare-row { grid-template-columns: 1fr; gap: 7px; }
       .recommendation-toolbar, .recommendation-head { grid-template-columns: 1fr; }
       .ingest-grid, .ingest-fields { grid-template-columns: 1fr; }
+      .workflow-steps, .source-grid, .check-summary, .export-grid { grid-template-columns: 1fr; }
       .ingest-fields .wide { grid-column: auto; }
       .scatter-stage { min-height: 380px; }
       .slide-chart { min-height: 320px; }
@@ -732,69 +760,36 @@
           </svg>
         </div>
         <div>
-          <h1>Wavestone Cyberbenchmark Explorer</h1>
-          <p>Assessment dataviz</p>
+          <h1>Wavestone Cyberbenchmark Workspace</h1>
+          <p>Ingest · Check · Explore · Export</p>
         </div>
       </div>
 
-      <section class="side-section stack">
-        <div>
-          <label for="assessmentFile">Assessment XLS/XLSM</label>
-          <input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb">
-          <p class="help" id="assessmentHelp">Local browser parsing. No file is sent.</p>
-        </div>
-        <div id="assessmentMeta" class="file-meta"></div>
-      </section>
-
-      <section class="side-section stack">
-        <div>
-          <label for="benchmarkFile">Benchmark referential</label>
-          <input id="benchmarkFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb,.csv">
-          <p class="help" id="benchmarkHelp">Optional: global average, sector, top 10. Columns are detected automatically.</p>
-          <a class="template-link" id="benchmarkTemplate" href="data/Scores-CyberBenchmark-03062026.xlsx" download>Download import template</a>
-          <label class="target-label" for="benchmarkTarget">Comparison target</label>
-          <select id="benchmarkTarget"></select>
-        </div>
-        <div id="benchmarkMeta" class="file-meta"></div>
-      </section>
-
       <section class="side-section">
-        <nav class="nav" id="nav">
-          <button data-tab="home" class="active" title="Synthèse">
+        <nav class="nav workflow-nav" id="nav">
+          <button data-workflow-tab="arrival" class="active" title="Accueil">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
-            Synthèse
+            Accueil
           </button>
-          <button data-tab="dashboard" title="Matrice de maturité">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="14" r="2.5"></circle><circle cx="13" cy="9" r="2.5"></circle><circle cx="17" cy="15" r="2.5"></circle><path d="M3 3v18h18"></path></svg>
-            Matrice
-          </button>
-          <button data-tab="overview" title="Rosace de maturité">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,3 20,8 17,18 7,18 4,8"></polygon><path d="M12 3v15"></path><path d="M4 8l16 0"></path></svg>
-            Rosace
-          </button>
-          <button data-tab="domains" title="Scores par domaine">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="M7 15v2"></path><path d="M12 9v8"></path><path d="M17 5v12"></path></svg>
-            Domaines
-          </button>
-          <button data-tab="findings" title="Forces et faiblesses">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"></path><path d="M7 8h10"></path><path d="M5 21h14"></path><path d="m6 8-3 7h6L6 8Z"></path><path d="m18 8-3 7h6l-3-7Z"></path></svg>
-            Constats
-          </button>
-          <button data-tab="compare" title="Comparaison au benchmark">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M20 19V5"></path><path d="M8 7h8"></path><path d="M8 12h8"></path><path d="M8 17h8"></path></svg>
-            Comparaison
-          </button>
-          <button data-tab="recommendations" title="Recommandations">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M8.5 14.5A7 7 0 1 1 15.5 14.5C14.5 15.3 14 16 14 18h-4c0-2-.5-2.7-1.5-3.5Z"></path><path d="m9 10 2 2 4-4"></path></svg>
-            Recommandations
-          </button>
-          <button data-tab="ingest" title="Ingestion de transcription">
+          <button data-workflow-tab="ingest" title="Ingest">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path><path d="M4 5h5"></path><path d="M15 5h5"></path></svg>
             Ingest
           </button>
-          <button data-tab="questions" title="Détails des réponses">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
-            Détails réponse
+          <button data-workflow-tab="check" title="Check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"></path><path d="M4 4h16v16H4z"></path></svg>
+            Check
+          </button>
+          <button data-workflow-tab="explore" title="Explore">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            Explore
+          </button>
+          <button data-workflow-tab="export" title="Export">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9"></path><path d="m7 14 5-5 5 5"></path><path d="M5 3h14"></path></svg>
+            Export
+          </button>
+          <button data-workflow-tab="configuration" title="Configuration">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>
+            Configuration
           </button>
         </nav>
       </section>
@@ -812,20 +807,102 @@
             <h2 id="pageTitle">Overview</h2>
             <p id="pageIntro">Upload a completed W-CyberBenchmark file to generate indicators, rankings, and exploration views.</p>
           </div>
-          <div class="topbar-actions">
-            <button class="primary pptx-export" id="exportPptx">Export all visuals to PPTX</button>
-            <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div>
-          </div>
+          <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div>
         </div>
 
-        <section id="emptyState" class="empty">
+        <section id="emptyState" class="empty hidden">
           <div>
             <h3 id="emptyTitle">Upload an assessment file</h3>
             <p id="emptyText">The file is parsed in your browser. Domain sheets, maturity levels, comments, and response reliability are extracted to generate the views.</p>
           </div>
         </section>
 
-        <section id="home" class="tab-panel">
+        <section id="arrival" class="workflow-panel">
+          <div class="arrival-hero">
+            <div>
+              <h3>Cyberbenchmark Workspace</h3>
+              <p>Un parcours unifié pour ingérer les entretiens, contrôler les règles métier, explorer les résultats et produire les livrables Cyberbenchmark.</p>
+              <div class="workflow-steps">
+                <div class="workflow-step"><b>1. Ingest</b><span>Chargez le questionnaire prérempli et analysez une transcription ou un média.</span></div>
+                <div class="workflow-step"><b>2. Check</b><span>Contrôlez les règles métier avant l'intégration dans la base centrale.</span></div>
+                <div class="workflow-step"><b>3. Explore</b><span>Comparez les scores et parcourez toutes les visualisations.</span></div>
+                <div class="workflow-step"><b>4. Export</b><span>Téléchargez les fichiers Excel, CSV et PowerPoint produits.</span></div>
+              </div>
+              <button class="primary" data-go-workflow="ingest" style="margin-top:28px;">Commencer</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="check" class="workflow-panel hidden">
+          <div class="check-summary">
+            <div class="card kpi"><div class="label">Questions contrôlées</div><div class="value" id="checkTotal">-</div><div class="sub">Règles applicables</div></div>
+            <div class="card kpi"><div class="label">Conformes</div><div class="value check-ok" id="checkOk">-</div><div class="sub">Sans anomalie</div></div>
+            <div class="card kpi"><div class="label">Anomalies</div><div class="value check-error" id="checkErrors">-</div><div class="sub">À corriger avant export</div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Contrôles métier Cyberbenchmark</h3><button class="primary" id="runChecks">Relancer les contrôles</button></div>
+            <div class="card-body">
+              <p class="muted">Règles initiales : identifiants uniques, pourcentages compris entre 0 et 100 %, somme des niveaux égale à 100 % pour une réponse scorée, et absence de score pour une réponse N/A.</p>
+              <div class="table-wrap"><table id="checkTable"><thead><tr><th class="small">ID</th><th class="small">Domaine</th><th class="small">Sévérité</th><th>Règle</th><th>Détail</th></tr></thead><tbody></tbody></table></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="export" class="workflow-panel hidden">
+          <div class="export-grid">
+            <div class="card export-card"><h3>Excel enrichi</h3><p>Questionnaire Cyberbenchmark complété avec les scores, commentaires et niveaux revus.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button></div>
+            <div class="card export-card"><h3>CSV base centrale</h3><p>Format tabulaire contrôlé pour ajout dans la base de données centrale Cyberbenchmark.</p><button class="primary" id="exportCentralCsv">Télécharger CSV</button></div>
+            <div class="card export-card"><h3>PowerPoint résultats</h3><p>Présentation 16:9 contenant l'ensemble des principaux visuels de l'Explorer.</p><button class="primary pptx-export" id="exportPptx">Télécharger PPTX</button></div>
+          </div>
+        </section>
+
+        <section id="configuration" class="workflow-panel hidden">
+          <div class="grid two">
+            <div class="card">
+              <div class="card-head"><h3>Configuration LLM</h3></div>
+              <div class="card-body">
+                <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés restent uniquement en mémoire.</div>
+                <div class="ingest-fields" style="margin-top:14px;">
+                  <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
+                  <div><label for="ingestModel">Modèle</label><input id="ingestModel" value="claude-sonnet-4-20250514"></div>
+                  <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
+                  <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
+                    <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
+                    <div><label for="ingestAzureDeployment">Déploiement</label><input id="ingestAzureDeployment"></div>
+                    <div><label for="ingestAzureKey">Clé Azure OpenAI</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
+                  </div></div>
+                </div>
+                <div class="ingest-actions"><button id="ingestTest">Tester la connexion LLM</button></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Azure Speech-to-Text</h3></div>
+              <div class="card-body">
+                <div class="ingest-fields">
+                  <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
+                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
+                  <div><label for="azureSpeechLocale">Langue</label><input id="azureSpeechLocale" value="fr-FR"></div>
+                </div>
+                <p class="muted">Utilise l'API Fast Transcription Azure Speech. Les fichiers audio ou vidéo sont transmis directement à Microsoft Azure.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="exploreToolbar" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;"><div class="card-body">
+            <div class="source-grid" style="margin-bottom:0;">
+              <div><label for="benchmarkFile">Fichier de références des scores</label><input id="benchmarkFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb,.csv"><div id="benchmarkMeta" class="muted"></div></div>
+              <div><label for="benchmarkTarget">Cible de comparaison</label><select id="benchmarkTarget"></select></div>
+              <div><a class="template-link" id="benchmarkTemplate" href="data/Scores-CyberBenchmark-03062026.xlsx" download>Télécharger le modèle de référence</a></div>
+            </div>
+          </div></div>
+          <nav class="explore-nav" id="exploreNav">
+            <button data-explore-tab="home" class="active">Synthèse</button><button data-explore-tab="dashboard">Matrice</button><button data-explore-tab="overview">Rosace</button><button data-explore-tab="domains">Domaines</button><button data-explore-tab="findings">Constats</button><button data-explore-tab="compare">Comparaison</button><button data-explore-tab="recommendations">Recommandations</button><button data-explore-tab="questions">Détails réponse</button>
+          </nav>
+        </section>
+
+        <section id="home" class="analysis-panel hidden">
           <div class="grid kpis">
             <div class="card kpi"><div class="label" id="kpiCoverageLabel">Coverage</div><div class="value" id="kpiCoverage">-</div><div class="sub" id="kpiCoverageSub">Excluding N/A</div></div>
             <div class="card kpi"><div class="label" id="kpiScoreLabel">Maturity</div><div class="value" id="kpiScore">-</div><div class="sub" id="kpiScoreSub">Scored questions</div></div>
@@ -842,7 +919,7 @@
           </div>
         </section>
 
-        <section id="dashboard" class="tab-panel hidden">
+        <section id="dashboard" class="analysis-panel hidden">
           <div class="dashboard-layout">
             <div class="card scatter-card">
               <div class="card-head">
@@ -865,7 +942,7 @@
           </div>
         </section>
 
-        <section id="overview" class="tab-panel hidden">
+        <section id="overview" class="analysis-panel hidden">
           <div class="card">
             <div class="card-head">
               <h3 id="radarTitle">Domain radar</h3>
@@ -880,7 +957,7 @@
           </div>
         </section>
 
-        <section id="domains" class="tab-panel hidden">
+        <section id="domains" class="analysis-panel hidden">
           <div class="grid two">
             <div class="card">
               <div class="card-head">
@@ -903,7 +980,7 @@
           </div>
         </section>
 
-        <section id="findings" class="tab-panel hidden">
+        <section id="findings" class="analysis-panel hidden">
           <div class="findings-filter">
             <label for="findingsDomainFilter">Domain</label>
             <select id="findingsDomainFilter"><option value="">All</option></select>
@@ -924,7 +1001,7 @@
           </div>
         </section>
 
-        <section id="questions" class="tab-panel hidden">
+        <section id="questions" class="analysis-panel hidden">
           <div class="card">
             <div class="card-head">
               <h3 id="questionsTitle">Detailed exploration</h3>
@@ -966,7 +1043,7 @@
           </div>
         </section>
 
-        <section id="compare" class="tab-panel hidden">
+        <section id="compare" class="analysis-panel hidden">
           <div id="compareEmpty" class="empty">
             <div>
               <h3 id="compareEmptyTitle">Upload a benchmark referential</h3>
@@ -1032,7 +1109,7 @@
           </div>
         </section>
 
-        <section id="recommendations" class="tab-panel hidden">
+        <section id="recommendations" class="analysis-panel hidden">
           <div class="card">
             <div class="card-head"><h3 id="recommendationsListTitle">Priority remediation actions</h3></div>
             <div class="card-body">
@@ -1051,7 +1128,17 @@
           </div>
         </section>
 
-        <section id="ingest" class="tab-panel hidden">
+        <section id="ingest" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-head"><h3>Sources d'ingestion</h3></div>
+            <div class="card-body">
+              <div class="source-grid">
+                <div class="source-card"><h4>0. Questionnaire Cyberbenchmark</h4><label for="assessmentFile">Excel avec scores prépositionnés</label><input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><p id="assessmentHelp" class="muted">Le fichier sert de base à enrichir.</p><div id="assessmentMeta" class="muted"></div></div>
+                <div class="source-card"><h4>1. Audio ou vidéo</h4><label for="ingestMedia">Média à transcrire via Azure</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted">Configuration Azure Speech requise.</p><button id="transcribeMedia">Transcrire le média</button></div>
+                <div class="source-card"><h4>2. Transcription directe</h4><p class="muted">Collez la transcription dans la zone ci-dessous, puis lancez l'analyse.</p></div>
+              </div>
+            </div>
+          </div>
           <div class="ingest-grid">
             <div class="card">
               <div class="card-head"><h3 id="ingestTranscriptTitle">Meeting transcript</h3></div>
@@ -1061,7 +1148,6 @@
                 <div class="ingest-actions">
                   <button class="primary" id="ingestRun">Run extraction + check &amp; challenge</button>
                   <button id="ingestApply" disabled>Apply reviewed results</button>
-                  <button id="ingestExport" disabled>Download completed Excel</button>
                 </div>
                 <div class="ingest-progress hidden" id="ingestProgress">
                   <div class="ingest-progress-line"><span id="ingestProgressBar" style="width:0%"></span></div>
@@ -1072,23 +1158,11 @@
               </div>
             </div>
             <div class="card">
-              <div class="card-head"><h3 id="ingestConfigTitle">LLM configuration</h3></div>
+              <div class="card-head"><h3>Options d'analyse</h3></div>
               <div class="card-body">
-                <div class="ingest-warning" id="ingestWarning">The transcript and selected questionnaire requirements are sent to the configured provider. Obtain authorization before processing confidential data. API keys remain in memory and are never saved.</div>
-                <div class="ingest-fields" style="margin-top:14px;">
-                  <div><label for="ingestProvider">Provider</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
-                  <div><label for="ingestModel">Model</label><input id="ingestModel" value="claude-sonnet-4-20250514"></div>
-                  <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">API key</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
-                  <div class="wide hidden" id="ingestAzureFields">
-                    <div class="ingest-fields">
-                      <div class="wide"><label for="ingestAzureEndpoint">Azure endpoint</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
-                      <div><label for="ingestAzureDeployment">Deployment</label><input id="ingestAzureDeployment"></div>
-                      <div><label for="ingestAzureKey">Azure API key</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
-                    </div>
-                  </div>
-                  <div class="wide"><label for="ingestDomain">Scope</label><select id="ingestDomain"><option value="">All domains, sequentially</option></select></div>
-                </div>
-                <div class="ingest-actions"><button id="ingestTest">Test connection</button></div>
+                <label for="ingestDomain">Périmètre</label><select id="ingestDomain"><option value="">Tous les domaines, séquentiellement</option></select>
+                <p class="muted">Pour une meilleure qualité, chaque domaine fait l'objet d'un appel d'extraction puis d'un appel indépendant de check &amp; challenge.</p>
+                <button data-go-workflow="configuration">Ouvrir la configuration API</button>
               </div>
             </div>
           </div>
@@ -1303,7 +1377,7 @@
         avgShortMarker: "Avg.",
         sectorShort: "Sector",
         topShort: "Top",
-        localDisplayNotice: "W-CyberBenchmark Explorer: an example assessment and the default benchmark are displayed. Upload your own assessment at the top of the window. Nothing is stored or shared on the Internet; it is only a local display."
+        localDisplayNotice: "Cyberbenchmark Workspace: example assessment and benchmark data are loaded. Use Ingest to replace the questionnaire and Explore to replace the score referential."
       },
       fr: {
         all: "Tous",
@@ -1483,7 +1557,7 @@
         avgShortMarker: "Moy.",
         sectorShort: "Sect.",
         topShort: "Top",
-        localDisplayNotice: "W-CyberBenchmark Explorer : une évaluation exemple et le benchmark par défaut sont affichés. Chargez votre propre évaluation en haut de la fenêtre. Rien n'est stocké ni partagé sur Internet ; il s'agit uniquement d'un affichage local."
+        localDisplayNotice: "Cyberbenchmark Workspace : une évaluation exemple et le benchmark par défaut sont chargés. Utilisez Ingest pour remplacer le questionnaire et Explore pour remplacer le référentiel de scores."
       }
     };
 
@@ -1500,6 +1574,7 @@
     const state = {
       assessment: null,
       benchmark: null,
+      workflowTab: "arrival",
       tab: "home",
       domainSort: "asc",
       tableSort: { key: "id", dir: "asc" },
@@ -1525,7 +1600,8 @@
       },
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
-      dummyBenchmark: false
+      dummyBenchmark: false,
+      checkResults: []
     };
 
     const RECOMMENDATION_ENRICHMENT = {
@@ -1543,6 +1619,35 @@
         return response.json();
       }
     };
+
+    // Add future Cyberbenchmark controls here without changing the Check workflow.
+    const BUSINESS_RULES = [
+      {
+        id: "percent-total",
+        severity: "Erreur",
+        label: "Somme des pourcentages",
+        evaluate(question) {
+          if (question.status !== "scored") return null;
+          const total = normalizeLevels(question.levels).reduce((sum, value) => sum + value, 0);
+          return Math.abs(total - 1) > 0.001 ? `La somme des niveaux vaut ${pct(total * 100)} au lieu de 100 %.` : null;
+        }
+      },
+      {
+        id: "na-consistency",
+        severity: "Erreur",
+        label: "Cohérence N/A",
+        evaluate(question) {
+          const total = normalizeLevels(question.levels).reduce((sum, value) => sum + value, 0);
+          return question.status === "na" && total > 0.001 ? "Une réponse N/A ne doit contenir aucun pourcentage." : null;
+        }
+      },
+      {
+        id: "assessment-point-required",
+        severity: "Alerte",
+        label: "Point d'évaluation requis",
+        evaluate(question) { return question.question ? null : "Le libellé du point d'évaluation est vide."; }
+      }
+    ];
 
     const $ = (id) => document.getElementById(id);
     const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
@@ -1564,7 +1669,8 @@
       statusText: $("statusText"),
       pageTitle: $("pageTitle"),
       pageIntro: $("pageIntro"),
-      panels: [...document.querySelectorAll(".tab-panel")]
+      workflowPanels: [...document.querySelectorAll(".workflow-panel")],
+      analysisPanels: [...document.querySelectorAll(".analysis-panel")]
     };
 
     function applyLocale() {
@@ -1617,11 +1723,9 @@
       $("exportPptx").textContent = t("exportPptx");
       document.querySelectorAll(".png-export").forEach((button) => button.title = t("exportPng"));
       $("search").placeholder = t("searchPlaceholder");
-      [
-        ["home", "navHome"], ["dashboard", "navDashboard"], ["overview", "navOverview"], ["domains", "navDomains"], ["findings", "navFindings"], ["questions", "navQuestions"], ["compare", "navCompare"], ["recommendations", "navRecommendations"], ["ingest", "navIngest"]
-      ].forEach(([tab, key]) => {
-        const button = document.querySelector(`[data-tab="${tab}"]`);
-        if (button?.lastChild) button.lastChild.textContent = t(key);
+      document.querySelectorAll("[data-explore-tab]").forEach((button) => {
+        const key = { home: "navHome", dashboard: "navDashboard", overview: "navOverview", domains: "navDomains", findings: "navFindings", questions: "navQuestions", compare: "navCompare", recommendations: "navRecommendations" }[button.dataset.exploreTab];
+        if (key) button.textContent = t(key);
       });
       const statusOptions = $("statusFilter").options;
       if (statusOptions.length >= 4) {
@@ -2186,6 +2290,7 @@
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
         refs.statusDot.className = "dot ready";
         refs.statusText.textContent = t("assessmentLoaded");
+        runBusinessChecks();
         render();
       } catch (error) {
         toast(error.message);
@@ -2412,8 +2517,92 @@ Return strict JSON only:
       });
       state.assessment.domainStats = buildDomainStats(state.assessment.questions);
       state.ingest.applied = true;
+      runBusinessChecks();
       render();
       toast("Reviewed results applied to the assessment.");
+    }
+
+    async function transcribeAzureMedia() {
+      const file = $("ingestMedia").files?.[0];
+      const key = $("azureSpeechKey").value.trim();
+      const region = clean($("azureSpeechRegion").value) || "westeurope";
+      const locale = clean($("azureSpeechLocale").value) || "fr-FR";
+      if (!file) return toast("Sélectionnez un fichier audio ou vidéo.");
+      if (!key) return toast("Configurez la clé Azure Speech dans Configuration.");
+      const button = $("transcribeMedia");
+      button.disabled = true;
+      button.textContent = "Transcription Azure en cours...";
+      try {
+        const form = new FormData();
+        form.append("audio", file, file.name);
+        form.append("definition", JSON.stringify({ locales: [locale] }));
+        const endpoint = `https://${encodeURIComponent(region)}.api.cognitive.microsoft.com/speechtotext/transcriptions:transcribe?api-version=2025-10-15`;
+        const response = await fetch(endpoint, { method: "POST", headers: { "Ocp-Apim-Subscription-Key": key }, body: form });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error?.message || data.message || `Azure Speech HTTP ${response.status}`);
+        const transcript = (data.combinedPhrases || []).map((phrase) => phrase.text || phrase.display || "").filter(Boolean).join("\n")
+          || (data.phrases || []).map((phrase) => phrase.text || phrase.display || "").filter(Boolean).join("\n");
+        if (!transcript) throw new Error("Azure Speech n'a retourné aucune transcription exploitable.");
+        $("ingestTranscript").value = transcript;
+        $("ingestMediaMeta").textContent = `${file.name} · transcription prête (${transcript.length} caractères)`;
+        toast("Transcription Azure terminée.");
+      } catch (error) {
+        toast(`Transcription Azure impossible : ${error.message}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Transcrire le média";
+      }
+    }
+
+    function runBusinessChecks() {
+      if (!state.assessment) return [];
+      const results = [];
+      const ids = new Map();
+      state.assessment.questions.forEach((question) => {
+        ids.set(question.id, (ids.get(question.id) || 0) + 1);
+        BUSINESS_RULES.forEach((rule) => {
+          const detail = rule.evaluate(question, state.assessment);
+          if (detail) results.push({ id: question.id, domain: question.domain, severity: rule.severity, rule: rule.label, ruleId: rule.id, detail });
+        });
+      });
+      ids.forEach((count, id) => {
+        if (count > 1) results.push({ id, domain: inferDomain(id), severity: "Erreur", rule: "Identifiant unique", detail: `${count} occurrences détectées.` });
+      });
+      state.checkResults = results;
+      renderChecks();
+      return results;
+    }
+
+    function renderChecks() {
+      if (!state.assessment) return;
+      const results = state.checkResults;
+      $("checkTotal").textContent = String(state.assessment.questions.length);
+      $("checkErrors").textContent = String(results.length);
+      $("checkOk").textContent = String(state.assessment.questions.length - new Set(results.map((row) => row.id)).size);
+      $("checkTable").querySelector("tbody").innerHTML = results.length ? results.map((row) => `
+        <tr><td class="small">${html(row.id)}</td><td class="small">${html(row.domain)}</td><td class="small check-error">${html(row.severity)}</td><td>${html(row.rule)}</td><td>${html(row.detail)}</td></tr>`).join("")
+        : '<tr><td colspan="5" class="check-ok"><strong>Aucune anomalie détectée.</strong></td></tr>';
+    }
+
+    function exportCentralCsv() {
+      if (!state.assessment) return;
+      const checks = runBusinessChecks();
+      const checksById = new Map();
+      checks.forEach((check) => {
+        if (!checksById.has(check.id)) checksById.set(check.id, []);
+        checksById.get(check.id).push(`${check.rule}: ${check.detail}`);
+      });
+      const headers = ["ID", "DOMAIN", "TYPE", "SUBTOPIC", "ASSESSMENT_POINT", "L1_PERCENT", "L2_PERCENT", "L3_PERCENT", "L4_PERCENT", "L5_PERCENT", "SCORE", "STATUS", "COMMENT", "ANSWER_RELIABILITY", "CONTROL", "CHECK_STATUS", "CHECK_ERRORS"];
+      const rows = state.assessment.questions.map((q) => {
+        const errors = checksById.get(q.id) || [];
+        return [q.id, q.domain, q.type, q.subtopic, q.question, ...normalizeLevels(q.levels).map((value) => Math.round(value * 10000) / 100), q.score ?? "", q.status, q.comment, q.reliability, q.control, errors.length ? "ERROR" : "OK", errors.join(" | ")];
+      });
+      const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+      link.download = `CyberBenchmark-central-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(link.href);
     }
 
     function exportAssessmentWorkbook() {
@@ -2447,7 +2636,6 @@ Return strict JSON only:
       $("ingestLog").innerHTML = state.ingest.log.map((line) => `<div>${html(line)}</div>`).join("");
       $("ingestRun").disabled = state.ingest.running;
       $("ingestApply").disabled = state.ingest.running || !state.ingest.results.length;
-      $("ingestExport").disabled = !state.ingest.applied;
       $("ingestReview").innerHTML = state.ingest.challenges.slice(0, 20).map((challenge) => `
         <div class="ingest-review-card"><strong>${html(challenge.id || "Review")}</strong><p>${html(challenge.issue || "")}</p><p><b>Correction:</b> ${html(challenge.correction || "")}</p></div>`).join("");
     }
@@ -2455,9 +2643,11 @@ Return strict JSON only:
     function render() {
       const ready = Boolean(state.assessment);
       refs.dummyNotice.classList.toggle("hidden", !(state.dummyAssessment || state.dummyBenchmark));
-      refs.emptyState.classList.toggle("hidden", ready);
-      refs.panels.forEach((panel) => panel.classList.toggle("hidden", !ready || panel.id !== state.tab));
-      document.querySelectorAll("[data-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.tab === state.tab));
+      refs.emptyState.classList.add("hidden");
+      refs.workflowPanels.forEach((panel) => panel.classList.toggle("hidden", panel.id !== state.workflowTab && !(panel.id === "exploreToolbar" && state.workflowTab === "explore")));
+      refs.analysisPanels.forEach((panel) => panel.classList.toggle("hidden", state.workflowTab !== "explore" || !ready || panel.id !== state.tab));
+      document.querySelectorAll("[data-workflow-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.workflowTab === state.workflowTab));
+      document.querySelectorAll("[data-explore-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.exploreTab === state.tab));
       updateTitle();
       if (!ready) return;
       renderFilters();
@@ -2470,21 +2660,19 @@ Return strict JSON only:
       renderIngest();
       renderQuestions();
       renderCompare();
+      renderChecks();
     }
 
     function updateTitle() {
       const titles = {
-        home: [t("homeTitle"), t("homeIntro")],
-        dashboard: [t("dashboardTitle"), t("dashboardIntro")],
-        overview: [t("overviewTitle"), t("overviewIntro")],
-        domains: [t("domainsTitle"), t("domainsIntro")],
-        findings: [t("findingsTitle"), t("findingsIntro")],
-        recommendations: [t("recommendationsTitle"), t("recommendationsIntro")],
-        ingest: [t("ingestTitle"), t("ingestIntro")],
-        questions: [t("questionsTitle"), t("questionsIntro")],
-        compare: [t("compareTitle"), t("compareIntro")]
+        arrival: ["Cyberbenchmark Workspace", "Accueil et parcours de traitement du questionnaire Cyberbenchmark."],
+        ingest: ["Ingest", "Chargez le questionnaire, transcrivez un média ou collez directement une transcription, puis enrichissez les scores."],
+        check: ["Check", "Vérifiez les règles métier avant intégration dans la base centrale Cyberbenchmark."],
+        explore: ["Explore", "Chargez le référentiel de scores et parcourez toutes les analyses existantes."],
+        export: ["Export", "Téléchargez les livrables enrichis, contrôlés et visualisés."],
+        configuration: ["Configuration", "Configurez les fournisseurs LLM et Azure Speech utilisés par l'ingestion."]
       };
-      const [title, intro] = titles[state.tab];
+      const [title, intro] = titles[state.workflowTab];
       refs.pageTitle.textContent = title;
       refs.pageIntro.textContent = intro;
     }
@@ -2790,7 +2978,6 @@ Return strict JSON only:
         { tab: "findings", title: t("navFindings"), text: t("findingsIntro"), preview: miniFindings() },
         { tab: "compare", title: t("navCompare"), text: t("compareIntro"), preview: miniCompare() },
         { tab: "recommendations", title: t("navRecommendations"), text: t("recommendationsIntro"), preview: miniRecommendations() },
-        { tab: "ingest", title: t("navIngest"), text: t("ingestIntro"), preview: miniTable() },
         { tab: "questions", title: t("navQuestions"), text: t("questionsIntro"), preview: miniTable() }
       ];
       $("thumbGrid").innerHTML = tiles.map((tile) => `
@@ -3490,6 +3677,7 @@ Return strict JSON only:
       if (!window.PptxGenJS) return toast(t("exportPptxError"));
       const button = $("exportPptx");
       const originalTab = state.tab;
+      const originalWorkflowTab = state.workflowTab;
       const visuals = [
         { tab: "home", target: "distributionChart", title: t("maturityDistribution") },
         { tab: "dashboard", target: "bubbleChart", title: t("maturityByTheme") },
@@ -3517,6 +3705,7 @@ Return strict JSON only:
         titleSlide.addText(new Date().toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US"), { x: 0.74, y: 6.52, w: 4, h: 0.3, fontFace: "Aptos", fontSize: 12, color: "FFFFFF", margin: 0 });
 
         for (const visual of visuals) {
+          state.workflowTab = "explore";
           state.tab = visual.tab;
           render();
           await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -3532,6 +3721,7 @@ Return strict JSON only:
         console.error(error);
         toast(t("exportPptxError"));
       } finally {
+        state.workflowTab = originalWorkflowTab;
         state.tab = originalTab;
         render();
         button.disabled = false;
@@ -3547,8 +3737,17 @@ Return strict JSON only:
       const [file] = event.target.files;
       if (file) handleBenchmark(file);
     });
-    document.querySelectorAll("[data-tab]").forEach((btn) => btn.addEventListener("click", () => {
-      state.tab = btn.dataset.tab;
+    document.querySelectorAll("[data-workflow-tab]").forEach((btn) => btn.addEventListener("click", () => {
+      state.workflowTab = btn.dataset.workflowTab;
+      if (state.workflowTab === "check") runBusinessChecks();
+      render();
+    }));
+    document.querySelectorAll("[data-go-workflow]").forEach((btn) => btn.addEventListener("click", () => {
+      state.workflowTab = btn.dataset.goWorkflow;
+      render();
+    }));
+    document.querySelectorAll("[data-explore-tab]").forEach((btn) => btn.addEventListener("click", () => {
+      state.tab = btn.dataset.exploreTab;
       render();
     }));
     document.querySelectorAll("#domainSort button").forEach((btn) => btn.addEventListener("click", () => {
@@ -3586,7 +3785,11 @@ Return strict JSON only:
     $("ingestTest").addEventListener("click", testIngestConnection);
     $("ingestRun").addEventListener("click", runIngest);
     $("ingestApply").addEventListener("click", applyIngestResults);
-    $("ingestExport").addEventListener("click", exportAssessmentWorkbook);
+    $("transcribeMedia").addEventListener("click", transcribeAzureMedia);
+    $("ingestMedia").addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      $("ingestMediaMeta").textContent = file ? `${file.name} · ${fmt.format(file.size / 1024 / 1024)} Mo` : "Configuration Azure Speech requise.";
+    });
     ["search", "domainFilter", "typeFilter", "statusFilter", "scoreFilter"].forEach((id) => {
       $(id).addEventListener("input", (event) => {
         const key = id.replace("Filter", "");
@@ -3600,6 +3803,9 @@ Return strict JSON only:
       renderQuestions();
     }));
     $("exportCsv").addEventListener("click", exportCsv);
+    $("runChecks").addEventListener("click", runBusinessChecks);
+    $("exportExcelWorkflow").addEventListener("click", exportAssessmentWorkbook);
+    $("exportCentralCsv").addEventListener("click", exportCentralCsv);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
 
