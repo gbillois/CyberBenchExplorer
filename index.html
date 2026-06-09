@@ -219,7 +219,7 @@
     .check-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
     .check-ok { color: #067647; }
     .check-error { color: #b42318; }
-    .export-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .export-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
     .export-card { padding: 20px; }
     .export-card h3 { margin: 0 0 8px; }
     .export-card p { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 58px; }
@@ -853,6 +853,7 @@
             <div class="card export-card"><h3>Excel enrichi</h3><p>Questionnaire Cyberbenchmark complété avec les scores, commentaires et niveaux revus.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button></div>
             <div class="card export-card"><h3>CSV base centrale</h3><p>Format tabulaire contrôlé pour ajout dans la base de données centrale Cyberbenchmark.</p><button class="primary" id="exportCentralCsv">Télécharger CSV</button></div>
             <div class="card export-card"><h3>PowerPoint résultats</h3><p>Présentation 16:9 contenant l'ensemble des principaux visuels de l'Explorer.</p><button class="primary pptx-export" id="exportPptx">Télécharger PPTX</button></div>
+            <div class="card export-card"><h3 id="exportHtmlTitle">Exploration client autonome</h3><p id="exportHtmlText">Fichier HTML interactif embarquant les résultats et le benchmark actuellement chargés.</p><button class="primary" id="exportStandaloneHtml">Télécharger HTML autonome</button></div>
           </div>
         </section>
 
@@ -1214,6 +1215,11 @@
         exportPptx: "Export all visuals to PPTX",
         exportPptxWorking: "Creating PPTX...",
         exportPptxError: "The PowerPoint export could not be created.",
+        exportHtmlTitle: "Standalone client explorer",
+        exportHtmlText: "Interactive HTML file embedding the currently loaded results and benchmark.",
+        exportHtml: "Download standalone HTML",
+        exportHtmlError: "The standalone HTML export could not be created.",
+        clientExploreIntro: "Interactive client report. Explore the embedded assessment results and benchmark.",
         navHome: "Summary",
         navDashboard: "Matrix",
         navOverview: "Radar",
@@ -1394,6 +1400,11 @@
         exportPptx: "Exporter tous les visuels en PPTX",
         exportPptxWorking: "Création du PPTX...",
         exportPptxError: "L'export PowerPoint n'a pas pu être généré.",
+        exportHtmlTitle: "Exploration client autonome",
+        exportHtmlText: "Fichier HTML interactif embarquant les résultats et le benchmark actuellement chargés.",
+        exportHtml: "Télécharger HTML autonome",
+        exportHtmlError: "L'export HTML autonome n'a pas pu être généré.",
+        clientExploreIntro: "Rapport client interactif. Explorez les résultats et le benchmark embarqués.",
         navHome: "Synthèse",
         navDashboard: "Matrice",
         navOverview: "Rosace",
@@ -1721,6 +1732,9 @@
       if (noticeText) noticeText.textContent = t("localDisplayNotice");
       $("benchmarkTemplate").textContent = t("benchmarkTemplate");
       $("exportPptx").textContent = t("exportPptx");
+      setText("exportHtmlTitle", "exportHtmlTitle");
+      setText("exportHtmlText", "exportHtmlText");
+      setText("exportStandaloneHtml", "exportHtml");
       document.querySelectorAll(".png-export").forEach((button) => button.title = t("exportPng"));
       $("search").placeholder = t("searchPlaceholder");
       document.querySelectorAll("[data-explore-tab]").forEach((button) => {
@@ -2623,6 +2637,77 @@ Return strict JSON only:
       XLSX.writeFile(workbook, `CyberBenchmark-ingested-${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
+    function standaloneExportPayload() {
+      const benchmark = state.benchmark ? { ...state.benchmark, recordMap: undefined } : null;
+      return {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        assessment: state.assessment,
+        benchmark,
+        preferences: {
+          compareRef: state.compareRef,
+          compareGap: state.compareGap,
+          domainSort: state.domainSort,
+          recommendationLimit: state.recommendationLimit
+        }
+      };
+    }
+
+    function exportStandaloneHtml() {
+      if (!state.assessment) return;
+      try {
+        const payload = JSON.stringify(standaloneExportPayload()).replace(/</g, "\\u003c");
+        const clientBootstrap = `<script>window.__CYBERBENCH_EXPORT__=${payload};<\/script>`;
+        const clientStyles = `<style id="client-export-styles">
+          body.client-export .workflow-nav,
+          body.client-export #dummyNotice,
+          body.client-export #exploreToolbar > .card,
+          body.client-export .status-pill { display: none !important; }
+          body.client-export .app { grid-template-columns: 1fr; }
+          body.client-export aside { display: none !important; }
+          body.client-export .content { width: min(1600px, 100%); margin: 0 auto; }
+        </style>`;
+        const documentHtml = `<!doctype html>\n${document.documentElement.outerHTML}`
+          .replace(/<script[^>]+src=["'][^"']+["'][^>]*><\/script>\s*/gi, "")
+          .replace("</head>", `${clientStyles}${clientBootstrap}</head>`);
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([documentHtml], { type: "text/html;charset=utf-8" }));
+        link.download = `CyberBenchmark-client-explorer-${new Date().toISOString().slice(0, 10)}.html`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } catch (error) {
+        console.error(error);
+        toast(t("exportHtmlError"));
+      }
+    }
+
+    function loadEmbeddedExport(payload) {
+      if (!payload?.assessment?.questions?.length) throw new Error(t("exportHtmlError"));
+      state.assessment = payload.assessment;
+      state.benchmark = payload.benchmark || null;
+      if (state.benchmark) {
+        state.benchmark.records = state.benchmark.records || [];
+        state.benchmark.recordMap = new Map(state.benchmark.records.map((record) => [normalize(record.id), record]));
+        state.benchmark.domainStats = state.benchmark.domainStats?.length ? state.benchmark.domainStats : aggregateBenchmark(state.benchmark.records);
+      }
+      const preferences = payload.preferences || {};
+      ["compareRef", "compareGap", "domainSort", "recommendationLimit"].forEach((key) => {
+        if (preferences[key] !== undefined) state[key] = preferences[key];
+      });
+      state.workflowTab = "explore";
+      state.tab = "home";
+      state.dummyAssessment = false;
+      state.dummyBenchmark = false;
+      document.body.classList.add("client-export");
+      document.title = lang === "fr" ? "Cyberbenchmark · Rapport client" : "Cyberbenchmark · Client report";
+      populateBenchmarkSelectors();
+      refs.statusDot.className = "dot ready";
+      refs.statusText.textContent = lang === "fr" ? "Rapport client autonome" : "Standalone client report";
+      refs.assessmentMeta.innerHTML = `<strong>${html(state.assessment.sourceName || t("assessment"))}</strong><br>${t("comparedQuestionCount", { count: state.assessment.questions.length })}`;
+      refs.benchmarkMeta.innerHTML = state.benchmark ? `<strong>${html(state.benchmark.sourceSheet || t("benchmarkLabel"))}</strong><br>${t("rowsSheet", { rows: state.benchmark.records.length, sheet: state.benchmark.sourceSheet || "-" })}` : "";
+      runBusinessChecks();
+    }
+
     function renderIngest() {
       const domains = state.assessment?.domainStats?.map((domain) => domain.id) || [];
       const domainSelect = $("ingestDomain");
@@ -2674,7 +2759,7 @@ Return strict JSON only:
       };
       const [title, intro] = titles[state.workflowTab];
       refs.pageTitle.textContent = title;
-      refs.pageIntro.textContent = intro;
+      refs.pageIntro.textContent = document.body.classList.contains("client-export") && state.workflowTab === "explore" ? t("clientExploreIntro") : intro;
     }
 
     function renderFilters() {
@@ -3807,10 +3892,21 @@ Return strict JSON only:
     $("exportExcelWorkflow").addEventListener("click", exportAssessmentWorkbook);
     $("exportCentralCsv").addEventListener("click", exportCentralCsv);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
+    $("exportStandaloneHtml").addEventListener("click", exportStandaloneHtml);
     document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
 
     applyLocale();
-    loadDummyData().finally(render);
+    if (window.__CYBERBENCH_EXPORT__) {
+      try {
+        loadEmbeddedExport(window.__CYBERBENCH_EXPORT__);
+        render();
+      } catch (error) {
+        console.error(error);
+        toast(t("exportHtmlError"));
+      }
+    } else {
+      loadDummyData().finally(render);
+    }
   </script>
 </body>
 </html>

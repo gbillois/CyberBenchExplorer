@@ -10,13 +10,15 @@ The UI defaults to English and automatically switches to French when the browser
 3. **Ingest**: upload the pre-positioned Cyberbenchmark Excel workbook, transcribe an audio/video file through Azure Speech, or paste a transcript. The LLM pipeline runs an extraction call and an independent check-and-challenge call per domain.
 4. **Check**: validate initial business rules such as unique IDs, percentage bounds, scored-answer totals equal to 100%, and N/A consistency.
 5. **Explore**: upload the score benchmark and access the existing Summary, Matrix, Radar, Domains, Findings, Comparison, Recommendations, and Response Details views.
-6. **Export**: download the enriched Excel workbook, the central-database CSV, and the complete 16:9 PowerPoint.
+6. **Export**: download the enriched Excel workbook, the central-database CSV, the complete 16:9 PowerPoint, or a standalone interactive HTML client report.
 7. **Configuration**: configure Anthropic, OpenAI, Azure OpenAI, Google Gemini, and Azure Speech. API keys stay in memory only.
 
 Files are read locally in the browser. No backend is used.
 SheetJS is vendored in `vendor/` to avoid a runtime CDN dependency.
 PptxGenJS is also vendored in `vendor/` so PowerPoint exports work without a runtime CDN dependency.
 Default data is stored as a static assessment JSON file and a benchmark workbook. If either file is missing or invalid, `index.html` loads a minimal fallback to avoid an empty screen. User-uploaded files are neither stored in the browser nor sent to a server.
+
+The standalone HTML export embeds the assessment and benchmark currently loaded in the browser. It opens directly on Explore, keeps its tabs, filters, sorting, drill-downs, CSV, and PNG exports, and does not load any external file or network resource.
 
 Transcript ingestion is the exception: transcripts and selected questionnaire requirements are sent directly from the browser to the configured LLM provider. Audio/video selected for transcription is sent to Microsoft Azure Speech. API keys are held only in memory and are not persisted. Obtain authorization before processing confidential data. For production use, route calls through an approved secure proxy.
 
