@@ -853,7 +853,7 @@
             <div class="card export-card"><h3>Excel enrichi</h3><p>Questionnaire Cyberbenchmark complété avec les scores, commentaires et niveaux revus.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button></div>
             <div class="card export-card"><h3>CSV base centrale</h3><p>Format tabulaire contrôlé pour ajout dans la base de données centrale Cyberbenchmark.</p><button class="primary" id="exportCentralCsv">Télécharger CSV</button></div>
             <div class="card export-card"><h3>PowerPoint résultats</h3><p>Présentation 16:9 contenant l'ensemble des principaux visuels de l'Explorer.</p><button class="primary pptx-export" id="exportPptx">Télécharger PPTX</button></div>
-            <div class="card export-card"><h3 id="exportHtmlTitle">Exploration client autonome</h3><p id="exportHtmlText">Fichier HTML interactif embarquant les résultats et le benchmark actuellement chargés.</p><button class="primary" id="exportStandaloneHtml">Télécharger HTML autonome</button></div>
+            <div class="card export-card"><h3 id="exportHtmlTitle">Exploration client autonome</h3><p id="exportHtmlText">Fichier HTML interactif avec résultats pré-calculés, sans benchmark ni données de calcul.</p><button class="primary" id="exportStandaloneHtml">Télécharger HTML autonome</button></div>
           </div>
         </section>
 
@@ -1216,10 +1216,14 @@
         exportPptxWorking: "Creating PPTX...",
         exportPptxError: "The PowerPoint export could not be created.",
         exportHtmlTitle: "Standalone client explorer",
-        exportHtmlText: "Interactive HTML file embedding the currently loaded results and benchmark.",
+        exportHtmlText: "Interactive HTML file with pre-calculated results, without benchmark or calculation data.",
         exportHtml: "Download standalone HTML",
         exportHtmlError: "The standalone HTML export could not be created.",
-        clientExploreIntro: "Interactive client report. Explore the embedded assessment results and benchmark.",
+        clientExploreIntro: "Interactive client report. Explore the sanitized, pre-calculated assessment results.",
+        clientRecommendationSummary: "{shown} pre-calculated priorities displayed out of {total}.",
+        scoreVariance: "Score difference",
+        belowReference: "below",
+        aboveReference: "above",
         navHome: "Summary",
         navDashboard: "Matrix",
         navOverview: "Radar",
@@ -1401,10 +1405,14 @@
         exportPptxWorking: "Création du PPTX...",
         exportPptxError: "L'export PowerPoint n'a pas pu être généré.",
         exportHtmlTitle: "Exploration client autonome",
-        exportHtmlText: "Fichier HTML interactif embarquant les résultats et le benchmark actuellement chargés.",
+        exportHtmlText: "Fichier HTML interactif avec résultats pré-calculés, sans benchmark ni données de calcul.",
         exportHtml: "Télécharger HTML autonome",
         exportHtmlError: "L'export HTML autonome n'a pas pu être généré.",
-        clientExploreIntro: "Rapport client interactif. Explorez les résultats et le benchmark embarqués.",
+        clientExploreIntro: "Rapport client interactif. Explorez les résultats sanitizés et pré-calculés.",
+        clientRecommendationSummary: "{shown} priorités pré-calculées affichées sur {total}.",
+        scoreVariance: "Ecart de notation",
+        belowReference: "inférieur",
+        aboveReference: "supérieur",
         navHome: "Synthèse",
         navDashboard: "Matrice",
         navOverview: "Rosace",
@@ -1598,6 +1606,7 @@
       recommendationDomain: "",
       recommendationLimit: 10,
       recommendationPayload: null,
+      clientReport: null,
       ingest: {
         provider: "anthropic",
         model: "claude-sonnet-4-20250514",
@@ -1683,6 +1692,8 @@
       workflowPanels: [...document.querySelectorAll(".workflow-panel")],
       analysisPanels: [...document.querySelectorAll(".analysis-panel")]
     };
+    // Export from the initial, unrendered document so runtime assessment and benchmark values cannot leak through the DOM snapshot.
+    const pristineDocumentHtml = document.documentElement.outerHTML;
 
     function applyLocale() {
       const labelMap = {
@@ -2637,16 +2648,118 @@ Return strict JSON only:
       XLSX.writeFile(workbook, `CyberBenchmark-ingested-${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    function standaloneExportPayload() {
-      const benchmark = state.benchmark ? { ...state.benchmark, recordMap: undefined } : null;
+    function varianceRange(value) {
+      if (!Number.isFinite(value)) return null;
+      const absolute = Math.abs(value);
+      const bucket = absolute < 3 ? { label: "0-3%", midpoint: 1.5 }
+        : absolute < 5 ? { label: "3-5%", midpoint: 4 }
+        : absolute < 10 ? { label: "5-10%", midpoint: 7.5 }
+        : absolute < 20 ? { label: "10-20%", midpoint: 15 }
+        : { label: "20%+", midpoint: 25 };
       return {
-        version: 1,
+        label: bucket.label,
+        direction: value < 0 ? "below" : "above",
+        position: value < 0 ? -bucket.midpoint : bucket.midpoint
+      };
+    }
+
+    function sanitizedClientQuestion(question, questionVariance = null) {
+      return {
+        id: question.id,
+        order: question.order,
+        domain: question.domain,
+        domainName: question.domainName,
+        type: question.type,
+        subtopic: question.subtopic,
+        question: question.question,
+        score: question.score,
+        status: question.status,
+        comment: question.comment,
+        reliability: question.reliability,
+        varianceRange: questionVariance
+      };
+    }
+
+    function standaloneExportPayload() {
+      const internalAverages = new Map(state.assessment.domainStats.map((domain) => {
+        const scored = state.assessment.questions.filter((question) => question.domain === domain.id && question.status === "scored");
+        return [domain.id, average(scored.map((question) => question.score))];
+      }));
+      const questions = state.assessment.questions.map((question) => {
+        const reference = questionReference(question);
+        const referenceValue = reference?.value ?? internalAverages.get(question.domain);
+        const difference = question.status === "scored" && Number.isFinite(referenceValue) ? question.score - referenceValue : null;
+        return sanitizedClientQuestion(question, varianceRange(difference));
+      });
+      const questionById = new Map(questions.map((question) => [question.id, question]));
+      const domains = state.assessment.domainStats.map((domain) => ({
+        id: domain.id,
+        name: domain.name,
+        total: domain.total,
+        scored: domain.scored,
+        na: domain.na,
+        missing: domain.missing,
+        orga: domain.orga,
+        tech: domain.tech,
+        score: domain.score,
+        coverage: domain.coverage
+      }));
+      const scored = questions.filter((question) => question.status === "scored");
+      const covered = questions.filter((question) => question.status === "scored" || question.status === "na").length;
+      const scoredDomains = domains.filter((domain) => Number.isFinite(domain.score));
+      const best = [...scoredDomains].sort((a, b) => b.score - a.score)[0] || null;
+      const weak = [...scoredDomains].sort((a, b) => a.score - b.score)[0] || null;
+      const distribution = [
+        { label: "0-20", min: 0, max: 20 },
+        { label: "20-40", min: 20, max: 40 },
+        { label: "40-60", min: 40, max: 60 },
+        { label: "60-80", min: 60, max: 80 },
+        { label: "80-100", min: 80, max: 101 }
+      ].map((bucket) => ({
+        label: bucket.label,
+        count: scored.filter((question) => question.score >= bucket.min && question.score < bucket.max).length
+      }));
+      const recommendations = recommendationRows().map((row) => ({
+        question: questionById.get(row.question.id),
+        currentLevel: row.currentLevel,
+        targetLevel: row.targetLevel,
+        actions: row.actions,
+        priority: { key: row.priority.key }
+      }));
+      const findings = Object.fromEntries(["all", ...domains.map((domain) => domain.id)].map((domainId) => {
+        const scoped = domainId === "all" ? questions : questions.filter((question) => question.domain === domainId);
+        const scopedScored = scoped.filter((question) => question.status === "scored");
+        return [domainId, {
+          strengthIds: [...scopedScored].sort((a, b) => b.score - a.score).slice(0, 8).map((question) => question.id),
+          weaknessIds: [...scopedScored].sort((a, b) => a.score - b.score).slice(0, 8).map((question) => question.id),
+          blindspotIds: scoped.filter((question) => question.status !== "scored").slice(0, 8).map((question) => question.id)
+        }];
+      }));
+      return {
+        version: 2,
         exportedAt: new Date().toISOString(),
-        assessment: state.assessment,
-        benchmark,
+        assessment: {
+          sourceName: state.assessment.sourceName,
+          sheetCount: state.assessment.sheetCount,
+          questions,
+          domainStats: domains
+        },
+        clientReport: {
+          sanitized: true,
+          summary: {
+            averageScore: average(scored.map((question) => question.score)),
+            total: questions.length,
+            scored: scored.length,
+            covered,
+            na: questions.filter((question) => question.status === "na").length,
+            best,
+            weak
+          },
+          distribution,
+          findings,
+          recommendations
+        },
         preferences: {
-          compareRef: state.compareRef,
-          compareGap: state.compareGap,
           domainSort: state.domainSort,
           recommendationLimit: state.recommendationLimit
         }
@@ -2662,12 +2775,19 @@ Return strict JSON only:
           body.client-export .workflow-nav,
           body.client-export #dummyNotice,
           body.client-export #exploreToolbar > .card,
-          body.client-export .status-pill { display: none !important; }
+          body.client-export .status-pill,
+          body.client-export [data-explore-tab="compare"],
+          body.client-export [data-nav-tab="compare"],
+          body.client-export #exportCsv,
+          body.client-export #questionsTable th:nth-child(n+6):nth-child(-n+10),
+          body.client-export #questionsTable td:nth-child(n+6):nth-child(-n+10),
+          body.client-export #questionsTable th:nth-child(12),
+          body.client-export #questionsTable td:nth-child(12) { display: none !important; }
           body.client-export .app { grid-template-columns: 1fr; }
           body.client-export aside { display: none !important; }
           body.client-export .content { width: min(1600px, 100%); margin: 0 auto; }
         </style>`;
-        const documentHtml = `<!doctype html>\n${document.documentElement.outerHTML}`
+        const documentHtml = `<!doctype html>\n${pristineDocumentHtml}`
           .replace(/<script[^>]+src=["'][^"']+["'][^>]*><\/script>\s*/gi, "")
           .replace("</head>", `${clientStyles}${clientBootstrap}</head>`);
         const link = document.createElement("a");
@@ -2685,6 +2805,7 @@ Return strict JSON only:
       if (!payload?.assessment?.questions?.length) throw new Error(t("exportHtmlError"));
       state.assessment = payload.assessment;
       state.benchmark = payload.benchmark || null;
+      state.clientReport = payload.clientReport || null;
       if (state.benchmark) {
         state.benchmark.records = state.benchmark.records || [];
         state.benchmark.recordMap = new Map(state.benchmark.records.map((record) => [normalize(record.id), record]));
@@ -2705,7 +2826,7 @@ Return strict JSON only:
       refs.statusText.textContent = lang === "fr" ? "Rapport client autonome" : "Standalone client report";
       refs.assessmentMeta.innerHTML = `<strong>${html(state.assessment.sourceName || t("assessment"))}</strong><br>${t("comparedQuestionCount", { count: state.assessment.questions.length })}`;
       refs.benchmarkMeta.innerHTML = state.benchmark ? `<strong>${html(state.benchmark.sourceSheet || t("benchmarkLabel"))}</strong><br>${t("rowsSheet", { rows: state.benchmark.records.length, sheet: state.benchmark.sourceSheet || "-" })}` : "";
-      runBusinessChecks();
+      if (!state.clientReport?.sanitized) runBusinessChecks();
     }
 
     function renderIngest() {
@@ -2838,11 +2959,31 @@ Return strict JSON only:
       return { ref, gap };
     }
 
+    function questionVarianceText(question) {
+      const range = question?.varianceRange;
+      if (!range) return "";
+      return `${t("scoreVariance")} ${range.label} · ${t(range.direction === "below" ? "belowReference" : "aboveReference")}`;
+    }
+
+    function pointDifferenceText(point) {
+      return point?.varianceRange ? questionVarianceText(point) : `${point.gapLabel} ${signedPct(point.gap)}`;
+    }
+
     function questionDashboardPoints(domainId) {
       const scored = state.assessment.questions
         .filter((q) => q.domain === domainId && q.status === "scored");
       const internalAverage = average(scored.map((q) => q.score));
       return scored.map((q) => {
+        if (state.clientReport?.sanitized && q.varianceRange) {
+          return {
+            ...q,
+            name: q.question || q.subtopic || q.id,
+            display: q.id,
+            ref: null,
+            gap: q.varianceRange.position,
+            gapLabel: t("scoreVariance")
+          };
+        }
         const ref = questionReference(q);
         const refValue = ref ? ref.value : internalAverage;
         return {
@@ -2888,7 +3029,7 @@ Return strict JSON only:
       $("dashboardBack").classList.toggle("hidden", !selectedDomain);
       const refLabel = points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, "");
       $("bubbleTitle").textContent = selectedDomain
-        ? t("questionsVs", { domain: selectedDomain.id, ref: refLabel })
+        ? (state.clientReport?.sanitized ? `${selectedDomain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: selectedDomain.id, ref: refLabel }))
         : t("maturityVs", { ref: refLabel });
 
       if (!points.length) {
@@ -2922,7 +3063,7 @@ Return strict JSON only:
           ? `data-drill-question="${html(d.id)}"`
           : `data-drill-domain="${html(d.id)}"`;
         const title = selectedDomain
-          ? `${d.id} · ${d.question || d.subtopic} · maturité ${pct(d.score)} · ${d.gapLabel} ${signedPct(d.gap)}`
+          ? `${d.id} · ${d.question || d.subtopic} · maturité ${pct(d.score)} · ${pointDifferenceText(d)}`
           : `${d.name} · maturité ${pct(d.score)} · ${d.gapLabel} ${signedPct(d.gap)}`;
         return `<g class="bubble-point${active}${dimmed}" ${dataAttr} tabindex="0" role="button">
           <circle cx="${x(d.gap)}" cy="${y(d.score)}" r="8.5" fill="${colors[i % colors.length]}"></circle>
@@ -2936,7 +3077,7 @@ Return strict JSON only:
         ${grid}
         <line class="slide-axis" x1="${pad.left}" y1="${h - pad.bottom}" x2="${w - pad.right}" y2="${h - pad.bottom}"></line>
         <line class="slide-axis" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${h - pad.bottom}"></line>
-        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${t("gapWith", { ref: refLabel })}</text>
+        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${selectedDomain && state.clientReport?.sanitized ? t("scoreVariance") : t("gapWith", { ref: refLabel })}</text>
         <text class="slide-label" x="18" y="${h / 2}" transform="rotate(-90 18 ${h / 2})" text-anchor="middle">${selectedDomain ? t("maturityQuestion") : t("maturityEnterprise")}</text>
         ${bubbles}
       </svg>`;
@@ -2974,7 +3115,7 @@ Return strict JSON only:
 
       if (!selectedQuestion) {
         $("drillPanel").innerHTML = `${crumbs}${summary}${questions.map((q) => `<button class="metric-line" data-drill-question="${html(q.id)}">
-          <span><strong>${html(q.id)} · ${html(q.subtopic || "-")}</strong><span>${html(q.question || "-")} · ${q.gapLabel} ${signedPct(q.gap)}</span></span>
+          <span><strong>${html(q.id)} · ${html(q.subtopic || "-")}</strong><span>${html(q.question || "-")} · ${html(pointDifferenceText(q))}</span></span>
           <b style="color:${scoreColor(q.score)}">${pct(q.score)}</b>
         </button>`).join("")}`;
         return;
@@ -2984,6 +3125,15 @@ Return strict JSON only:
     }
 
     function questionDetailCard(question) {
+      if (state.clientReport?.sanitized) {
+        return `<div class="question-card">
+          <div class="q-title">${html(question.question || question.subtopic || question.id)}</div>
+          <div class="q-meta">${html(question.id)} · ${html(question.type)} · ${html(question.status)}</div>
+          <div class="score-badge" style="margin-top:12px; color:${scoreColor(question.score)}">${question.status === "na" ? "N/A" : pct(question.score)}</div>
+          ${question.varianceRange ? `<div class="q-meta" style="margin-top:8px;">${html(questionVarianceText(question))}</div>` : ""}
+          <div class="q-comment">${html(question.comment || "-")}</div>
+        </div>`;
+      }
       const top = questionGap(question);
       return `<div class="question-card">
         <div class="q-title">${html(question.question || question.subtopic || question.id)}</div>
@@ -3038,15 +3188,16 @@ Return strict JSON only:
     function renderHome() {
       const qs = state.assessment.questions;
       const scored = qs.filter((q) => q.status === "scored");
-      const avg = average(scored.map((q) => q.score));
-      const covered = qs.filter((q) => q.status === "scored" || q.status === "na").length;
       const domains = state.assessment.domainStats.filter((d) => Number.isFinite(d.score));
-      const best = [...domains].sort((a, b) => b.score - a.score)[0];
-      const weak = [...domains].sort((a, b) => a.score - b.score)[0];
+      const precomputed = state.clientReport?.sanitized ? state.clientReport.summary : null;
+      const avg = precomputed?.averageScore ?? average(scored.map((q) => q.score));
+      const covered = precomputed?.covered ?? qs.filter((q) => q.status === "scored" || q.status === "na").length;
+      const best = precomputed?.best ?? [...domains].sort((a, b) => b.score - a.score)[0];
+      const weak = precomputed?.weak ?? [...domains].sort((a, b) => a.score - b.score)[0];
       $("kpiScore").textContent = pct(avg);
-      $("kpiScoreSub").textContent = t("questionsScoredOn", { scored: scored.length, total: qs.length });
-      $("kpiCoverage").textContent = pct(covered / qs.length * 100);
-      $("kpiCoverageSub").textContent = t("questionsCovered", { covered, na: qs.filter((q) => q.status === "na").length });
+      $("kpiScoreSub").textContent = t("questionsScoredOn", { scored: precomputed?.scored ?? scored.length, total: precomputed?.total ?? qs.length });
+      $("kpiCoverage").textContent = pct(covered / (precomputed?.total ?? qs.length) * 100);
+      $("kpiCoverageSub").textContent = t("questionsCovered", { covered, na: precomputed?.na ?? qs.filter((q) => q.status === "na").length });
       $("kpiBest").textContent = best ? best.id : "-";
       $("kpiBestSub").textContent = best ? `${best.name} · ${pct(best.score)}` : t("highestScore");
       $("kpiWeak").textContent = weak ? weak.id : "-";
@@ -3064,7 +3215,7 @@ Return strict JSON only:
         { tab: "compare", title: t("navCompare"), text: t("compareIntro"), preview: miniCompare() },
         { tab: "recommendations", title: t("navRecommendations"), text: t("recommendationsIntro"), preview: miniRecommendations() },
         { tab: "questions", title: t("navQuestions"), text: t("questionsIntro"), preview: miniTable() }
-      ];
+      ].filter((tile) => !(state.clientReport?.sanitized && tile.tab === "compare"));
       $("thumbGrid").innerHTML = tiles.map((tile) => `
         <button class="thumb" type="button" data-nav-tab="${tile.tab}">
           <div class="thumb-preview">${tile.preview}</div>
@@ -3303,15 +3454,18 @@ Return strict JSON only:
     }
 
     function renderDistribution() {
-      const buckets = [
+      const precomputed = state.clientReport?.sanitized ? state.clientReport.distribution : null;
+      const buckets = precomputed || [
         { label: "0-20", min: 0, max: 20 },
         { label: "20-40", min: 20, max: 40 },
         { label: "40-60", min: 40, max: 60 },
         { label: "60-80", min: 60, max: 80 },
         { label: "80-100", min: 80, max: 101 }
       ];
-      const scored = state.assessment.questions.filter((q) => q.status === "scored");
-      buckets.forEach((b) => b.count = scored.filter((q) => q.score >= b.min && q.score < b.max).length);
+      if (!precomputed) {
+        const scored = state.assessment.questions.filter((q) => q.status === "scored");
+        buckets.forEach((b) => b.count = scored.filter((q) => q.score >= b.min && q.score < b.max).length);
+      }
       const max = Math.max(1, ...buckets.map((b) => b.count));
       $("distributionChart").innerHTML = `<div class="bars">${buckets.map((b) => `
         <div class="bar-row">
@@ -3372,14 +3526,15 @@ Return strict JSON only:
       const dots = points.map((q) => `<g>
         <circle cx="${x(q.gap)}" cy="${y(q.score)}" r="7" fill="${scoreColor(q.score)}"></circle>
         <text class="axis-label" x="${x(q.gap) + 10}" y="${y(q.score) + 4}">${html(q.id)}</text>
-        <title>${html(q.question)} · ${pct(q.score)} · ${q.gapLabel} ${signedPct(q.gap)}</title>
+        <title>${html(q.question)} · ${pct(q.score)} · ${html(pointDifferenceText(q))}</title>
       </g>`).join("");
-      $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(t("questionsVs", { domain: domain.id, ref: referenceLabel() }))}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div>
-        <svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${html(t("questionsVs", { domain: domain.id, ref: referenceLabel() }))}">
+      const scatterTitle = state.clientReport?.sanitized ? `${domain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: domain.id, ref: referenceLabel() });
+      $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(scatterTitle)}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div>
+        <svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${html(scatterTitle)}">
           <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${x(0)}" y1="${pad}" x2="${x(0)}" y2="${h-pad}" stroke="rgba(255,255,255,.18)" stroke-dasharray="4 5"></line>
-          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${html(t("gapWith", { ref: referenceLabel() }))}</text>
+          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${html(state.clientReport?.sanitized ? t("scoreVariance") : t("gapWith", { ref: referenceLabel() }))}</text>
           <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">${t("questionScoreAxis")}</text>
           ${dots}
         </svg>`;
@@ -3409,7 +3564,7 @@ Return strict JSON only:
       const top = questionGap(q);
       return `<div class="finding">
         <div class="id">${q.id}</div>
-        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${top.ref ? ` · ${html(top.ref.label)} ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : ""}</div></div>
+        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${q.varianceRange ? ` · ${html(questionVarianceText(q))}` : (top.ref ? ` · ${html(top.ref.label)} ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : "")}</div></div>
         <div class="score-badge" style="color:${scoreColor(q.score)}">${q.status === "na" ? "N/A" : pct(q.score)}</div>
       </div>`;
     }
@@ -3418,10 +3573,12 @@ Return strict JSON only:
       renderFindingsFilter();
       let scoped = state.assessment.questions;
       if (state.findingsDomain) scoped = scoped.filter((q) => q.domain === state.findingsDomain);
+      const precomputed = state.clientReport?.sanitized ? state.clientReport.findings[state.findingsDomain || "all"] : null;
+      const byIds = (ids) => (ids || []).map((id) => scoped.find((question) => question.id === id)).filter(Boolean);
       const scored = scoped.filter((q) => q.status === "scored");
-      const strengths = [...scored].sort((a, b) => b.score - a.score).slice(0, 8);
-      const weaknesses = [...scored].sort((a, b) => a.score - b.score).slice(0, 8);
-      const blindspots = scoped.filter((q) => q.status !== "scored").slice(0, 8);
+      const strengths = precomputed ? byIds(precomputed.strengthIds) : [...scored].sort((a, b) => b.score - a.score).slice(0, 8);
+      const weaknesses = precomputed ? byIds(precomputed.weaknessIds) : [...scored].sort((a, b) => a.score - b.score).slice(0, 8);
+      const blindspots = precomputed ? byIds(precomputed.blindspotIds) : scoped.filter((q) => q.status !== "scored").slice(0, 8);
       $("strengths").innerHTML = strengths.length ? strengths.map(findingItem).join("") : `<p class="muted">${t("noScoredQuestion")}</p>`;
       $("weaknesses").innerHTML = weaknesses.length ? weaknesses.map(findingItem).join("") : `<p class="muted">${t("noScoredQuestion")}</p>`;
       $("blindspots").innerHTML = blindspots.length ? blindspots.map(findingItem).join("") : `<p class="muted">${t("noBlindspot")}</p>`;
@@ -3464,6 +3621,10 @@ Return strict JSON only:
     }
 
     function recommendationRows() {
+      if (state.clientReport?.sanitized) {
+        return state.clientReport.recommendations
+          .filter((row) => !state.recommendationDomain || row.question.domain === state.recommendationDomain);
+      }
       if (!state.assessment || !state.benchmark) return [];
       const marketByDomain = new Map(state.benchmark.domainStats.map((domain) => [domain.id, benchmarkValue(domain, "all")]));
       return state.assessment.questions
@@ -3519,7 +3680,7 @@ Return strict JSON only:
       const rows = recommendationRows();
       const visible = rows.slice(0, state.recommendationLimit);
       $("recommendationSummary").textContent = rows.length
-        ? t("recommendationSummary", { shown: visible.length, total: rows.length })
+        ? t(state.clientReport?.sanitized ? "clientRecommendationSummary" : "recommendationSummary", { shown: visible.length, total: rows.length })
         : t("recommendationEmpty");
       $("recommendationList").innerHTML = visible.map((row) => `
         <article class="card recommendation-card">
@@ -3528,13 +3689,14 @@ Return strict JSON only:
               <div class="recommendation-title">${html(row.question.id)} · ${html(row.question.question || row.question.subtopic)}</div>
               <div class="recommendation-meta">${html(row.question.domain)} · ${html(row.question.subtopic || "-")} · ${html(row.question.type)}</div>
             </div>
-            <div class="priority-badge priority-${row.priority.key}">${html(row.priority.label)}</div>
+            <div class="priority-badge priority-${row.priority.key}">${html(row.priority.label || t({ critical: "priorityCritical", high: "priorityHigh", medium: "priorityMedium" }[row.priority.key]))}</div>
           </div>
           <div class="recommendation-body">
             <div class="recommendation-scores">
               <span class="recommendation-score">${t("currentScore")} <strong>${pct(row.question.score)}</strong></span>
-              <span class="recommendation-score">${t("marketScore")} <strong>${pct(row.market)}</strong></span>
-              <span class="recommendation-score">${t("gap")} <strong style="color:var(--red)">${signedPct(row.gap)}</strong></span>
+              ${state.clientReport?.sanitized && row.question.varianceRange ? `<span class="recommendation-score">${html(questionVarianceText(row.question))}</span>` : ""}
+              ${state.clientReport?.sanitized ? "" : `<span class="recommendation-score">${t("marketScore")} <strong>${pct(row.market)}</strong></span>
+              <span class="recommendation-score">${t("gap")} <strong style="color:var(--red)">${signedPct(row.gap)}</strong></span>`}
               <span class="recommendation-score">${t("targetLevel")} <strong>L${row.targetLevel}</strong></span>
             </div>
             <strong>${t("remediationActions")}</strong>
@@ -3543,7 +3705,7 @@ Return strict JSON only:
         </article>`).join("");
 
       // The payload stays in memory; sending it requires a configured secure API proxy.
-      state.recommendationPayload = buildRecommendationEnrichmentPayload(visible);
+      state.recommendationPayload = state.clientReport?.sanitized ? null : buildRecommendationEnrichmentPayload(visible);
     }
 
     function filteredQuestions() {
@@ -3574,7 +3736,8 @@ Return strict JSON only:
     function renderQuestions() {
       const rows = filteredQuestions();
       const tbody = $("questionsTable").querySelector("tbody");
-      $("questionsTable").querySelectorAll("th")[10].textContent = referenceLabel();
+      const sanitized = Boolean(state.clientReport?.sanitized);
+      $("questionsTable").querySelectorAll("th")[10].textContent = sanitized ? t("scoreAxis") : referenceLabel();
       tbody.innerHTML = rows.map((q) => {
         const top = questionGap(q);
         return `
@@ -3589,9 +3752,9 @@ Return strict JSON only:
             <td class="small">${levelPct(q, 2)}</td>
             <td class="small">${levelPct(q, 3)}</td>
             <td class="small">${levelPct(q, 4)}</td>
-            <td class="small">${top.ref ? pct(top.ref.value) : "-"}</td>
+            <td class="small">${sanitized ? pct(q.score) : (top.ref ? pct(top.ref.value) : "-")}</td>
             <td class="small">${top.ref ? maturityLabel(top.ref.maturityLevel) : "-"}</td>
-            <td class="small" style="color:${Number.isFinite(top.gap) && top.gap < 0 ? "var(--red)" : "var(--muted)"}; font-weight:800">${signedPct(top.gap)}</td>
+            <td class="small" style="color:${(sanitized && q.varianceRange?.direction === "below") || (Number.isFinite(top.gap) && top.gap < 0) ? "var(--red)" : "var(--muted)"}; font-weight:800">${sanitized ? html(questionVarianceText(q)) : signedPct(top.gap)}</td>
             <td class="small">${q.status}</td>
             <td>${q.comment || `<span class="muted">-</span>`}</td>
           </tr>`;

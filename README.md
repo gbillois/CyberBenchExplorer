@@ -18,7 +18,9 @@ SheetJS is vendored in `vendor/` to avoid a runtime CDN dependency.
 PptxGenJS is also vendored in `vendor/` so PowerPoint exports work without a runtime CDN dependency.
 Default data is stored as a static assessment JSON file and a benchmark workbook. If either file is missing or invalid, `index.html` loads a minimal fallback to avoid an empty screen. User-uploaded files are neither stored in the browser nor sent to a server.
 
-The standalone HTML export embeds the assessment and benchmark currently loaded in the browser. It opens directly on Explore, keeps its tabs, filters, sorting, drill-downs, CSV, and PNG exports, and does not load any external file or network resource.
+The standalone HTML client export embeds only sanitized, pre-calculated results. It excludes the benchmark, question-level maturity distributions, calculation requirements, market values, and question-level market gaps. It opens directly on Explore, keeps useful tabs, filters, sorting, drill-downs, and PNG exports, and does not load any external file or network resource.
+Question-level score differences are exposed only as pre-calculated ranges (`0-3%`, `3-5%`, `5-10%`, `10-20%`, or `20%+`), never as exact values.
+As with any local HTML file, a recipient can edit their own copy visually. Sanitized mode prevents benchmark extraction and score recalculation from source data; it does not make the file tamper-proof.
 
 Transcript ingestion is the exception: transcripts and selected questionnaire requirements are sent directly from the browser to the configured LLM provider. Audio/video selected for transcription is sent to Microsoft Azure Speech. API keys are held only in memory and are not persisted. Obtain authorization before processing confidential data. For production use, route calls through an approved secure proxy.
 
