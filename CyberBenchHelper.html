@@ -1761,6 +1761,7 @@
       checkRan: false,
       checkOriginals: new Map(),
       sourceWorkbook: null,
+      sourceBytes: null,
       sourceFileName: "",
       sourceFileType: "xlsx"
     };
@@ -2492,7 +2493,8 @@
     async function handleAssessment(file) {
       try {
         if (!window.XLSX) throw new Error(t("missingSheetJs"));
-        const workbook = await readWorkbook(file);
+        state.sourceBytes = new Uint8Array(await file.arrayBuffer());
+        const workbook = XLSX.read(state.sourceBytes, { type: "array", cellDates: true, cellNF: true });
         const assessment = parseAssessment(workbook);
         if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
         state.assessment = assessment;
@@ -3202,65 +3204,279 @@ Return strict JSON only:
       XLSX.writeFile(workbook, `CyberBenchmark-ingested-${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    function setWorkbookCell(worksheet, row, col, type, value) {
-      const address = XLSX.utils.encode_cell({ r: row, c: col });
-      const cell = worksheet[address] || {};
-      delete cell.w;
-      delete cell.r;
-      delete cell.h;
-      delete cell.f;
-      if (type === "s" && (value === "" || value === null || value === undefined)) {
-        cell.t = "z";
-        delete cell.v;
-      } else {
-        cell.t = type;
-        cell.v = value;
+    // ---------------------------------------------------------------------------
+    // In-browser OOXML (.xlsx/.xlsm) cell patcher.
+    // SheetJS cannot rewrite a macro-enabled workbook without dropping macros,
+    // styles, charts and other sheets, which corrupts the file. Instead we edit
+    // the existing file's ZIP directly: only the targeted worksheet cells are
+    // changed; every other entry (vbaProject.bin, styles, drawings, other sheets)
+    // is copied back byte for byte.
+    // ---------------------------------------------------------------------------
+    const ZIP_REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+    const XML_NS = "http://www.w3.org/XML/1998/namespace";
+
+    const CRC32_TABLE = (() => {
+      const table = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+        table[n] = c >>> 0;
       }
-      worksheet[address] = cell;
+      return table;
+    })();
+
+    function crc32(bytes) {
+      let crc = 0xffffffff;
+      for (let i = 0; i < bytes.length; i++) crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ bytes[i]) & 0xff];
+      return (crc ^ 0xffffffff) >>> 0;
     }
 
-    // Write the current answers back into the cells of the originally loaded workbook,
-    // preserving every other sheet, formatting and (for .xlsm) the VBA project.
-    function applyEditsToSourceWorkbook(workbook) {
-      if (!workbook || !state.assessment) return false;
-      state.assessment.questions.forEach((question) => {
-        const src = question._src;
-        if (!src) return;
-        const worksheet = workbook.Sheets[src.sheet];
-        if (!worksheet) return;
-        const levels = normalizeLevels(question.levels);
-        src.levelCols.forEach((col, index) => {
-          if (col < 0) return;
-          const scale = src.levelScales[index] || 100;
-          const numeric = question.status === "scored" ? levels[index] * scale : 0;
-          setWorkbookCell(worksheet, src.row, col, "n", Math.round(numeric * 1e6) / 1e6);
+    async function inflateRaw(bytes) {
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+
+    const readU16 = (d, o) => d[o] | (d[o + 1] << 8);
+    const readU32 = (d, o) => (d[o] | (d[o + 1] << 8) | (d[o + 2] << 16) | (d[o + 3] << 24)) >>> 0;
+
+    // Parse a ZIP using its central directory (authoritative for sizes and offsets).
+    function parseZip(bytes) {
+      let eocd = -1;
+      for (let i = bytes.length - 22; i >= 0; i--) { if (readU32(bytes, i) === 0x06054b50) { eocd = i; break; } }
+      if (eocd < 0) throw new Error("ZIP end-of-directory not found");
+      const count = readU16(bytes, eocd + 10);
+      let p = readU32(bytes, eocd + 16);
+      const decoder = new TextDecoder();
+      const entries = [];
+      for (let i = 0; i < count; i++) {
+        if (readU32(bytes, p) !== 0x02014b50) throw new Error("Corrupt central directory");
+        const versionMadeBy = readU16(bytes, p + 4);
+        const versionNeeded = readU16(bytes, p + 6);
+        const flags = readU16(bytes, p + 8);
+        const method = readU16(bytes, p + 10);
+        const time = readU16(bytes, p + 12);
+        const date = readU16(bytes, p + 14);
+        const crc = readU32(bytes, p + 16);
+        const compSize = readU32(bytes, p + 20);
+        const uncompSize = readU32(bytes, p + 24);
+        const nameLen = readU16(bytes, p + 28);
+        const extraLen = readU16(bytes, p + 30);
+        const commentLen = readU16(bytes, p + 32);
+        const internalAttrs = readU16(bytes, p + 36);
+        const externalAttrs = readU32(bytes, p + 38);
+        const localOffset = readU32(bytes, p + 42);
+        const name = decoder.decode(bytes.subarray(p + 46, p + 46 + nameLen));
+        const lNameLen = readU16(bytes, localOffset + 26);
+        const lExtraLen = readU16(bytes, localOffset + 28);
+        const dataStart = localOffset + 30 + lNameLen + lExtraLen;
+        entries.push({
+          name, versionMadeBy, versionNeeded, flags, method, time, date, crc, compSize, uncompSize,
+          internalAttrs, externalAttrs,
+          localExtra: bytes.subarray(localOffset + 30 + lNameLen, dataStart),
+          data: bytes.subarray(dataStart, dataStart + compSize)
         });
-        if (src.naCol >= 0) setWorkbookCell(worksheet, src.row, src.naCol, "s", question.status === "na" ? "x" : "");
-        if (src.commentCol >= 0) setWorkbookCell(worksheet, src.row, src.commentCol, "s", question.comment || "");
-        if (src.reliabilityCol >= 0) setWorkbookCell(worksheet, src.row, src.reliabilityCol, "s", question.reliability || "");
+        p += 46 + nameLen + extraLen + commentLen;
+      }
+      return entries;
+    }
+
+    async function zipEntryText(entry) {
+      const raw = entry.method === 8 ? await inflateRaw(entry.data) : entry.data;
+      return new TextDecoder().decode(raw);
+    }
+
+    // Rebuild a ZIP. Unchanged entries are copied verbatim; changed entries are
+    // stored uncompressed (method 0) so no compressor dependency is required.
+    function buildZip(entries) {
+      const encoder = new TextEncoder();
+      const chunks = [];
+      const central = [];
+      let offset = 0;
+      for (const e of entries) {
+        let { data, method, crc, compSize, uncompSize, localExtra } = e;
+        let flags = e.flags & ~0x08;
+        if (e.newText !== undefined) {
+          data = encoder.encode(e.newText);
+          method = 0; crc = crc32(data); compSize = data.length; uncompSize = data.length; localExtra = new Uint8Array(0);
+        }
+        const nameBytes = encoder.encode(e.name);
+        const header = new Uint8Array(30 + nameBytes.length + localExtra.length);
+        const hv = new DataView(header.buffer);
+        hv.setUint32(0, 0x04034b50, true);
+        hv.setUint16(4, e.versionNeeded, true);
+        hv.setUint16(6, flags, true);
+        hv.setUint16(8, method, true);
+        hv.setUint16(10, e.time, true);
+        hv.setUint16(12, e.date, true);
+        hv.setUint32(14, crc, true);
+        hv.setUint32(18, compSize, true);
+        hv.setUint32(22, uncompSize, true);
+        hv.setUint16(26, nameBytes.length, true);
+        hv.setUint16(28, localExtra.length, true);
+        header.set(nameBytes, 30);
+        header.set(localExtra, 30 + nameBytes.length);
+        chunks.push(header, data);
+        central.push({ e, flags, method, crc, compSize, uncompSize, nameBytes, offset });
+        offset += header.length + compSize;
+      }
+      const cdStart = offset;
+      for (const c of central) {
+        const cd = new Uint8Array(46 + c.nameBytes.length);
+        const cv = new DataView(cd.buffer);
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, c.e.versionMadeBy, true);
+        cv.setUint16(6, c.e.versionNeeded, true);
+        cv.setUint16(8, c.flags, true);
+        cv.setUint16(10, c.method, true);
+        cv.setUint16(12, c.e.time, true);
+        cv.setUint16(14, c.e.date, true);
+        cv.setUint32(16, c.crc, true);
+        cv.setUint32(20, c.compSize, true);
+        cv.setUint32(24, c.uncompSize, true);
+        cv.setUint16(28, c.nameBytes.length, true);
+        cv.setUint16(36, c.e.internalAttrs, true);
+        cv.setUint32(38, c.e.externalAttrs, true);
+        cv.setUint32(42, c.offset, true);
+        cd.set(c.nameBytes, 46);
+        chunks.push(cd);
+        offset += cd.length;
+      }
+      const eocd = new Uint8Array(22);
+      const ev = new DataView(eocd.buffer);
+      ev.setUint32(0, 0x06054b50, true);
+      ev.setUint16(8, central.length, true);
+      ev.setUint16(10, central.length, true);
+      ev.setUint32(12, offset - cdStart, true);
+      ev.setUint32(16, cdStart, true);
+      chunks.push(eocd);
+      let total = 0;
+      chunks.forEach((c) => { total += c.length; });
+      const out = new Uint8Array(total);
+      let q = 0;
+      chunks.forEach((c) => { out.set(c, q); q += c.length; });
+      return out;
+    }
+
+    // Set one cell (numeric or inline string) in a parsed worksheet XML document,
+    // preserving the cell's style index and inserting rows/cells in order if needed.
+    function setWorksheetCell(doc, ns, ref, rowNum, type, value) {
+      const sheetData = doc.getElementsByTagName("sheetData")[0];
+      if (!sheetData) return;
+      const colIndex = XLSX.utils.decode_cell(ref).c;
+      let row = null;
+      const rows = sheetData.getElementsByTagName("row");
+      for (let i = 0; i < rows.length; i++) { if (rows[i].getAttribute("r") === String(rowNum)) { row = rows[i]; break; } }
+      if (!row) {
+        row = doc.createElementNS(ns, "row");
+        row.setAttribute("r", String(rowNum));
+        let placed = false;
+        for (let i = 0; i < rows.length; i++) { if (parseInt(rows[i].getAttribute("r"), 10) > rowNum) { sheetData.insertBefore(row, rows[i]); placed = true; break; } }
+        if (!placed) sheetData.appendChild(row);
+      }
+      let cell = null;
+      const cells = row.getElementsByTagName("c");
+      for (let i = 0; i < cells.length; i++) { if (cells[i].getAttribute("r") === ref) { cell = cells[i]; break; } }
+      if (!cell) {
+        cell = doc.createElementNS(ns, "c");
+        cell.setAttribute("r", ref);
+        let placed = false;
+        for (let i = 0; i < cells.length; i++) { if (XLSX.utils.decode_cell(cells[i].getAttribute("r")).c > colIndex) { row.insertBefore(cell, cells[i]); placed = true; break; } }
+        if (!placed) row.appendChild(cell);
+      }
+      while (cell.firstChild) cell.removeChild(cell.firstChild);
+      if (type === "n" && value !== "") {
+        cell.removeAttribute("t");
+        const v = doc.createElementNS(ns, "v");
+        v.textContent = String(value);
+        cell.appendChild(v);
+      } else if (type === "s" && value !== "") {
+        cell.setAttribute("t", "inlineStr");
+        const is = doc.createElementNS(ns, "is");
+        const tn = doc.createElementNS(ns, "t");
+        tn.setAttributeNS(XML_NS, "xml:space", "preserve");
+        tn.textContent = String(value);
+        is.appendChild(tn);
+        cell.appendChild(is);
+      } else {
+        cell.removeAttribute("t");
+      }
+    }
+
+    // Patch the original file bytes: returns the updated .xlsm/.xlsx bytes.
+    async function patchExistingWorkbookBytes(bytes) {
+      const entries = parseZip(bytes);
+      const byName = new Map(entries.map((e) => [e.name, e]));
+      if (!byName.has("xl/workbook.xml")) throw new Error("unsupported");
+      const parser = new DOMParser();
+      const workbookDoc = parser.parseFromString(await zipEntryText(byName.get("xl/workbook.xml")), "application/xml");
+      const relsEntry = byName.get("xl/_rels/workbook.xml.rels");
+      const relsDoc = parser.parseFromString(relsEntry ? await zipEntryText(relsEntry) : "<x/>", "application/xml");
+      const relTarget = new Map();
+      Array.from(relsDoc.getElementsByTagName("Relationship")).forEach((rel) => relTarget.set(rel.getAttribute("Id"), rel.getAttribute("Target") || ""));
+      const sheetPath = new Map();
+      Array.from(workbookDoc.getElementsByTagName("sheet")).forEach((sheet) => {
+        const rid = sheet.getAttributeNS(ZIP_REL_NS, "id") || sheet.getAttribute("r:id");
+        const target = (relTarget.get(rid) || "").replace(/^\/?xl\//, "").replace(/^\//, "");
+        if (target) sheetPath.set(sheet.getAttribute("name"), "xl/" + target);
       });
-      return true;
+      const bySheet = new Map();
+      state.assessment.questions.forEach((q) => {
+        if (!q._src) return;
+        if (!bySheet.has(q._src.sheet)) bySheet.set(q._src.sheet, []);
+        bySheet.get(q._src.sheet).push(q);
+      });
+      let patched = 0;
+      for (const [sheetName, questions] of bySheet) {
+        const path = sheetPath.get(sheetName);
+        if (!path || !byName.has(path)) continue;
+        const entry = byName.get(path);
+        const xml = await zipEntryText(entry);
+        const declaration = (xml.match(/^<\?xml[^?]*\?>/) || [""])[0];
+        const doc = parser.parseFromString(xml, "application/xml");
+        if (doc.getElementsByTagName("parsererror").length) continue;
+        const ns = doc.documentElement.namespaceURI;
+        questions.forEach((question) => {
+          const src = question._src;
+          const rowNum = src.row + 1;
+          const levels = normalizeLevels(question.levels);
+          src.levelCols.forEach((col, index) => {
+            if (col < 0) return;
+            const scale = src.levelScales[index] || 100;
+            const numeric = question.status === "scored" ? levels[index] * scale : 0;
+            setWorksheetCell(doc, ns, XLSX.utils.encode_cell({ r: src.row, c: col }), rowNum, "n", Math.round(numeric * 1e6) / 1e6);
+          });
+          if (src.naCol >= 0) setWorksheetCell(doc, ns, XLSX.utils.encode_cell({ r: src.row, c: src.naCol }), rowNum, "s", question.status === "na" ? "x" : "");
+          if (src.commentCol >= 0) setWorksheetCell(doc, ns, XLSX.utils.encode_cell({ r: src.row, c: src.commentCol }), rowNum, "s", question.comment || "");
+          if (src.reliabilityCol >= 0) setWorksheetCell(doc, ns, XLSX.utils.encode_cell({ r: src.row, c: src.reliabilityCol }), rowNum, "s", question.reliability || "");
+        });
+        let serialized = new XMLSerializer().serializeToString(doc);
+        if (declaration && !serialized.startsWith("<?xml")) serialized = declaration + "\r\n" + serialized;
+        entry.newText = serialized;
+        patched += 1;
+      }
+      if (!patched) throw new Error("no domain sheet matched");
+      return buildZip(entries);
     }
 
     // Save corrections/enrichment back into the existing file instead of creating a new one.
-    function saveAssessmentInPlace() {
-      if (!window.XLSX) return toast(t("missingSheetJs"));
+    async function saveAssessmentInPlace() {
       if (!state.assessment) return;
-      if (!state.sourceWorkbook) {
-        // No workbook kept in memory (e.g. restored session): fall back to building a fresh file.
+      const supportsZipEdit = typeof DecompressionStream !== "undefined" && state.sourceBytes && /\.(xlsm|xlsx)$/i.test(state.sourceFileName || "");
+      if (!supportsZipEdit) {
+        // No original bytes (restored session) or unsupported format/browser: build a fresh file as a fallback.
+        if (!window.XLSX) return toast(t("missingSheetJs"));
+        toast(localText("Édition en place indisponible : un nouveau fichier est généré.", "In-place editing unavailable: a new file is generated.", "Bearbeitung in der Originaldatei nicht möglich: Eine neue Datei wird erzeugt."), "error");
         return exportAssessmentWorkbook(true);
       }
       try {
-        applyEditsToSourceWorkbook(state.sourceWorkbook);
-        const bookType = ["xlsm", "xlsb", "xlsx"].includes(state.sourceFileType) ? state.sourceFileType : "xlsx";
-        const output = XLSX.write(state.sourceWorkbook, { bookType, type: "array", bookVBA: bookType === "xlsm", cellStyles: true });
-        const fileName = state.sourceFileName || `CyberBenchmark-${new Date().toISOString().slice(0, 10)}.${bookType}`;
+        const output = await patchExistingWorkbookBytes(state.sourceBytes);
+        const fileName = state.sourceFileName;
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([output], { type: "application/octet-stream" }));
         link.download = fileName;
         link.click();
         URL.revokeObjectURL(link.href);
-        toast(localText(`Fichier « ${fileName} » mis à jour et enregistré.`, `File "${fileName}" updated and saved.`, `Datei „${fileName}" aktualisiert und gespeichert.`), "success");
+        toast(localText(`Fichier « ${fileName} » mis à jour (macros et mise en forme conservées).`, `File "${fileName}" updated (macros and formatting preserved).`, `Datei „${fileName}" aktualisiert (Makros und Formatierung erhalten).`), "success");
       } catch (error) {
         toast(localText(`Enregistrement impossible : ${error.message}`, `Could not save: ${error.message}`, `Speichern nicht möglich: ${error.message}`), "error");
       }

@@ -2584,7 +2584,7 @@ Return strict JSON only:
       };
     }
 
-    function sanitizedClientQuestion(question, questionVariance = null) {
+    function sanitizedClientQuestion(question, questionVariance = null, varianceByRef = null) {
       return {
         id: question.id,
         order: question.order,
@@ -2597,7 +2597,8 @@ Return strict JSON only:
         status: question.status,
         comment: question.comment,
         reliability: question.reliability,
-        varianceRange: questionVariance
+        varianceRange: questionVariance,
+        varianceByRef
       };
     }
 
@@ -2606,11 +2607,30 @@ Return strict JSON only:
         const scored = state.assessment.questions.filter((question) => question.domain === domain.id && question.status === "scored");
         return [domain.id, average(scored.map((question) => question.score))];
       }));
+      // Comparison bases available in the export (Top 10, large companies, ...) — labels only, no exact benchmark values.
+      const referenceOptions = (state.benchmark?.referenceOptions || []).map((option) => ({ key: option.key, label: option.label }));
+      const benchmarkDomainStats = state.benchmark?.domainStats || [];
+      // For each base, the per-question reference score: question-level if available, else domain-level, else the internal domain average.
+      const referenceValueFor = (question, key) => {
+        if (state.benchmark) {
+          const record = state.benchmark.recordMap?.get(normalize(question.id));
+          const recordValue = benchmarkValue(record, key);
+          if (Number.isFinite(recordValue)) return recordValue;
+          const domainRef = benchmarkValue(benchmarkDomainStats.find((domain) => domain.id === question.domain), key);
+          if (Number.isFinite(domainRef)) return domainRef;
+        }
+        return internalAverages.get(question.domain);
+      };
       const questions = state.assessment.questions.map((question) => {
-        const reference = questionReference(question);
-        const referenceValue = reference?.value ?? internalAverages.get(question.domain);
-        const difference = question.status === "scored" && Number.isFinite(referenceValue) ? question.score - referenceValue : null;
-        return sanitizedClientQuestion(question, varianceRange(difference));
+        const varianceByRef = referenceOptions.length ? Object.fromEntries(referenceOptions.map((option) => {
+          const referenceValue = referenceValueFor(question, option.key);
+          const difference = question.status === "scored" && Number.isFinite(referenceValue) ? question.score - referenceValue : null;
+          return [option.key, varianceRange(difference)];
+        })) : null;
+        const defaultReference = questionReference(question);
+        const defaultValue = defaultReference?.value ?? internalAverages.get(question.domain);
+        const defaultDifference = question.status === "scored" && Number.isFinite(defaultValue) ? question.score - defaultValue : null;
+        return sanitizedClientQuestion(question, varianceRange(defaultDifference), varianceByRef);
       });
       const questionById = new Map(questions.map((question) => [question.id, question]));
       const domains = state.assessment.domainStats.map((domain) => ({
@@ -2665,6 +2685,15 @@ Return strict JSON only:
           questions,
           domainStats: domains
         },
+        // Comparison bases only (labels + keys), so the recipient can switch base without exposing exact benchmark values.
+        benchmark: referenceOptions.length ? {
+          referenceOptions,
+          preferredRef: state.benchmark?.preferredRef || referenceOptions[0].key,
+          sourceSheet: state.benchmark?.sourceSheet || "",
+          records: [],
+          domainStats: [],
+          clientRefsOnly: true
+        } : null,
         clientReport: {
           sanitized: true,
           summary: {
@@ -2682,7 +2711,8 @@ Return strict JSON only:
         },
         preferences: {
           domainSort: state.domainSort,
-          recommendationLimit: state.recommendationLimit
+          recommendationLimit: state.recommendationLimit,
+          compareRef: referenceOptions.some((option) => option.key === state.compareRef) ? state.compareRef : (state.benchmark?.preferredRef || referenceOptions[0]?.key)
         }
       };
     }
@@ -2695,7 +2725,6 @@ Return strict JSON only:
         const clientStyles = `<style id="client-export-styles">
           body.client-export .workflow-nav,
           body.client-export #dummyNotice,
-          body.client-export #exploreToolbar > .card,
           body.client-export .status-pill,
           body.client-export [data-explore-tab="compare"],
           body.client-export [data-nav-tab="compare"],
@@ -2704,6 +2733,12 @@ Return strict JSON only:
           body.client-export #questionsTable td:nth-child(n+6):nth-child(-n+10),
           body.client-export #questionsTable th:nth-child(12),
           body.client-export #questionsTable td:nth-child(12) { display: none !important; }
+          /* The benchmark toolbar is hidden unless a comparison base is embedded; then only the base selector is shown. */
+          body.client-export #exploreToolbar > .card { display: none !important; }
+          body.client-export.has-benchmark #exploreToolbar > .card { display: block !important; }
+          body.client-export #exploreToolbar .source-grid { grid-template-columns: minmax(0, 320px); }
+          body.client-export #exploreToolbar .source-grid > div:nth-child(1),
+          body.client-export #exploreToolbar .source-grid > div:nth-child(3) { display: none !important; }
           body.client-export .app { grid-template-columns: 1fr; }
           body.client-export aside { display: none !important; }
           body.client-export .content { width: min(1600px, 100%); margin: 0 auto; }
@@ -2741,6 +2776,7 @@ Return strict JSON only:
       state.dummyAssessment = false;
       state.dummyBenchmark = false;
       document.body.classList.add("client-export");
+      document.body.classList.toggle("has-benchmark", Boolean(state.benchmark?.referenceOptions?.length));
       document.title = lang === "fr" ? "Cyberbenchmark · Rapport client" : "Cyberbenchmark · Client report";
       populateBenchmarkSelectors();
       refs.statusDot.className = "dot ready";
@@ -2878,14 +2914,20 @@ Return strict JSON only:
       return { ref, gap };
     }
 
+    // In a sanitized client export, the pre-calculated score difference depends on the chosen comparison base.
+    function clientVariance(question) {
+      if (!question) return null;
+      return (question.varianceByRef && question.varianceByRef[state.compareRef]) || question.varianceRange || null;
+    }
+
     function questionVarianceText(question) {
-      const range = question?.varianceRange;
+      const range = clientVariance(question);
       if (!range) return "";
-      return `${t("scoreVariance")} ${range.label} · ${t(range.direction === "below" ? "belowReference" : "aboveReference")}`;
+      return `${t("scoreVariance")} ${range.label} · ${t(range.direction === "below" ? "belowReference" : "aboveReference")}${state.benchmark?.referenceOptions?.length ? ` (${html(referenceLabel())})` : ""}`;
     }
 
     function pointDifferenceText(point) {
-      return point?.varianceRange ? questionVarianceText(point) : `${point.gapLabel} ${signedPct(point.gap)}`;
+      return clientVariance(point) ? questionVarianceText(point) : `${point.gapLabel} ${signedPct(point.gap)}`;
     }
 
     function questionDashboardPoints(domainId) {
@@ -2893,13 +2935,14 @@ Return strict JSON only:
         .filter((q) => q.domain === domainId && q.status === "scored");
       const internalAverage = average(scored.map((q) => q.score));
       return scored.map((q) => {
-        if (state.clientReport?.sanitized && q.varianceRange) {
+        const variance = clientVariance(q);
+        if (state.clientReport?.sanitized && variance) {
           return {
             ...q,
             name: q.question || q.subtopic || q.id,
             display: q.id,
             ref: null,
-            gap: q.varianceRange.position,
+            gap: variance.position,
             gapLabel: t("scoreVariance")
           };
         }
@@ -3049,7 +3092,7 @@ Return strict JSON only:
           <div class="q-title">${html(question.question || question.subtopic || question.id)}</div>
           <div class="q-meta">${html(question.id)} · ${html(question.type)} · ${html(question.status)}</div>
           <div class="score-badge" style="margin-top:12px; color:${scoreColor(question.score)}">${question.status === "na" ? "N/A" : pct(question.score)}</div>
-          ${question.varianceRange ? `<div class="q-meta" style="margin-top:8px;">${html(questionVarianceText(question))}</div>` : ""}
+          ${clientVariance(question) ? `<div class="q-meta" style="margin-top:8px;">${html(questionVarianceText(question))}</div>` : ""}
           <div class="q-comment">${html(question.comment || "-")}</div>
         </div>`;
       }
@@ -3483,7 +3526,7 @@ Return strict JSON only:
       const top = questionGap(q);
       return `<div class="finding">
         <div class="id">${q.id}</div>
-        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${q.varianceRange ? ` · ${html(questionVarianceText(q))}` : (top.ref ? ` · ${html(top.ref.label)} ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : "")}</div></div>
+        <div><div class="q">${q.question || q.subtopic}</div><div class="meta">${q.domain} · ${q.subtopic || "-"} · ${q.type}${clientVariance(q) ? ` · ${html(questionVarianceText(q))}` : (top.ref ? ` · ${html(top.ref.label)} ${pct(top.ref.value)} · ${maturityLabel(top.ref.maturityLevel)} · ${signedPct(top.gap)}` : "")}</div></div>
         <div class="score-badge" style="color:${scoreColor(q.score)}">${q.status === "na" ? "N/A" : pct(q.score)}</div>
       </div>`;
     }
@@ -3613,7 +3656,7 @@ Return strict JSON only:
           <div class="recommendation-body">
             <div class="recommendation-scores">
               <span class="recommendation-score">${t("currentScore")} <strong>${pct(row.question.score)}</strong></span>
-              ${state.clientReport?.sanitized && row.question.varianceRange ? `<span class="recommendation-score">${html(questionVarianceText(row.question))}</span>` : ""}
+              ${state.clientReport?.sanitized && clientVariance(row.question) ? `<span class="recommendation-score">${html(questionVarianceText(row.question))}</span>` : ""}
               ${state.clientReport?.sanitized ? "" : `<span class="recommendation-score">${t("marketScore")} <strong>${pct(row.market)}</strong></span>
               <span class="recommendation-score">${t("gap")} <strong style="color:var(--red)">${signedPct(row.gap)}</strong></span>`}
               <span class="recommendation-score">${t("targetLevel")} <strong>L${row.targetLevel}</strong></span>
@@ -3673,7 +3716,7 @@ Return strict JSON only:
             <td class="small">${levelPct(q, 4)}</td>
             <td class="small">${sanitized ? pct(q.score) : (top.ref ? pct(top.ref.value) : "-")}</td>
             <td class="small">${top.ref ? maturityLabel(top.ref.maturityLevel) : "-"}</td>
-            <td class="small" style="color:${(sanitized && q.varianceRange?.direction === "below") || (Number.isFinite(top.gap) && top.gap < 0) ? "var(--red)" : "var(--muted)"}; font-weight:800">${sanitized ? html(questionVarianceText(q)) : signedPct(top.gap)}</td>
+            <td class="small" style="color:${(sanitized && clientVariance(q)?.direction === "below") || (Number.isFinite(top.gap) && top.gap < 0) ? "var(--red)" : "var(--muted)"}; font-weight:800">${sanitized ? html(questionVarianceText(q)) : signedPct(top.gap)}</td>
             <td class="small">${q.status}</td>
             <td>${q.comment || `<span class="muted">-</span>`}</td>
           </tr>`;
