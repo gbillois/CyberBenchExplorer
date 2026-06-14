@@ -1230,7 +1230,7 @@
                 <div class="choice-separator" data-ui="orSeparator">OU</div>
                 <div class="interview-choice"><label for="ingestTranscriptSource" id="ingestTranscriptLabel" data-ui="transcriptLabel">Ajouter directement votre transcript existant</label><textarea id="ingestTranscriptSource" placeholder="Collez la transcription complète ici..."></textarea><div class="improve-transcript-action"><button id="improveTranscript" data-ui="improveTranscript">Lancer l'amélioration du transcript</button></div></div>
               </div>
-              <div id="transcriptResult" class="transcript-result hidden"><label for="ingestTranscript">Transcription à relire et à modifier ci-dessous</label><textarea id="ingestTranscript" placeholder="La transcription traitée apparaîtra ici..."></textarea><div class="transcript-result-actions"><button class="primary" id="saveImprovedTranscript">Valider et enregistrer la transcription</button><button id="loadImprovedTranscript">Charger une transcription améliorée</button><input id="improvedTranscriptFile" class="hidden" type="file" accept=".json,application/json"></div></div>
+              <div id="transcriptResult" class="transcript-result hidden"><label for="ingestTranscript">Transcription à relire et à modifiée ci-dessous</label><textarea id="ingestTranscript" placeholder="La transcription traitée apparaîtra ici..."></textarea><div class="transcript-result-actions"><button class="primary" id="saveImprovedTranscript">Valider et enregistrer la transcription</button><button id="loadImprovedTranscript">Charger une transcription améliorée</button><input id="improvedTranscriptFile" class="hidden" type="file" accept=".json,application/json"></div></div>
             </div></div>
             <div class="helper-step"><div class="helper-step-number">3</div><div>
               <h3 data-ui="stepAnalyzeTitle">Analyser et télécharger le fichier enrichi</h3>
@@ -2011,6 +2011,7 @@
       if (!task) return;
       task.message = message || task.message;
       task.progress = progress;
+      logApiExchange(`${task.message}${Number.isFinite(progress) ? ` (${Math.round(progress)} %)` : ""}`);
       renderApiActivity();
     }
 
@@ -2475,6 +2476,12 @@
         refs.statusText.textContent = t("assessmentLoaded");
         state.checkResults = [];
         state.checkRan = false;
+        state.checkOriginals = new Map(assessment.questions.map((question) => [question.id, {
+          status: question.status,
+          levels: [...normalizeLevels(question.levels)],
+          comment: question.comment || "",
+          reliability: question.reliability || ""
+        }]));
         saveIngestSession(false);
         render();
       } catch (error) {
@@ -3065,12 +3072,20 @@ Return strict JSON only:
         : "";
       $("checkEditor").innerHTML = questions.map((question) => {
         const levels = normalizeLevels(question.levels);
+        const original = state.checkOriginals.get(question.id) || { status: question.status, levels, comment: question.comment || "", reliability: question.reliability || "" };
+        const originalLevels = normalizeLevels(original.levels);
         return `<article class="measure-review" data-check-id="${html(question.id)}">
           <div class="measure-review-head"><div><strong>${html(question.id)} · ${html(question.question || question.subtopic || "")}</strong><span>${html(question.domain || "")}</span></div><span class="review-status">${html(localText("À corriger", "To correct", "Zu korrigieren"))}</span></div>
-          <div class="review-version final">
-            <div class="ingest-fields"><div><label>${html(localText("Statut", "Status", "Status"))}</label><select data-check-field="status"><option value="scored"${question.status === "scored" ? " selected" : ""}>scored</option><option value="na"${question.status === "na" ? " selected" : ""}>N/A</option><option value="missing"${question.status === "missing" ? " selected" : ""}>missing</option></select></div><div><label>${html(localText("Fiabilité", "Reliability", "Zuverlässigkeit"))}</label><select data-check-field="reliability">${["High", "Medium", "Low"].map((value) => `<option value="${value}"${question.reliability === value ? " selected" : ""}>${value}</option>`).join("")}</select></div></div>
-            <div class="level-grid" style="margin-top:10px;">${levels.map((value, index) => `<label class="level-cell"><span>L${index + 1}</span><input type="number" min="0" max="100" step="1" value="${Math.round(value * 100)}" data-check-level="${index}"><span>%</span></label>`).join("")}</div>
-            <div class="review-comment"><label>${html(localText("Commentaire", "Comment", "Kommentar"))}</label><textarea data-check-field="comment">${html(question.comment || "")}</textarea></div>
+          <div class="measure-review-grid">
+            <div class="review-version"><h4>${html(localText("État original", "Original state", "Originalzustand"))} · ${html(original.status || "missing")}</h4>
+              <div class="level-grid">${originalLevels.map((value, index) => `<div class="level-cell"><span>L${index + 1}</span><div class="level-value">${Math.round(value * 100)} %</div></div>`).join("")}</div>
+              <div class="review-comment"><label>${html(localText("Commentaire original", "Original comment", "Ursprünglicher Kommentar"))}</label><p class="muted">${html(original.comment || localText("Aucun commentaire", "No comment", "Kein Kommentar"))}</p></div>
+            </div>
+            <div class="review-version final"><h4>${html(localText("Résultat modifiable", "Editable result", "Bearbeitbares Ergebnis"))}</h4>
+              <div class="ingest-fields"><div><label>${html(localText("Statut", "Status", "Status"))}</label><select data-check-field="status"><option value="scored"${question.status === "scored" ? " selected" : ""}>scored</option><option value="na"${question.status === "na" ? " selected" : ""}>N/A</option><option value="missing"${question.status === "missing" ? " selected" : ""}>missing</option></select></div><div><label>${html(localText("Fiabilité", "Reliability", "Zuverlässigkeit"))}</label><select data-check-field="reliability">${["High", "Medium", "Low"].map((value) => `<option value="${value}"${question.reliability === value ? " selected" : ""}>${value}</option>`).join("")}</select></div></div>
+              <div class="level-grid" style="margin-top:10px;">${levels.map((value, index) => `<label class="level-cell"><span>L${index + 1}</span><input type="number" min="0" max="100" step="1" value="${Math.round(value * 100)}" data-check-level="${index}"><span>%</span></label>`).join("")}</div>
+              <div class="review-comment"><label>${html(localText("Commentaire modifiable", "Editable comment", "Bearbeitbarer Kommentar"))}</label><textarea data-check-field="comment">${html(question.comment || "")}</textarea></div>
+            </div>
           </div>
         </article>`;
       }).join("");
@@ -3315,7 +3330,7 @@ Return strict JSON only:
       $("ingestApply").disabled = state.ingest.running || !state.ingest.results.length;
       const validated = state.ingest.results.filter((result) => result.validated).length;
       state.ingest.applied = state.ingest.results.length > 0 && validated === state.ingest.results.length;
-      $("ingestDownload").disabled = !state.ingest.applied;
+      $("ingestDownload").disabled = !state.assessment;
       $("ingestReviewSummary").classList.toggle("hidden", !state.ingest.results.length);
       $("ingestReviewSummary").innerHTML = state.ingest.results.length ? `
         <strong>${html(localText(`${validated}/${state.ingest.results.length} mesures validées`, `${validated}/${state.ingest.results.length} measures validated`, `${validated}/${state.ingest.results.length} Maßnahmen validiert`))}</strong>
@@ -4851,7 +4866,7 @@ Return strict JSON only:
       event.target.value = "";
     });
     $("ingestApply").addEventListener("click", validateAllReviewResults);
-    $("ingestDownload").addEventListener("click", () => exportAssessmentWorkbook(false));
+    $("ingestDownload").addEventListener("click", () => exportAssessmentWorkbook(true));
     $("ingestReview").addEventListener("input", (event) => {
       const card = event.target.closest("[data-review-id]");
       if (!card) return;
@@ -4872,7 +4887,7 @@ Return strict JSON only:
       card.classList.remove("validated");
       card.querySelector(".review-status").textContent = localText("À valider", "To validate", "Zu validieren");
       card.querySelector("[data-review-validate]").textContent = localText("Valider cette mesure", "Validate this measure", "Diese Maßnahme validieren");
-      $("ingestDownload").disabled = true;
+      $("ingestDownload").disabled = !state.assessment;
     });
     $("ingestReview").addEventListener("click", (event) => {
       const button = event.target.closest("[data-review-validate]");
@@ -4928,6 +4943,17 @@ Return strict JSON only:
     });
     $("saveCheckedExcel").addEventListener("click", () => exportAssessmentWorkbook(true));
     $("emailChecks").addEventListener("click", emailChecks);
+    $("aiLivePill").addEventListener("click", () => {
+      const details = $("apiExchangeDetails");
+      const opening = details.classList.contains("hidden");
+      details.classList.toggle("hidden", !opening);
+      $("aiLivePill").setAttribute("aria-expanded", String(opening));
+      if (opening && !state.apiActivity.exchanges.length) {
+        logApiExchange(state.ai.live
+          ? localText("IA configurée. Aucun échange API enregistré pour cette session.", "AI configured. No API exchange recorded for this session.", "KI konfiguriert. Kein API-Austausch für diese Sitzung aufgezeichnet.")
+          : localText("Aucune IA configurée. Configurez un fournisseur dans Réglages pour démarrer les échanges.", "No AI configured. Configure a provider in Settings to start exchanges.", "Keine KI konfiguriert. Konfigurieren Sie einen Anbieter in den Einstellungen."));
+      }
+    });
     $("saveHelperConfig").addEventListener("click", saveHelperConfig);
     $("refreshAnalysisModels").addEventListener("click", () => refreshModelList("analysis").catch((error) => toast(error.message, "error")));
     $("refreshChallengeModels").addEventListener("click", () => refreshModelList("challenge").catch((error) => toast(error.message, "error")));
