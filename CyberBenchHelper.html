@@ -253,6 +253,27 @@
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
     .dot.ready { background: var(--green); box-shadow: 0 0 0 5px rgba(99,210,124,.1); }
     .dot.warn { background: var(--amber); box-shadow: 0 0 0 5px rgba(241,184,75,.1); }
+    .ai-live-pill { display:inline-flex; align-items:center; gap:8px; min-height:32px; padding:0 11px; border:1px solid #a7f3d0; border-radius:999px; background:#ecfdf5; color:#047857; font-size:12px; font-weight:850; white-space:nowrap; }
+    .ai-live-pill .dot { background:var(--green); box-shadow:0 0 0 4px rgba(46,211,155,.12); }
+    .api-activity { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:12px; align-items:center; margin:0 0 16px; padding:11px 13px; border:1px solid #bfdbfe; border-radius:12px; background:#eff6ff; color:#1d4ed8; box-shadow:0 6px 18px rgba(29,78,216,.08); }
+    .api-activity.success { border-color:#a7f3d0; background:#ecfdf5; color:#047857; }
+    .api-activity.error { border-color:#fecaca; background:#fef2f2; color:#b91c1c; }
+    .api-activity-spinner { width:18px; height:18px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:api-spin .75s linear infinite; }
+    .api-activity.success .api-activity-spinner, .api-activity.error .api-activity-spinner { animation:none; border-right-color:currentColor; }
+    .api-activity-main { min-width:0; }
+    .api-activity-main strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+    .api-activity-track { height:5px; margin-top:6px; overflow:hidden; border-radius:999px; background:rgba(29,78,216,.12); }
+    .api-activity-bar { height:100%; width:0; border-radius:999px; background:currentColor; transition:width .2s ease; }
+    .api-activity.indeterminate .api-activity-bar { width:38%; animation:api-progress 1.2s ease-in-out infinite; }
+    .api-activity-meta { font-size:11px; font-weight:800; white-space:nowrap; }
+    .api-exchange { margin:-8px 0 16px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.82); }
+    .api-exchange summary { padding:9px 12px; color:var(--muted); font-size:12px; font-weight:800; cursor:pointer; }
+    .api-exchange-log { max-height:220px; overflow:auto; padding:0 12px 10px; color:#36566b; font:11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .api-exchange-entry { padding:6px 0; border-top:1px solid var(--line-soft); overflow-wrap:anywhere; }
+    .api-exchange-entry.error { color:#b91c1c; }
+    .api-exchange-entry.success { color:#047857; }
+    @keyframes api-spin { to { transform:rotate(360deg); } }
+    @keyframes api-progress { 0% { transform:translateX(-110%); } 100% { transform:translateX(285%); } }
 
     .grid { display: grid; gap: 16px; }
     .grid.kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 16px; }
@@ -404,6 +425,9 @@
     .choice-separator::before, .choice-separator::after { content:""; width:1px; height:100%; background:var(--line); }
     .improve-transcript-action { margin-top:14px; }
     #improveTranscript { width:100%; background:linear-gradient(135deg, #137f9a, #13a59e); color:#fff; border-color:transparent; box-shadow:0 12px 24px rgba(14,126,148,.22); }
+    .transcript-result { margin-top:18px; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--panel-3); }
+    .transcript-result textarea { min-height:260px; background:#fff; }
+    .transcript-result-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
     .context-check { margin-bottom:16px; }
     .context-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
     .context-item { padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg-soft); }
@@ -414,6 +438,10 @@
     .llm-consent input { width:18px; min-height:18px; accent-color:#dc2626; }
     .llm-locked { opacity:.42; pointer-events:none; }
     .model-guidance { margin-top:12px; padding:10px 12px; border-left:4px solid var(--cyan); border-radius:8px; background:var(--panel-3); color:var(--text); font-size:13px; line-height:1.45; }
+    .model-catalog-status, .connection-status { margin-top:10px; padding:9px 11px; border:1px solid var(--line); border-radius:9px; background:var(--bg-soft); color:var(--muted); font-size:12px; line-height:1.4; }
+    .connection-status.testing { border-color:#bfdbfe; background:#eff6ff; color:#1d4ed8; }
+    .connection-status.success { border-color:#a7f3d0; background:#ecfdf5; color:#047857; }
+    .connection-status.error { border-color:#fecaca; background:#fef2f2; color:#b91c1c; }
 
     .empty {
       min-height: 360px;
@@ -652,6 +680,26 @@
     .ingest-review-card { padding: 12px; border: 1px solid var(--line-soft); border-radius: 12px; background: #fff; }
     .ingest-review-card strong { font-size: 13px; }
     .ingest-review-card p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .review-summary { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-top:16px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:var(--panel-3); color:var(--muted); font-size:12px; }
+    .measure-review { padding:14px; border:1px solid var(--line); border-radius:12px; background:#fff; box-shadow:0 5px 16px rgba(12,45,64,.05); }
+    .measure-review.validated { border-color:#86efac; background:#f0fdf4; }
+    .measure-review-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .measure-review-head strong { display:block; color:var(--text); font-size:14px; }
+    .measure-review-head span { color:var(--muted); font-size:11px; }
+    .review-status { padding:4px 8px; border-radius:999px; background:#fff7ed; color:#9a3412; font-size:11px; font-weight:800; white-space:nowrap; }
+    .validated .review-status { background:#dcfce7; color:#166534; }
+    .measure-review-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .review-version { padding:11px; border:1px solid var(--line-soft); border-radius:10px; background:#f8fbfc; }
+    .review-version.final { background:#fff; }
+    .review-version h4 { margin:0 0 10px; color:var(--text); font-size:12px; }
+    .level-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
+    .level-cell { display:grid; gap:4px; text-align:center; color:var(--muted); font-size:10px; font-weight:800; }
+    .level-cell input { min-width:0; padding:7px 4px; text-align:center; }
+    .level-value { padding:7px 4px; border:1px solid var(--line-soft); border-radius:7px; background:#fff; color:var(--text); font-size:12px; }
+    .review-comment { margin-top:10px; }
+    .review-comment textarea { min-height:110px; }
+    .review-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:8px; margin-top:12px; }
+    .review-actions .validation-error { margin-right:auto; color:#b91c1c; font-size:11px; font-weight:750; }
     .level-detail {
       display: grid;
       gap: 8px;
@@ -712,6 +760,9 @@
       color: var(--text);
       z-index: 30;
     }
+    .toast.success { background:#1f6f4f; border-color:#1f6f4f; color:#fff; }
+    .toast.error { background:#8c1d18; border-color:#8c1d18; color:#fff; }
+    .toast.info { background:#164e63; border-color:#164e63; color:#fff; }
 
     @media (max-width: 1100px) {
       .app { grid-template-columns: 1fr; }
@@ -742,7 +793,7 @@
       .interview-choice-grid { grid-template-columns:1fr; }
       .choice-separator { grid-template-columns:1fr auto 1fr; grid-template-rows:auto; }
       .choice-separator::before, .choice-separator::after { width:100%; height:1px; }
-      .workflow-steps, .source-grid, .check-summary, .export-grid { grid-template-columns: 1fr; }
+      .workflow-steps, .source-grid, .check-summary, .export-grid, .measure-review-grid { grid-template-columns: 1fr; }
       .ingest-fields .wide { grid-column: auto; }
       .scatter-stage { min-height: 380px; }
       .slide-chart { min-height: 320px; }
@@ -798,8 +849,10 @@
             <h2 id="pageTitle">Overview</h2>
             <p id="pageIntro">Upload a completed W-CyberBenchmark file to generate indicators, rankings, and exploration views.</p>
           </div>
-          <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div>
+          <div class="topbar-actions"><div id="aiLivePill" class="ai-live-pill hidden"><span class="dot"></span><span data-ui="aiLive">AI Live</span></div><div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div></div>
         </div>
+        <div id="apiActivity" class="api-activity hidden" role="status" aria-live="polite"><span class="api-activity-spinner"></span><div class="api-activity-main"><strong id="apiActivityText"></strong><div class="api-activity-track"><div id="apiActivityBar" class="api-activity-bar"></div></div></div><span id="apiActivityMeta" class="api-activity-meta"></span></div>
+        <details id="apiExchangeDetails" class="api-exchange hidden"><summary data-ui="followApiExchanges">Suivre les échanges API</summary><div id="apiExchangeLog" class="api-exchange-log"></div></details>
 
         <section id="emptyState" class="empty hidden">
           <div>
@@ -846,10 +899,12 @@
             </div><div id="contextDetails" class="muted" style="margin-top:12px;"></div></div>
           </div>
           <div class="card">
-            <div class="card-head"><h3 data-ui="businessCheckTitle">Contrôle des niveaux et règles métier</h3><div class="config-actions"><button id="emailChecks" disabled data-ui="sendTeam">Envoyer à l’équipe Cyber Bench</button></div></div>
+            <div class="card-head"><h3 data-ui="businessCheckTitle">Contrôle des niveaux et règles métier</h3><div class="config-actions"><button id="saveCheckedExcel" disabled data-ui="saveCheckedExcel">Sauvegarder le fichier Excel</button><button id="emailChecks" disabled data-ui="sendTeam">Envoyer à l’équipe Cyber Bench</button></div></div>
             <div class="card-body">
               <p class="muted" data-ui="businessCheckIntro">Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.</p>
               <div class="table-wrap"><table id="checkTable"><thead><tr><th class="small">ID</th><th class="small" data-ui="domainHeader">Domaine</th><th class="small" data-ui="severityHeader">Sévérité</th><th data-ui="ruleHeader">Règle</th><th data-ui="detailHeader">Détail</th></tr></thead><tbody></tbody></table></div>
+              <div id="checkEditorIntro" class="review-summary hidden"></div>
+              <div id="checkEditor" class="ingest-review"></div>
             </div>
           </div>
         </section>
@@ -891,7 +946,7 @@
                 <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés restent uniquement en mémoire.</div>
                 <div class="ingest-fields" style="margin-top:14px;">
                   <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
-                  <div><label for="ingestModel">Modèle</label><input id="ingestModel" list="analysisModels" value="claude-opus-4-6"></div>
+                  <div><label for="ingestModel">Modèle</label><select id="ingestModel"><option value="claude-opus-4-6">claude-opus-4-6</option></select><div id="analysisModelStatus" class="model-catalog-status"></div></div>
                   <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
                   <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
                     <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
@@ -900,19 +955,20 @@
                   </div></div>
                 </div>
                 <div class="ingest-actions"><button id="refreshAnalysisModels">Récupérer les modèles</button><button id="ingestTest">Tester la connexion LLM</button></div>
+                <div id="analysisConnectionStatus" class="connection-status hidden"></div>
                 <div class="model-guidance" data-ui="modelGuidance">Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure.</div>
               </div>
             </div>
             <div class="card">
             <div class="card-head"><h3 data-ui="challengeApiTitle">Modèle de Check &amp; Challenge</h3></div>
             <div class="card-body"><label style="display:flex;gap:10px;align-items:center;text-transform:none;"><input id="challengeEnabled" type="checkbox" checked style="width:auto;"><span data-ui="challengeEnabledLabel">Activer la seconde passe contradictoire par défaut</span></label><p class="muted" data-ui="challengeHelp">Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.</p>
-              <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><input id="challengeModel" list="challengeModels" value="claude-opus-4-6"></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
+              <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><select id="challengeModel"><option value="claude-opus-4-6">claude-opus-4-6</option></select><div id="challengeModelStatus" class="model-catalog-status"></div></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
               <div class="config-actions"><button id="refreshChallengeModels">Récupérer la liste des modèles existants</button><button id="challengeTest">Tester la connexion</button></div>
+              <div id="challengeConnectionStatus" class="connection-status hidden"></div>
               <div class="model-guidance" data-ui="modelGuidance">Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure.</div>
             </div>
           </div>
           </div>
-          <datalist id="analysisModels"></datalist><datalist id="challengeModels"></datalist>
           </div>
         </section>
 
@@ -1167,17 +1223,19 @@
               <h3 data-ui="stepInterviewTitle">Ajouter les données issues des entretiens</h3>
               <p data-ui="stepInterviewText">Sélectionnez un fichier audio ou vidéo à transcrire et diariser, ou ajoutez directement votre transcript existant.</p>
               <div class="interview-choice-grid">
-                <div class="interview-choice"><label for="ingestMedia" data-ui="mediaLabel">Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted"></p><button id="transcribeMedia" data-ui="transcribeButton">Transcrire et diariser</button></div>
+                <div class="interview-choice"><label for="ingestMedia" data-ui="mediaLabel">Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted"></p><button id="transcribeMedia" data-ui="transcribeButton">Lancer la transcription de l'amélioration</button></div>
                 <div class="choice-separator" data-ui="orSeparator">OU</div>
-                <div class="interview-choice"><label for="ingestTranscript" id="ingestTranscriptLabel" data-ui="transcriptLabel">Ajouter directement votre transcript existant</label><textarea id="ingestTranscript" placeholder="Collez la transcription complète ici..."></textarea><div class="improve-transcript-action"><button id="improveTranscript" data-ui="improveTranscript">Améliorer le transcript</button></div></div>
+                <div class="interview-choice"><label for="ingestTranscriptSource" id="ingestTranscriptLabel" data-ui="transcriptLabel">Ajouter directement votre transcript existant</label><textarea id="ingestTranscriptSource" placeholder="Collez la transcription complète ici..."></textarea><div class="improve-transcript-action"><button id="improveTranscript" data-ui="improveTranscript">Lancer l'amélioration du transcript</button></div></div>
               </div>
+              <div id="transcriptResult" class="transcript-result hidden"><label for="ingestTranscript">Transcription améliorée à relire</label><textarea id="ingestTranscript" placeholder="La transcription traitée apparaîtra ici..."></textarea><div class="transcript-result-actions"><button class="primary" id="saveImprovedTranscript">Valider et enregistrer la transcription</button><button id="loadImprovedTranscript">Charger une transcription améliorée</button><input id="improvedTranscriptFile" class="hidden" type="file" accept=".json,application/json"></div></div>
             </div></div>
             <div class="helper-step"><div class="helper-step-number">3</div><div>
               <h3 data-ui="stepAnalyzeTitle">Analyser et télécharger le fichier enrichi</h3>
               <p data-ui="stepAnalyzeText">L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.</p>
               <label for="ingestDomain" data-ui="scopeLabel">Périmètre d’analyse</label><select id="ingestDomain"><option value="">Tous les domaines, séquentiellement</option></select>
-              <div class="ingest-actions"><button class="primary" id="ingestRun" data-ui="analyzeButton">Lancer l’analyse</button><button id="ingestApply" disabled data-ui="applyButton">Appliquer les résultats</button><button id="ingestDownload" disabled data-ui="downloadEnriched">Télécharger le fichier enrichi</button><button data-go-workflow="configuration" data-ui="openSettings">Ouvrir les réglages API</button></div>
+              <div class="ingest-actions"><button class="primary" id="ingestRun" data-ui="analyzeButton">Lancer l’analyse</button><button id="ingestApply" disabled>Valider toutes les propositions</button><button id="ingestDownload" disabled data-ui="downloadEnriched">Télécharger le fichier enrichi</button></div>
               <div class="ingest-progress hidden" id="ingestProgress"><div class="ingest-progress-line"><span id="ingestProgressBar" style="width:0%"></span></div><strong id="ingestProgressText"></strong><div class="ingest-log" id="ingestLog"></div></div>
+              <div id="ingestReviewSummary" class="review-summary hidden"></div>
               <div class="ingest-review" id="ingestReview"></div>
             </div></div>
           </div>
@@ -1251,7 +1309,7 @@
         ingestTranscriptLabel: "Transcript to analyze",
         ingestTranscriptPlaceholder: "Paste the complete meeting transcript here...",
         ingestRun: "Run extraction + check & challenge",
-        ingestApply: "Apply reviewed results",
+        ingestApply: "Validate all proposals",
         ingestExport: "Download completed Excel",
         ingestConfigTitle: "LLM configuration",
         ingestWarning: "The transcript and selected questionnaire requirements are sent to the configured provider. Obtain authorization before processing confidential data. API keys remain in memory and are never saved.",
@@ -1437,7 +1495,7 @@
         ingestTranscriptLabel: "Transcription à analyser",
         ingestTranscriptPlaceholder: "Collez ici la transcription complète de la réunion...",
         ingestRun: "Lancer l'extraction + check & challenge",
-        ingestApply: "Appliquer les résultats revus",
+        ingestApply: "Valider toutes les propositions",
         ingestExport: "Télécharger l'Excel complété",
         ingestConfigTitle: "Configuration du LLM",
         ingestWarning: "La transcription et les exigences sélectionnées sont envoyées au fournisseur configuré. Obtenez une autorisation avant de traiter des données confidentielles. Les clés API restent en mémoire et ne sont jamais enregistrées.",
@@ -1592,21 +1650,21 @@
 
     const HELPER_UI = {
       fr: {
-        navHome:"Accueil", navEnrich:"Enrichir", navCheck:"Contrôler", navSettings:"Réglages", localNotice:"CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.",
+        navHome:"Accueil", navEnrich:"Enrichir", navCheck:"Contrôler", navSettings:"Réglages", aiLive:"AI Live", followApiExchanges:"Suivre les échanges API", localNotice:"CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.",
         homeTitle:"Configurer ou charger votre mission", homeIntro:"Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.", apiRequired:"Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.", missionCode:"Code mission", missionName:"Nom mission / client", projectManager:"Chef de projet", projectManagerEmail:"Email chef de projet", saveBrowser:"Sauvegarder localement dans votre navigateur", downloadProject:"Télécharger la configuration du projet pour l'utiliser sur un autre ordinateur", loadProject:"Charger un projet sauvegardé", startEnrich:"Commencer l’enrichissement",
-        ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi. Cet enrichissement peut être réalisé thème par thème ou globalement.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Sélectionnez un fichier audio ou vidéo à transcrire et diariser, ou ajoutez directement votre transcript existant.", mediaLabel:"Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)", transcribeButton:"Transcrire et diariser", transcriptLabel:"Ajouter directement votre transcript existant", orSeparator:"OU", improveTranscript:"Améliorer le transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
-        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API d'analyse et de vérification", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
+        ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi. Cet enrichissement peut être réalisé thème par thème ou globalement.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Sélectionnez un fichier audio ou vidéo à transcrire et améliorer, ou ajoutez directement votre transcript existant.", mediaLabel:"Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)", transcribeButton:"Lancer la transcription de l'amélioration", transcriptLabel:"Ajouter directement votre transcript existant", orSeparator:"OU", improveTranscript:"Lancer l'amélioration du transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
+        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", saveCheckedExcel:"Sauvegarder le fichier Excel", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API d'analyse et de vérification", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
       },
       en: {
-        navHome:"Home", navEnrich:"Enrich", navCheck:"Check", navSettings:"Settings", localNotice:"CyberBenchHelper runs locally. Files stay in the browser except during direct calls to configured API providers.",
+        navHome:"Home", navEnrich:"Enrich", navCheck:"Check", navSettings:"Settings", aiLive:"AI Live", followApiExchanges:"Follow API exchanges", localNotice:"CyberBenchHelper runs locally. Files stay in the browser except during direct calls to configured API providers.",
         homeTitle:"Configure or load your mission", homeIntro:"Enter the mission details before starting. They will be included in files and the return email.", apiRequired:"A transcription API key and an analysis API key must be configured in Settings before processing an interview.", missionCode:"Mission code", missionName:"Mission / client name", projectManager:"Project manager", projectManagerEmail:"Project manager email", saveBrowser:"Save locally in your browser", downloadProject:"Download the project configuration to use it on another computer", loadProject:"Load a saved project", startEnrich:"Start enrichment",
-        ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file. Enrichment can be performed theme by theme or globally.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Select an audio or video file to transcribe and diarize, or directly add your existing transcript.", mediaLabel:"Add an audio or video file (250 MB maximum with Azure, 25 MB with OpenAI)", transcribeButton:"Transcribe and diarize", transcriptLabel:"Directly add your existing transcript", orSeparator:"OR", improveTranscript:"Improve transcript", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
-        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and verification API", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
+        ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file. Enrichment can be performed theme by theme or globally.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Select an audio or video file to transcribe and improve, or directly add your existing transcript.", mediaLabel:"Add an audio or video file (250 MB maximum with Azure, 25 MB with OpenAI)", transcribeButton:"Start transcription and improvement", transcriptLabel:"Directly add your existing transcript", orSeparator:"OR", improveTranscript:"Start transcript improvement", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
+        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", saveCheckedExcel:"Save Excel file", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and verification API", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
       },
       de: {
-        navHome:"Start", navEnrich:"Anreichern", navCheck:"Prüfen", navSettings:"Einstellungen", localNotice:"CyberBenchHelper läuft lokal. Dateien bleiben im Browser, außer bei direkten Aufrufen der konfigurierten API-Anbieter.",
+        navHome:"Start", navEnrich:"Anreichern", navCheck:"Prüfen", navSettings:"Einstellungen", aiLive:"AI Live", followApiExchanges:"API-Austausch verfolgen", localNotice:"CyberBenchHelper läuft lokal. Dateien bleiben im Browser, außer bei direkten Aufrufen der konfigurierten API-Anbieter.",
         homeTitle:"Mission konfigurieren oder laden", homeIntro:"Geben Sie vor dem Start die Missionsdaten ein. Sie werden in Dateien und Rücksende-E-Mail übernommen.", apiRequired:"Vor der Verarbeitung eines Interviews müssen in den Einstellungen ein Transkriptions-API-Schlüssel und ein Analyse-API-Schlüssel konfiguriert werden.", missionCode:"Missionscode", missionName:"Mission / Kunde", projectManager:"Projektleiter", projectManagerEmail:"E-Mail des Projektleiters", saveBrowser:"Lokal im Browser speichern", downloadProject:"Projektkonfiguration zur Nutzung auf einem anderen Computer herunterladen", loadProject:"Projekt-JSON laden", startEnrich:"Anreicherung starten",
-        ingestGuide:"Ablauf: vorausgefüllten Fragebogen laden, Interviewdaten hinzufügen, Analyse starten und angereicherte Datei herunterladen.", stepExcelTitle:"Vorausgefüllte Excel-Datei laden", stepExcelText:"Wählen Sie den Fragebogen mit den während des Interviews eingetragenen Reifegraden.", assessmentFileLabel:"Excel-Fragebogen", stepInterviewTitle:"Interviewdaten hinzufügen", stepInterviewText:"Fügen Sie das Teams-Transkript ein oder wählen Sie direkt eine Audio- oder Videodatei zur Transkription und Sprechertrennung.", mediaLabel:"Audio oder Video", transcribeButton:"Transkribieren und Sprecher trennen", transcriptLabel:"Teams-Transkript oder zu analysierender Text", improveTranscript:"Transkript verbessern", stepAnalyzeTitle:"Analysieren und angereicherte Datei herunterladen", stepAnalyzeText:"Die Analyse ergänzt Kommentare und prüft die Stufen. Der unabhängige Check & Challenge ist standardmäßig aktiviert.", scopeLabel:"Analyseumfang", analyzeButton:"Analyse starten", applyButton:"Ergebnisse übernehmen", downloadEnriched:"Angereicherte Datei herunterladen", openSettings:"API-Einstellungen öffnen",
+        ingestGuide:"Ablauf: vorausgefüllten Fragebogen laden, Interviewdaten hinzufügen, Analyse starten und angereicherte Datei herunterladen.", stepExcelTitle:"Vorausgefüllte Excel-Datei laden", stepExcelText:"Wählen Sie den Fragebogen mit den während des Interviews eingetragenen Reifegraden.", assessmentFileLabel:"Excel-Fragebogen", stepInterviewTitle:"Interviewdaten hinzufügen", stepInterviewText:"Wählen Sie eine Audio- oder Videodatei zur Transkription und Verbesserung oder fügen Sie ein vorhandenes Transkript hinzu.", mediaLabel:"Audio oder Video", transcribeButton:"Transkription und Verbesserung starten", transcriptLabel:"Vorhandenes Transkript direkt hinzufügen", improveTranscript:"Transkriptverbesserung starten", stepAnalyzeTitle:"Analysieren und angereicherte Datei herunterladen", stepAnalyzeText:"Die Analyse ergänzt Kommentare und prüft die Stufen. Der unabhängige Check & Challenge ist standardmäßig aktiviert.", scopeLabel:"Analyseumfang", analyzeButton:"Analyse starten", applyButton:"Ergebnisse übernehmen", downloadEnriched:"Angereicherte Datei herunterladen", openSettings:"API-Einstellungen öffnen",
         checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden.", consentTitle:"Vertraulichkeitshinweis und LLM-Autorisierung", consentText:"Die Nutzung eines LLM und der konfigurierten Anbieter muss von der bewerteten Organisation ausdrücklich genehmigt sein. Interviewdaten und ausgewählte Fragebogeninformationen werden an die ausgewählten Anbieter übermittelt.", consentLabel:"Mir liegt eine schriftliche Genehmigung zur Nutzung eines LLM und der konfigurierten Anbieter vor.", modelGuidance:"Verwenden Sie für ausreichende Qualität mindestens GPT-5.5 oder Claude Opus 4.6 beziehungsweise eine neuere Version."
       }
     };
@@ -1632,7 +1690,7 @@
         de: { refreshAnalysisModels:"Liste der vorhandenen Modelle abrufen", ingestTest:"Verbindung testen", refreshChallengeModels:"Liste der vorhandenen Modelle abrufen", challengeTest:"Verbindung testen" }
       }[lang] || {};
       Object.entries(buttons).forEach(([id, value]) => { if ($(id)) $(id).textContent = value; });
-      $("ingestTranscript").placeholder = lang === "fr" ? "Collez la transcription complète ici..." : (lang === "de" ? "Vollständiges Transkript hier einfügen..." : "Paste the complete transcript here...");
+      $("ingestTranscriptSource").placeholder = lang === "fr" ? "Collez la transcription complète ici..." : (lang === "de" ? "Vollständiges Transkript hier einfügen..." : "Paste the complete transcript here...");
     }
 
     const t = (key, vars = {}) => {
@@ -1673,9 +1731,22 @@
         results: [],
         challenges: [],
         transcriptCorrections: [],
-        applied: false
+        applied: false,
+        lastSavedAt: null
       },
       filters: { search: "", domain: "", type: "", status: "", score: "" },
+      ai: {
+        live: false,
+        catalogs: {
+          analysis: { status: "idle", message: "" },
+          challenge: { status: "idle", message: "" }
+        },
+        connections: {
+          analysis: { status: "idle", message: "" },
+          challenge: { status: "idle", message: "" }
+        }
+      },
+      apiActivity: { tasks: new Map(), exchanges: [], sequence: 0, clearTimer: null },
       checkResults: [],
       checkRan: false
     };
@@ -1686,11 +1757,11 @@
       // Keep API keys server-side. Configure this endpoint as a secure proxy when enrichment is enabled.
       async enrich(payload) {
         if (!this.enabled || !this.endpoint) throw new Error("Recommendation enrichment is not configured.");
-        const response = await fetch(this.endpoint, {
+        const response = await apiFetch(this.endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        });
+        }, localText("Enrichissement des recommandations…", "Enriching recommendations…", "Empfehlungen werden angereichert…"));
         if (!response.ok) throw new Error("Recommendation enrichment failed.");
         return response.json();
       }
@@ -1788,7 +1859,7 @@
         ["ingestApply", "ingestApply"], ["ingestExport", "ingestExport"], ["ingestConfigTitle", "ingestConfigTitle"],
         ["ingestWarning", "ingestWarning"], ["ingestTest", "ingestTest"]
       ].forEach(([id, key]) => setText(id, key));
-      $("ingestTranscript").placeholder = t("ingestTranscriptPlaceholder");
+      $("ingestTranscriptSource").placeholder = t("ingestTranscriptPlaceholder");
       document.querySelector('label[for="ingestProvider"]').textContent = t("ingestProvider");
       document.querySelector('label[for="ingestModel"]').textContent = t("ingestModel");
       document.querySelector('label[for="ingestApiKey"]').textContent = t("ingestApiKey");
@@ -1833,12 +1904,164 @@
       });
     }
 
-    function toast(message) {
+    function toast(message, type = "info") {
       const el = $("toast");
       el.textContent = message;
-      el.classList.remove("hidden");
+      el.className = `toast ${type}`;
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(() => el.classList.add("hidden"), 5200);
+    }
+
+    function classifyLLMError(error) {
+      const message = String(error?.message || error || "").toLowerCase();
+      if (/\b401\b|\b403\b|invalid.*key|api key.*invalid|api key missing|missing.*api key|authentication|unauthorized|permission/.test(message)) return "auth";
+      if (/\b429\b|quota|rate.?limit|too many requests|capacity/.test(message)) return "quota";
+      if (/network|fetch|connection|failed to fetch|cors|timeout|timed out|offline/.test(message)) return "network";
+      if (/empty|no content|no response/.test(message)) return "empty";
+      if (/json|parse|malformed|invalid response/.test(message)) return "malformed";
+      return "provider";
+    }
+
+    function friendlyLLMError(error) {
+      const detail = clean(error?.message || error || "");
+      const messages = {
+        auth: localText("Clé API invalide ou accès refusé. Vérifiez la clé et le fournisseur.", "Invalid API key or access denied. Check the key and provider.", "Ungültiger API-Schlüssel oder Zugriff verweigert. Prüfen Sie Schlüssel und Anbieter."),
+        quota: localText("Quota API dépassé ou limite de requêtes atteinte. Réessayez plus tard ou changez de modèle.", "API quota or rate limit reached. Retry later or change model.", "API-Kontingent oder Anfragelimit erreicht. Versuchen Sie es später erneut oder wechseln Sie das Modell."),
+        network: localText("Erreur de connexion. Vérifiez votre accès Internet, l’endpoint et les autorisations navigateur.", "Connection error. Check your internet access, endpoint, and browser permissions.", "Verbindungsfehler. Prüfen Sie Internetzugang, Endpunkt und Browserberechtigungen."),
+        empty: localText("Le fournisseur n’a renvoyé aucun contenu exploitable.", "The provider returned no usable content.", "Der Anbieter hat keinen nutzbaren Inhalt zurückgegeben."),
+        malformed: localText("La réponse du LLM n’est pas exploitable. Réessayez ou changez de modèle.", "The LLM response is not usable. Retry or change model.", "Die LLM-Antwort ist nicht nutzbar. Versuchen Sie es erneut oder wechseln Sie das Modell."),
+        provider: localText("Le fournisseur LLM a renvoyé une erreur.", "The LLM provider returned an error.", "Der LLM-Anbieter hat einen Fehler zurückgegeben.")
+      };
+      const summary = messages[classifyLLMError(error)];
+      return detail && !summary.toLowerCase().includes(detail.toLowerCase()) ? `${summary} ${localText("Détail fournisseur :", "Provider detail:", "Anbieterdetail:")} ${detail}` : summary;
+    }
+
+    function setConnectionState(kind, status, message = "") {
+      state.ai.connections[kind] = { status, message };
+      state.ai.live = Object.values(state.ai.connections).some((connection) => connection.status === "success")
+        || Object.values(state.ai.catalogs).some((catalog) => catalog.status === "success");
+      renderAIStatus();
+    }
+
+    function setCatalogState(kind, status, message = "") {
+      state.ai.catalogs[kind] = { status, message };
+      state.ai.live = Object.values(state.ai.connections).some((connection) => connection.status === "success")
+        || Object.values(state.ai.catalogs).some((catalog) => catalog.status === "success");
+      renderAIStatus();
+    }
+
+    function renderAIStatus() {
+      $("aiLivePill").classList.toggle("hidden", !state.ai.live);
+      ["analysis", "challenge"].forEach((kind) => {
+        const connection = state.ai.connections[kind];
+        const connectionElement = $(`${kind}ConnectionStatus`);
+        connectionElement.className = `connection-status ${connection.status}${connection.status === "idle" ? " hidden" : ""}`;
+        connectionElement.textContent = connection.message;
+        const catalog = state.ai.catalogs[kind];
+        const catalogElement = $(`${kind}ModelStatus`);
+        catalogElement.textContent = catalog.message || localText("La liste sera chargée depuis le fournisseur après saisie d’une clé valide.", "The list will load from the provider after a valid key is entered.", "Die Liste wird nach Eingabe eines gültigen Schlüssels vom Anbieter geladen.");
+      });
+    }
+
+    function renderApiActivity() {
+      const tasks = [...state.apiActivity.tasks.values()];
+      const active = tasks.filter((task) => task.status === "active");
+      const current = active.at(-1) || tasks.at(-1);
+      const element = $("apiActivity");
+      if (!current) {
+        element.classList.add("hidden");
+        return;
+      }
+      const progress = Number.isFinite(current.progress) ? clamp(current.progress, 0, 100) : null;
+      element.className = `api-activity ${current.status}${current.status === "active" && progress === null ? " indeterminate" : ""}`;
+      $("apiActivityText").textContent = current.message;
+      $("apiActivityBar").style.width = progress === null ? "" : `${progress}%`;
+      $("apiActivityMeta").textContent = current.status === "active"
+        ? (progress === null ? localText("En cours…", "In progress…", "In Bearbeitung…") : `${Math.round(progress)}%`)
+        : current.status === "success"
+        ? localText("Terminé", "Completed", "Abgeschlossen")
+        : localText("Échec", "Failed", "Fehlgeschlagen");
+    }
+
+    function logApiExchange(message, status = "info") {
+      state.apiActivity.exchanges.push({ message: clean(message), status, at: new Date() });
+      state.apiActivity.exchanges = state.apiActivity.exchanges.slice(-100);
+      $("apiExchangeDetails").classList.remove("hidden");
+      $("apiExchangeLog").innerHTML = state.apiActivity.exchanges.map((entry) => `<div class="api-exchange-entry ${entry.status}">[${entry.at.toLocaleTimeString()}] ${html(entry.message)}</div>`).join("");
+      $("apiExchangeLog").scrollTop = $("apiExchangeLog").scrollHeight;
+    }
+
+    function beginApiAction(message, progress = null) {
+      clearTimeout(state.apiActivity.clearTimer);
+      const id = ++state.apiActivity.sequence;
+      state.apiActivity.tasks.set(id, { id, message, progress, status: "active" });
+      logApiExchange(message);
+      renderApiActivity();
+      return id;
+    }
+
+    function updateApiAction(id, message, progress = null) {
+      const task = state.apiActivity.tasks.get(id);
+      if (!task) return;
+      task.message = message || task.message;
+      task.progress = progress;
+      renderApiActivity();
+    }
+
+    function completeApiAction(id, message) {
+      const task = state.apiActivity.tasks.get(id);
+      if (!task) return;
+      task.status = "success";
+      task.progress = 100;
+      task.message = message || task.message;
+      state.apiActivity.tasks.delete(id);
+      state.apiActivity.tasks.set(id, task);
+      logApiExchange(task.message, "success");
+      renderApiActivity();
+      scheduleApiActivityClear();
+    }
+
+    function failApiAction(id, error, message) {
+      const task = state.apiActivity.tasks.get(id);
+      if (!task) return;
+      task.status = "error";
+      task.progress = null;
+      task.message = message || friendlyLLMError(error);
+      state.apiActivity.tasks.delete(id);
+      state.apiActivity.tasks.set(id, task);
+      logApiExchange(task.message, "error");
+      renderApiActivity();
+      scheduleApiActivityClear(8000);
+    }
+
+    function scheduleApiActivityClear(delay = 3500) {
+      clearTimeout(state.apiActivity.clearTimer);
+      state.apiActivity.clearTimer = setTimeout(() => {
+        [...state.apiActivity.tasks].forEach(([id, task]) => {
+          if (task.status !== "active") state.apiActivity.tasks.delete(id);
+        });
+        renderApiActivity();
+      }, delay);
+    }
+
+    async function apiFetch(url, options = {}, label = localText("Appel API en cours…", "API call in progress…", "API-Aufruf läuft…")) {
+      const taskId = beginApiAction(label);
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          const payload = await response.clone().json().catch(() => ({}));
+          const detail = payload.error?.message || payload.message || `HTTP ${response.status}`;
+          throw new Error(detail);
+        }
+        completeApiAction(taskId, localText("Réponse API reçue.", "API response received.", "API-Antwort empfangen."));
+        return response;
+      } catch (error) {
+        const message = friendlyLLMError(error);
+        failApiAction(taskId, error, message);
+        const wrapped = new Error(message);
+        wrapped.isFriendlyApiError = true;
+        throw wrapped;
+      }
     }
 
     function scoreColor(score) {
@@ -2230,6 +2453,7 @@
         refs.statusText.textContent = t("assessmentLoaded");
         state.checkResults = [];
         state.checkRan = false;
+        saveIngestSession(false);
         render();
       } catch (error) {
         toast(error.message);
@@ -2273,28 +2497,28 @@
       }
     }
 
-    async function callIngestLLM(systemPrompt, userPrompt, config = ingestConfig()) {
+    async function callIngestLLMRaw(systemPrompt, userPrompt, config = ingestConfig()) {
       requireLlmAuthorization();
       if (!config.model && config.provider !== "azure_openai") throw new Error("A model name is required.");
       let response;
       if (config.provider === "anthropic") {
         if (!config.apiKey) throw new Error("Anthropic API key missing.");
-        response = await fetch("https://api.anthropic.com/v1/messages", {
+        response = await apiFetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-api-key": config.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
           body: JSON.stringify({ model: config.model, max_tokens: 8000, system: systemPrompt, messages: [{ role: "user", content: userPrompt }] })
-        });
+        }, localText("Analyse Anthropic en cours…", "Anthropic analysis in progress…", "Anthropic-Analyse läuft…"));
         const data = await response.json();
         if (!response.ok) throw new Error(data.error?.message || `Anthropic HTTP ${response.status}`);
         return parseLLMJson(data.content?.map((part) => part.text || "").join("") || "");
       }
       if (config.provider === "openai") {
         if (!config.apiKey) throw new Error("OpenAI API key missing.");
-        response = await fetch("https://api.openai.com/v1/chat/completions", {
+        response = await apiFetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}` },
           body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
-        });
+        }, localText("Analyse OpenAI en cours…", "OpenAI analysis in progress…", "OpenAI-Analyse läuft…"));
         const data = await response.json();
         if (!response.ok) throw new Error(data.error?.message || `OpenAI HTTP ${response.status}`);
         return parseLLMJson(data.choices?.[0]?.message?.content || "");
@@ -2303,18 +2527,18 @@
         if (!config.azureEndpoint || !config.azureDeployment || !config.azureKey) throw new Error("Azure endpoint, deployment, and API key are required.");
         const endpoint = config.azureEndpoint.replace(/\/+$/, "");
         if (!endpoint.startsWith("https://")) throw new Error("Azure endpoint must use HTTPS.");
-        response = await fetch(`${endpoint}/openai/deployments/${encodeURIComponent(config.azureDeployment)}/chat/completions?api-version=2024-02-01`, {
+        response = await apiFetch(`${endpoint}/openai/deployments/${encodeURIComponent(config.azureDeployment)}/chat/completions?api-version=2024-02-01`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "api-key": config.azureKey },
           body: JSON.stringify({ messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
-        });
+        }, localText("Analyse Azure OpenAI en cours…", "Azure OpenAI analysis in progress…", "Azure-OpenAI-Analyse läuft…"));
         const data = await response.json();
         if (!response.ok) throw new Error(data.error?.message || `Azure OpenAI HTTP ${response.status}`);
         return parseLLMJson(data.choices?.[0]?.message?.content || "");
       }
       if (config.provider === "google_gemini") {
         if (!config.apiKey) throw new Error("Google Gemini API key missing.");
-        response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(config.model)}:generateContent?key=${encodeURIComponent(config.apiKey)}`, {
+        response = await apiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(config.model)}:generateContent?key=${encodeURIComponent(config.apiKey)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -2322,12 +2546,20 @@
             contents: [{ role: "user", parts: [{ text: userPrompt }] }],
             generationConfig: { responseMimeType: "application/json", maxOutputTokens: 8000 }
           })
-        });
+        }, localText("Analyse Google Gemini en cours…", "Google Gemini analysis in progress…", "Google-Gemini-Analyse läuft…"));
         const data = await response.json();
         if (!response.ok) throw new Error(data.error?.message || `Google Gemini HTTP ${response.status}`);
         return parseLLMJson(data.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "");
       }
       throw new Error(`Unsupported provider: ${config.provider}`);
+    }
+
+    async function callIngestLLM(systemPrompt, userPrompt, config = ingestConfig()) {
+      try {
+        return await callIngestLLMRaw(systemPrompt, userPrompt, config);
+      } catch (error) {
+        throw error.isFriendlyApiError ? error : new Error(friendlyLLMError(error));
+      }
     }
 
     function ingestQuestionPayload(questions) {
@@ -2427,6 +2659,72 @@ Return strict JSON only:
       });
     }
 
+    function prepareReviewResults(results, questions) {
+      const questionsById = new Map(questions.map((question) => [question.id, question]));
+      return results.map((result) => {
+        const question = questionsById.get(result.id);
+        return {
+          ...result,
+          levels: normalizeLevels(result.levels),
+          original: {
+            status: question?.status || "missing",
+            levels: normalizeLevels(question?.levels),
+            comment: question?.comment || "",
+            reliability: question?.reliability || ""
+          },
+          validated: false,
+          validationError: ""
+        };
+      });
+    }
+
+    function reviewValidationError(result) {
+      if (result.status !== "scored") return "";
+      const total = normalizeLevels(result.levels).slice(0, 4).reduce((sum, value) => sum + value, 0);
+      return Math.abs(total - 1) <= 0.001
+        ? ""
+        : localText(`La somme L1 à L4 doit être égale à 100 % (actuellement ${Math.round(total * 100)} %).`, `L1 to L4 must total 100% (currently ${Math.round(total * 100)}%).`, `L1 bis L4 müssen 100 % ergeben (derzeit ${Math.round(total * 100)} %).`);
+    }
+
+    function applyReviewResult(result, rerender = true) {
+      const question = state.assessment?.questions?.find((item) => item.id === result.id);
+      if (!question) return false;
+      result.validationError = reviewValidationError(result);
+      if (result.validationError) {
+        result.validated = false;
+        if (rerender) renderIngest();
+        return false;
+      }
+      result.levels = result.status === "scored" ? normalizeLevels(result.levels) : [0, 0, 0, 0, 0];
+      result.validated = true;
+      question.status = result.status;
+      question.levels = [...result.levels];
+      question.score = result.status === "scored" ? scoreFromLevels(result.levels) : null;
+      question.comment = result.comment;
+      question.reliability = result.reliability;
+      state.assessment.domainStats = buildDomainStats(state.assessment.questions);
+      state.ingest.applied = state.ingest.results.length > 0 && state.ingest.results.every((row) => row.validated);
+      saveIngestSession(false);
+      if (rerender) {
+        runBusinessChecks();
+        render();
+      }
+      return true;
+    }
+
+    function validateAllReviewResults() {
+      let valid = 0;
+      state.ingest.results.forEach((result) => { if (applyReviewResult(result, false)) valid += 1; });
+      state.ingest.applied = valid === state.ingest.results.length && valid > 0;
+      runBusinessChecks();
+      saveIngestSession(false);
+      render();
+      toast(state.ingest.applied
+        ? localText("Toutes les propositions ont été validées.", "All proposals have been validated.", "Alle Vorschläge wurden validiert.")
+        : localText(`${valid} proposition(s) validée(s). Corrigez les répartitions signalées.`, `${valid} proposal(s) validated. Correct the highlighted distributions.`, `${valid} Vorschlag/Vorschläge validiert. Korrigieren Sie die markierten Verteilungen.`),
+      state.ingest.applied ? "success" : "error");
+    }
+
     function setIngestProgress(message, progress = state.ingest.progress) {
       state.ingest.progress = progress;
       state.ingest.log.push(message);
@@ -2467,17 +2765,23 @@ Return strict JSON only:
       return chunks;
     }
 
+    function revealTranscriptResult() {
+      $("transcriptResult").classList.remove("hidden");
+    }
+
     async function improveTranscript(silent = false) {
-      const rawTranscript = $("ingestTranscript").value.trim();
+      const rawTranscript = $("ingestTranscriptSource").value.trim() || $("ingestTranscript").value.trim();
       if (!rawTranscript) return silent ? null : toast("Ajoutez d’abord un transcript.");
       if (!analysisConfigReady()) return silent ? null : toast("Configurez d’abord le modèle d’analyse.");
       const button = $("improveTranscript");
+      const apiTask = beginApiAction(localText("Amélioration du transcript…", "Improving transcript…", "Transkript wird verbessert…"), 0);
       button.disabled = true;
       state.ingest.transcriptCorrections = [];
       try {
         const chunks = transcriptChunks(rawTranscript);
         const improved = [];
         for (let index = 0; index < chunks.length; index++) {
+          updateApiAction(apiTask, localText(`Amélioration du transcript ${index + 1}/${chunks.length}…`, `Improving transcript ${index + 1}/${chunks.length}…`, `Transkript wird verbessert ${index + 1}/${chunks.length}…`), index / chunks.length * 100);
           setIngestProgress(`Transcript: correction terminologique ${index + 1}/${chunks.length}.`, (index / chunks.length) * 40);
           const prompts = transcriptCorrectionPrompts(chunks[index], state.assessment.questions);
           const correctedPayload = await callIngestLLM(prompts.system, prompts.user);
@@ -2492,13 +2796,16 @@ Return strict JSON only:
           (finalPayload.warnings || []).forEach((warning) => state.ingest.transcriptCorrections.push({ before: "", after: "", reason: warning }));
         }
         $("ingestTranscript").value = improved.join("\n\n");
+        revealTranscriptResult();
         state.ingest.challenges.unshift(...state.ingest.transcriptCorrections.slice(0, 20).map((item) => ({ id: "Transcript", issue: item.before || item.reason || "Ambiguïté", correction: item.after || item.reason || "À vérifier" })));
         setIngestProgress(`Transcript amélioré et contrôlé : ${state.ingest.transcriptCorrections.length} corrections ou alertes.`, 100);
         toast("Transcript amélioré à partir de la terminologie du questionnaire.");
+        completeApiAction(apiTask, localText("Transcript amélioré et vérifié.", "Transcript improved and checked.", "Transkript verbessert und geprüft."));
         return $("ingestTranscript").value;
       } catch (error) {
         setIngestProgress(`Correction du transcript interrompue : ${error.message}`, state.ingest.progress);
-        if (!silent) toast(`Amélioration impossible : ${error.message}`);
+        if (!silent) toast(`Amélioration impossible : ${error.message}`, "error");
+        failApiAction(apiTask, error, error.message);
         return null;
       } finally {
         button.disabled = false;
@@ -2509,12 +2816,20 @@ Return strict JSON only:
     async function testModelConnection(kind = "analysis") {
       const challenge = kind === "challenge";
       const button = $(challenge ? "challengeTest" : "ingestTest");
+      const apiTask = beginApiAction(challenge ? localText("Test de la connexion de vérification…", "Testing verification connection…", "Prüfverbindung wird getestet…") : localText("Test de la connexion d’analyse…", "Testing analysis connection…", "Analyseverbindung wird getestet…"));
       button.disabled = true;
+      setConnectionState(kind, "testing", localText("Vérification de la connexion IA…", "Checking the AI connection…", "KI-Verbindung wird geprüft…"));
       try {
-        await callIngestLLM("Return strict JSON only.", 'Reply with {"ok":true}.', challenge ? challengeIngestConfig() : ingestConfig());
-        toast("LLM connection confirmed.");
+        const result = await callIngestLLM("Return strict JSON only.", 'Reply with {"ok":true,"message":"valid connection"}.', challenge ? challengeIngestConfig() : ingestConfig());
+        const message = clean(result?.message) || localText("Connexion confirmée. Le fournisseur a renvoyé une réponse valide.", "Connection confirmed. The provider returned a valid response.", "Verbindung bestätigt. Der Anbieter hat eine gültige Antwort zurückgegeben.");
+        setConnectionState(kind, "success", message);
+        completeApiAction(apiTask, message);
+        toast(localText("Connexion IA validée.", "AI connection validated.", "KI-Verbindung validiert."), "success");
       } catch (error) {
-        toast(`LLM connection failed: ${error.message}`);
+        const message = error.message || friendlyLLMError(error);
+        setConnectionState(kind, "error", message);
+        failApiAction(apiTask, error, message);
+        toast(message, "error");
       } finally {
         button.disabled = false;
       }
@@ -2523,7 +2838,9 @@ Return strict JSON only:
     async function runIngest() {
       const transcript = $("ingestTranscript").value.trim();
       if (!transcript) return toast("Paste a meeting transcript before starting ingestion.");
+      if (!state.assessment?.questions?.length) return toast(localText("Chargez d’abord le questionnaire.", "Load the questionnaire first.", "Laden Sie zuerst den Fragebogen."), "error");
       if (state.ingest.running) return;
+      const apiTask = beginApiAction(localText("Analyse du questionnaire…", "Analyzing questionnaire…", "Fragebogen wird analysiert…"), 0);
       const selectedDomain = $("ingestDomain").value;
       const groups = [...new Set(state.assessment.questions.map((q) => q.domain))]
         .filter((domain) => !selectedDomain || domain === selectedDomain)
@@ -2537,6 +2854,7 @@ Return strict JSON only:
         for (let index = 0; index < groups.length; index++) {
           const group = groups[index];
           const base = index / groups.length * 100;
+          updateApiAction(apiTask, localText(`Analyse du thème ${group.domain}…`, `Analyzing theme ${group.domain}…`, `Thema ${group.domain} wird analysiert…`), base);
           setIngestProgress(`${group.domain}: analyst extraction started.`, base);
           const extraction = extractionPrompts(transcript, group.questions);
           const draftPayload = await callIngestLLM(extraction.system, extraction.user);
@@ -2551,36 +2869,21 @@ Return strict JSON only:
           } else {
             setIngestProgress(`${group.domain}: ${draft.length} draft answers extracted; check & challenge disabled.`, base + 45 / groups.length);
           }
-          state.ingest.results.push(...reviewed);
+          state.ingest.results.push(...prepareReviewResults(reviewed, group.questions));
           state.ingest.challenges.push(...(Array.isArray(reviewedPayload?.challenges) ? reviewedPayload.challenges : []));
           setIngestProgress(`${group.domain}: ${reviewed.length} reviewed answers ready.`, (index + 1) / groups.length * 100);
         }
-        toast(`${state.ingest.results.length} reviewed answers ready to apply.`);
+        saveIngestSession(false);
+        toast(localText(`${state.ingest.results.length} propositions prêtes à être revues.`, `${state.ingest.results.length} proposals ready for review.`, `${state.ingest.results.length} Vorschläge zur Prüfung bereit.`));
+        completeApiAction(apiTask, localText("Analyse et vérification terminées.", "Analysis and verification completed.", "Analyse und Prüfung abgeschlossen."));
       } catch (error) {
         setIngestProgress(`Stopped: ${error.message}`, state.ingest.progress);
-        toast(`Ingestion failed: ${error.message}`);
+        toast(`Ingestion failed: ${error.message}`, "error");
+        failApiAction(apiTask, error, error.message);
       } finally {
         state.ingest.running = false;
         renderIngest();
       }
-    }
-
-    function applyIngestResults() {
-      const resultMap = new Map(state.ingest.results.map((row) => [row.id, row]));
-      state.assessment.questions.forEach((question) => {
-        const result = resultMap.get(question.id);
-        if (!result) return;
-        question.status = result.status;
-        question.levels = result.levels;
-        question.score = result.status === "scored" ? scoreFromLevels(result.levels) : null;
-        question.comment = result.comment;
-        question.reliability = result.reliability;
-      });
-      state.assessment.domainStats = buildDomainStats(state.assessment.questions);
-      state.ingest.applied = true;
-      runBusinessChecks();
-      render();
-      toast("Reviewed results applied to the assessment.");
     }
 
     function mediaDurationSeconds(file) {
@@ -2620,6 +2923,7 @@ Return strict JSON only:
         if (Number.isFinite(duration) && duration >= 2 * 60 * 60) return toast("Azure Fast Transcription exige un média de moins de 2 heures. Découpez-le avant import.");
       }
       const button = $("transcribeMedia");
+      const apiTask = beginApiAction(provider === "azure" ? localText("Transcription et diarisation avec Azure…", "Transcribing and diarizing with Azure…", "Transkription und Sprechertrennung mit Azure…") : localText("Transcription et diarisation avec OpenAI…", "Transcribing and diarizing with OpenAI…", "Transkription und Sprechertrennung mit OpenAI…"));
       button.disabled = true;
       button.textContent = "Transcription et diarisation en cours...";
       try {
@@ -2632,7 +2936,7 @@ Return strict JSON only:
           form.append("model", "gpt-4o-transcribe-diarize");
           form.append("response_format", "diarized_json");
           form.append("chunking_strategy", "auto");
-          response = await fetch("https://api.openai.com/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${key}` }, body: form });
+          response = await apiFetch("https://api.openai.com/v1/audio/transcriptions", { method: "POST", headers: { Authorization: `Bearer ${key}` }, body: form }, localText("Transcription OpenAI en cours…", "OpenAI transcription in progress…", "OpenAI-Transkription läuft…"));
         } else {
           const key = $("azureSpeechKey").value.trim();
           const region = clean($("azureSpeechRegion").value) || "westeurope";
@@ -2641,7 +2945,7 @@ Return strict JSON only:
           form.append("audio", file, file.name);
           form.append("definition", JSON.stringify({ locales: [locale], diarization: { enabled: true, maxSpeakers: 10 } }));
           const endpoint = `https://${encodeURIComponent(region)}.api.cognitive.microsoft.com/speechtotext/transcriptions:transcribe?api-version=2025-10-15`;
-          response = await fetch(endpoint, { method: "POST", headers: { "Ocp-Apim-Subscription-Key": key }, body: form });
+          response = await apiFetch(endpoint, { method: "POST", headers: { "Ocp-Apim-Subscription-Key": key }, body: form }, localText("Transcription Azure en cours…", "Azure transcription in progress…", "Azure-Transkription läuft…"));
         }
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error?.message || data.message || `Transcription HTTP ${response.status}`);
@@ -2652,15 +2956,19 @@ Return strict JSON only:
           return text ? `${speaker !== undefined ? `Speaker ${speaker}: ` : ""}${text}` : "";
         }).filter(Boolean).join("\n") || (data.combinedPhrases || []).map((phrase) => phrase.text || phrase.display || "").filter(Boolean).join("\n") || data.text || "";
         if (!transcript) throw new Error("Aucune transcription exploitable n’a été retournée.");
+        $("ingestTranscriptSource").value = "";
         $("ingestTranscript").value = transcript;
+        revealTranscriptResult();
         $("ingestMediaMeta").textContent = `${file.name} · transcription prête (${transcript.length} caractères)`;
         toast("Transcription et diarisation terminées.");
         if (analysisConfigReady()) await improveTranscript(true);
+        completeApiAction(apiTask, localText("Transcription et diarisation terminées.", "Transcription and diarization completed.", "Transkription und Sprechertrennung abgeschlossen."));
       } catch (error) {
-        toast(`Transcription impossible : ${error.message}`);
+        toast(`Transcription impossible : ${error.message}`, "error");
+        failApiAction(apiTask, error, error.message);
       } finally {
         button.disabled = false;
-        button.textContent = "Transcrire et diariser";
+        button.textContent = localText("Lancer la transcription de l'amélioration", "Start transcription and improvement", "Transkription und Verbesserung starten");
       }
     }
 
@@ -2696,6 +3004,9 @@ Return strict JSON only:
         $("contextStatus").className = "value";
         $("contextDetails").textContent = localText("Chargez un fichier puis cliquez sur Contrôler le fichier.", "Load a file, then click Check file.", "Laden Sie eine Datei und klicken Sie anschließend auf Datei prüfen.");
         $("emailChecks").disabled = true;
+        $("saveCheckedExcel").disabled = true;
+        $("checkEditorIntro").classList.add("hidden");
+        $("checkEditor").innerHTML = "";
         $("checkTable").querySelector("tbody").innerHTML = `<tr><td colspan="5" class="muted">${localText("Le contrôle n’a pas encore été lancé.", "The check has not been run yet.", "Die Prüfung wurde noch nicht gestartet.")}</td></tr>`;
         return;
       }
@@ -2716,9 +3027,31 @@ Return strict JSON only:
       }[lang] || [];
       $("contextDetails").textContent = contextIssues.length ? contextIssues.map((issue) => `${issue.sheet}: ${issue.field}`).join(" · ") : (contextFields.length ? contextMessages[0] : contextMessages[1]);
       $("emailChecks").disabled = !levelTotalsAreValid();
+      $("saveCheckedExcel").disabled = false;
       $("checkTable").querySelector("tbody").innerHTML = results.length ? results.map((row) => `
         <tr><td class="small">${html(row.id)}</td><td class="small">${html(row.domain)}</td><td class="small check-error">${html(row.severity)}</td><td>${html(row.rule)}</td><td>${html(row.detail)}</td></tr>`).join("")
         : `<tr><td colspan="5" class="check-ok"><strong>${localText("Aucune anomalie détectée.", "No issue detected.", "Kein Problem erkannt.")}</strong></td></tr>`;
+      renderCheckEditor(results);
+    }
+
+    function renderCheckEditor(results) {
+      const affectedIds = [...new Set(results.map((result) => result.id).filter((id) => id && id !== "CONTEXT"))];
+      const questions = affectedIds.map((id) => state.assessment.questions.find((question) => question.id === id)).filter(Boolean);
+      $("checkEditorIntro").classList.toggle("hidden", !questions.length);
+      $("checkEditorIntro").innerHTML = questions.length
+        ? `<strong>${html(localText(`${questions.length} mesure(s) à corriger directement`, `${questions.length} measure(s) to correct directly`, `${questions.length} Maßnahme(n) direkt zu korrigieren`))}</strong><span>${html(localText("Les contrôles sont relancés après chaque modification.", "Checks rerun after every change.", "Die Prüfungen werden nach jeder Änderung erneut ausgeführt."))}</span>`
+        : "";
+      $("checkEditor").innerHTML = questions.map((question) => {
+        const levels = normalizeLevels(question.levels);
+        return `<article class="measure-review" data-check-id="${html(question.id)}">
+          <div class="measure-review-head"><div><strong>${html(question.id)} · ${html(question.question || question.subtopic || "")}</strong><span>${html(question.domain || "")}</span></div><span class="review-status">${html(localText("À corriger", "To correct", "Zu korrigieren"))}</span></div>
+          <div class="review-version final">
+            <div class="ingest-fields"><div><label>${html(localText("Statut", "Status", "Status"))}</label><select data-check-field="status"><option value="scored"${question.status === "scored" ? " selected" : ""}>scored</option><option value="na"${question.status === "na" ? " selected" : ""}>N/A</option><option value="missing"${question.status === "missing" ? " selected" : ""}>missing</option></select></div><div><label>${html(localText("Fiabilité", "Reliability", "Zuverlässigkeit"))}</label><select data-check-field="reliability">${["High", "Medium", "Low"].map((value) => `<option value="${value}"${question.reliability === value ? " selected" : ""}>${value}</option>`).join("")}</select></div></div>
+            <div class="level-grid" style="margin-top:10px;">${levels.map((value, index) => `<label class="level-cell"><span>L${index + 1}</span><input type="number" min="0" max="100" step="1" value="${Math.round(value * 100)}" data-check-level="${index}"><span>%</span></label>`).join("")}</div>
+            <div class="review-comment"><label>${html(localText("Commentaire", "Comment", "Kommentar"))}</label><textarea data-check-field="comment">${html(question.comment || "")}</textarea></div>
+          </div>
+        </article>`;
+      }).join("");
     }
 
     function levelTotalsAreValid() {
@@ -2746,8 +3079,11 @@ Return strict JSON only:
       URL.revokeObjectURL(link.href);
     }
 
-    function exportAssessmentWorkbook() {
+    function exportAssessmentWorkbook(skipReviewValidation = false) {
       if (!window.XLSX) return toast(t("missingSheetJs"));
+      if (!skipReviewValidation && state.ingest.results.length && !state.ingest.results.every((result) => result.validated)) {
+        return toast(localText("Validez chaque mesure avant de télécharger le fichier.", "Validate every measure before downloading the file.", "Validieren Sie jede Maßnahme vor dem Herunterladen."), "error");
+      }
       const headers = ["#", "ID", "TYPE", "SUBTOPIC", "ASSESSMENT POINT", "EVIDENCE REQUIRED", "REQUIREMENTS L1", "(1) %", "REQUIREMENTS L2", "(2) %", "REQUIREMENTS L3", "(3) %", "REQUIREMENTS L4", "(4) %", "REQUIREMENTS L5", "(5) %", "N/A", "COMMENT", "ANSWER RELIABILITY", "CONTROL"];
       const workbook = XLSX.utils.book_new();
       [...new Set(state.assessment.questions.map((q) => q.domain))].forEach((domain) => {
@@ -2955,14 +3291,42 @@ Return strict JSON only:
       $("ingestLog").innerHTML = state.ingest.log.map((line) => `<div>${html(line)}</div>`).join("");
       $("ingestRun").disabled = state.ingest.running;
       $("ingestApply").disabled = state.ingest.running || !state.ingest.results.length;
+      const validated = state.ingest.results.filter((result) => result.validated).length;
+      state.ingest.applied = state.ingest.results.length > 0 && validated === state.ingest.results.length;
       $("ingestDownload").disabled = !state.ingest.applied;
-      $("ingestReview").innerHTML = state.ingest.challenges.slice(0, 20).map((challenge) => `
-        <div class="ingest-review-card"><strong>${html(challenge.id || "Review")}</strong><p>${html(challenge.issue || "")}</p><p><b>Correction:</b> ${html(challenge.correction || "")}</p></div>`).join("");
+      $("ingestReviewSummary").classList.toggle("hidden", !state.ingest.results.length);
+      $("ingestReviewSummary").innerHTML = state.ingest.results.length ? `
+        <strong>${html(localText(`${validated}/${state.ingest.results.length} mesures validées`, `${validated}/${state.ingest.results.length} measures validated`, `${validated}/${state.ingest.results.length} Maßnahmen validiert`))}</strong>
+        <span>${html(state.ingest.lastSavedAt
+          ? localText(`Sauvegarde locale : ${new Date(state.ingest.lastSavedAt).toLocaleTimeString()}`, `Local save: ${new Date(state.ingest.lastSavedAt).toLocaleTimeString()}`, `Lokale Speicherung: ${new Date(state.ingest.lastSavedAt).toLocaleTimeString()}`)
+          : localText("Sauvegarde automatique toutes les 30 secondes", "Automatic save every 30 seconds", "Automatische Speicherung alle 30 Sekunden"))}</span>` : "";
+      const questionsById = new Map((state.assessment?.questions || []).map((question) => [question.id, question]));
+      $("ingestReview").innerHTML = state.ingest.results.map((result) => {
+        const question = questionsById.get(result.id);
+        const initial = result.original || { status: question?.status || "missing", levels: question?.levels || [], comment: question?.comment || "", reliability: question?.reliability || "" };
+        const initialLevels = normalizeLevels(initial.levels);
+        const finalLevels = normalizeLevels(result.levels);
+        const initialLevelHtml = initialLevels.map((value, index) => `<div class="level-cell"><span>L${index + 1}</span><div class="level-value">${Math.round(value * 100)} %</div></div>`).join("");
+        const finalLevelHtml = finalLevels.map((value, index) => `<label class="level-cell"><span>L${index + 1}</span><input type="number" min="0" max="100" step="1" value="${Math.round(value * 100)}" data-review-level="${index}"><span>%</span></label>`).join("");
+        return `<article class="measure-review${result.validated ? " validated" : ""}" data-review-id="${html(result.id)}">
+          <div class="measure-review-head"><div><strong>${html(result.id)} · ${html(question?.question || question?.subtopic || "")}</strong><span>${html(question?.domain || "")}</span></div><span class="review-status">${html(result.validated ? localText("Validée", "Validated", "Validiert") : localText("À valider", "To validate", "Zu validieren"))}</span></div>
+          <div class="measure-review-grid">
+            <div class="review-version"><h4>${html(localText("État initial", "Initial state", "Ausgangszustand"))} · ${html(initial.status || "missing")}</h4><div class="level-grid">${initialLevelHtml}</div><div class="review-comment"><label>${html(localText("Commentaire initial", "Initial comment", "Ursprünglicher Kommentar"))}</label><p class="muted">${html(initial.comment || localText("Aucun commentaire", "No comment", "Kein Kommentar"))}</p></div></div>
+            <div class="review-version final"><h4>${html(localText("Proposition finale modifiable", "Editable final proposal", "Bearbeitbarer endgültiger Vorschlag"))}</h4>
+              <div class="ingest-fields"><div><label>${html(localText("Statut", "Status", "Status"))}</label><select data-review-field="status"><option value="scored"${result.status === "scored" ? " selected" : ""}>scored</option><option value="na"${result.status === "na" ? " selected" : ""}>N/A</option><option value="missing"${result.status === "missing" ? " selected" : ""}>missing</option></select></div><div><label>${html(localText("Fiabilité", "Reliability", "Zuverlässigkeit"))}</label><select data-review-field="reliability">${["High", "Medium", "Low"].map((value) => `<option value="${value}"${result.reliability === value ? " selected" : ""}>${value}</option>`).join("")}</select></div></div>
+              <div class="level-grid" style="margin-top:10px;">${finalLevelHtml}</div>
+              <div class="review-comment"><label>${html(localText("Commentaire amélioré", "Improved comment", "Verbesserter Kommentar"))}</label><textarea data-review-field="comment">${html(result.comment || "")}</textarea></div>
+            </div>
+          </div>
+          <div class="review-actions"><span class="validation-error">${html(result.validationError || "")}</span><button class="primary" data-review-validate>${html(result.validated ? localText("Revalider cette mesure", "Revalidate this measure", "Diese Maßnahme erneut validieren") : localText("Valider cette mesure", "Validate this measure", "Diese Maßnahme validieren"))}</button></div>
+        </article>`;
+      }).join("");
     }
 
     function render() {
       const ready = Boolean(state.assessment);
       $("missionStrip").classList.toggle("hidden", state.workflowTab === "arrival");
+      renderAIStatus();
       refs.emptyState.classList.add("hidden");
       refs.workflowPanels.forEach((panel) => panel.classList.toggle("hidden", panel.id !== state.workflowTab && !(panel.id === "exploreToolbar" && state.workflowTab === "explore")));
       refs.analysisPanels.forEach((panel) => panel.classList.toggle("hidden", state.workflowTab !== "explore" || !ready || panel.id !== state.tab));
@@ -4090,8 +4454,15 @@ Return strict JSON only:
     }
 
     const HELPER_CONFIG_KEY = "cyberbench-helper-config-v1";
+    const INGEST_SESSION_KEY = "cyberbench-helper-ingest-session-v1";
     const helperConfigIds = ["missionCode", "missionName", "projectManagerName", "projectManagerEmail", "llmConsent", "ingestProvider", "ingestModel", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureDeployment", "ingestAzureKey", "transcriptionProvider", "openaiTranscriptionKey", "azureSpeechKey", "azureSpeechRegion", "azureSpeechLocale", "challengeEnabled", "challengeProvider", "challengeModel", "challengeApiKey"];
     const modelRefreshTimers = {};
+    const DEFAULT_MODEL_OPTIONS = {
+      anthropic: ["claude-opus-4-6", "claude-sonnet-4-20250514"],
+      openai: ["gpt-5.5", "gpt-4.1"],
+      azure_openai: [],
+      google_gemini: ["gemini-2.5-pro", "gemini-2.5-flash"]
+    };
 
     function llmUseAuthorized() {
       return $("llmConsent").checked;
@@ -4102,6 +4473,14 @@ Return strict JSON only:
       $("apiConfigurationFields").classList.toggle("llm-locked", locked);
       $("apiConfigurationFields").inert = locked;
       $("apiConfigurationFields").setAttribute("aria-disabled", String(locked));
+      if (locked) {
+        ["analysis", "challenge"].forEach((kind) => {
+          state.ai.connections[kind] = { status: "idle", message: "" };
+          state.ai.catalogs[kind] = { status: "idle", message: "" };
+        });
+        state.ai.live = false;
+        renderAIStatus();
+      }
     }
 
     function requireLlmAuthorization() {
@@ -4120,37 +4499,61 @@ Return strict JSON only:
       return { version: 1, application: "CyberBenchHelper", exportedAt: new Date().toISOString(), mission: { code: values.missionCode, name: values.missionName, projectManager: { name: values.projectManagerName, email: values.projectManagerEmail } }, values };
     }
 
+    function populateModelSelect(kind, models, preferred = "") {
+      const select = $(kind === "challenge" ? "challengeModel" : "ingestModel");
+      const provider = $(kind === "challenge" ? "challengeProvider" : "ingestProvider").value;
+      const selected = preferred || select.value;
+      const options = [...new Set([selected, ...(models || []), ...(DEFAULT_MODEL_OPTIONS[provider] || [])].filter(Boolean))];
+      select.innerHTML = options.map((model) => `<option value="${html(model)}">${html(model)}</option>`).join("");
+      if (options.includes(selected)) select.value = selected;
+    }
+
     async function refreshModelList(kind) {
       requireLlmAuthorization();
       const challenge = kind === "challenge";
       const provider = $(challenge ? "challengeProvider" : "ingestProvider").value;
       const key = $(challenge ? "challengeApiKey" : "ingestApiKey").value.trim() || $("ingestApiKey").value.trim();
-      let response;
-      if (provider === "openai") {
-        if (!key) throw new Error(localText("Clé OpenAI manquante.", "OpenAI key missing.", "OpenAI-Schlüssel fehlt."));
-        response = await fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` } });
-      } else if (provider === "anthropic") {
-        if (!key) throw new Error(localText("Clé Anthropic manquante.", "Anthropic key missing.", "Anthropic-Schlüssel fehlt."));
-        response = await fetch("https://api.anthropic.com/v1/models", { headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" } });
-      } else if (provider === "google_gemini") {
-        if (!key) throw new Error(localText("Clé Google Gemini manquante.", "Google Gemini key missing.", "Google-Gemini-Schlüssel fehlt."));
-        response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
-      } else {
-        const endpoint = $("ingestAzureEndpoint").value.trim().replace(/\/+$/, "");
-        const azureKey = challenge ? ($("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim();
-        if (!endpoint || !azureKey) throw new Error(localText("Endpoint et clé Azure OpenAI manquants.", "Azure OpenAI endpoint and key missing.", "Azure-OpenAI-Endpunkt und Schlüssel fehlen."));
-        response = await fetch(`${endpoint}/openai/deployments?api-version=2024-10-21`, { headers: { "api-key": azureKey } });
+      const apiTask = beginApiAction(localText("Récupération de la liste des modèles…", "Retrieving the model list…", "Modellliste wird abgerufen…"));
+      setCatalogState(kind, "loading", localText("Chargement des modèles depuis le fournisseur…", "Loading models from the provider…", "Modelle werden vom Anbieter geladen…"));
+      try {
+        let response;
+        if (provider === "openai") {
+          if (!key) throw new Error(localText("Clé OpenAI manquante.", "OpenAI key missing.", "OpenAI-Schlüssel fehlt."));
+          response = await apiFetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` } }, localText("Chargement des modèles OpenAI…", "Loading OpenAI models…", "OpenAI-Modelle werden geladen…"));
+        } else if (provider === "anthropic") {
+          if (!key) throw new Error(localText("Clé Anthropic manquante.", "Anthropic key missing.", "Anthropic-Schlüssel fehlt."));
+          response = await apiFetch("https://api.anthropic.com/v1/models?limit=100", { headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" } }, localText("Chargement des modèles Anthropic…", "Loading Anthropic models…", "Anthropic-Modelle werden geladen…"));
+        } else if (provider === "google_gemini") {
+          if (!key) throw new Error(localText("Clé Google Gemini manquante.", "Google Gemini key missing.", "Google-Gemini-Schlüssel fehlt."));
+          response = await apiFetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`, {}, localText("Chargement des modèles Google Gemini…", "Loading Google Gemini models…", "Google-Gemini-Modelle werden geladen…"));
+        } else {
+          const endpoint = $("ingestAzureEndpoint").value.trim().replace(/\/+$/, "");
+          const azureKey = challenge ? ($("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim();
+          if (!endpoint || !azureKey) throw new Error(localText("Endpoint et clé Azure OpenAI manquants.", "Azure OpenAI endpoint and key missing.", "Azure-OpenAI-Endpunkt und Schlüssel fehlen."));
+          response = await apiFetch(`${endpoint}/openai/deployments?api-version=2024-10-21`, { headers: { "api-key": azureKey } }, localText("Chargement des déploiements Azure OpenAI…", "Loading Azure OpenAI deployments…", "Azure-OpenAI-Bereitstellungen werden geladen…"));
+        }
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error?.message || `HTTP ${response.status}`);
+        let source = data.data || data.value || data.models || [];
+        if (provider === "google_gemini") source = source.filter((item) => !item.supportedGenerationMethods || item.supportedGenerationMethods.includes("generateContent"));
+        let models = source.map((item) => item.id || item.name || item.model).filter(Boolean);
+        if (provider === "openai") models = models.filter((model) => /^(gpt-|o[1-9]|chatgpt-)/i.test(model) && !/(audio|transcribe|tts|realtime|image|embedding|moderation|search|instruct)/i.test(model));
+        if (provider === "google_gemini") models = models.map((model) => model.replace(/^models\//, "")).filter((model) => /gemini/i.test(model));
+        models = [...new Set(models)].sort((a, b) => a.localeCompare(b));
+        if (!models.length) throw new Error(localText("Le fournisseur n’a renvoyé aucun modèle compatible.", "The provider returned no compatible models.", "Der Anbieter hat keine kompatiblen Modelle zurückgegeben."));
+        populateModelSelect(kind, models);
+        const message = localText(`${models.length} modèles chargés depuis le fournisseur.`, `${models.length} models loaded from the provider.`, `${models.length} Modelle vom Anbieter geladen.`);
+        setCatalogState(kind, "success", message);
+        completeApiAction(apiTask, message);
+        toast(message, "success");
+        return models;
+      } catch (error) {
+        const message = error.isFriendlyApiError ? error.message : friendlyLLMError(error);
+        setCatalogState(kind, "error", localText(`Liste de repli affichée. ${message}`, `Fallback list shown. ${message}`, `Standardliste wird angezeigt. ${message}`));
+        failApiAction(apiTask, error, message);
+        populateModelSelect(kind, []);
+        throw new Error(message);
       }
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error?.message || `HTTP ${response.status}`);
-      let models = (data.data || data.value || data.models || []).map((item) => item.id || item.name || item.model).filter(Boolean);
-      if (provider === "openai") models = models.filter((model) => /^(gpt-|o[1-9]|chatgpt-)/i.test(model) && !/(audio|transcribe|tts|realtime|image|embedding|moderation|search)/i.test(model));
-      if (provider === "google_gemini") models = models.map((model) => model.replace(/^models\//, "")).filter((model) => /gemini/i.test(model));
-      const currentModel = clean($(challenge ? "challengeModel" : "ingestModel").value);
-      models = [...new Set([...models, currentModel].filter(Boolean))].sort();
-      const list = $(challenge ? "challengeModels" : "analysisModels");
-      list.innerHTML = models.map((model) => `<option value="${html(model)}"></option>`).join("");
-      toast(localText(`${models.length} modèles disponibles récupérés.`, `${models.length} available models retrieved.`, `${models.length} verfügbare Modelle abgerufen.`));
     }
 
     function modelConfigReady(kind) {
@@ -4175,13 +4578,24 @@ Return strict JSON only:
       scheduleModelRefresh("challenge");
     }
 
+    function resetAIState(kind) {
+      state.ai.connections[kind] = { status: "idle", message: "" };
+      state.ai.catalogs[kind] = { status: "idle", message: "" };
+      state.ai.live = Object.values(state.ai.connections).some((connection) => connection.status === "success")
+        || Object.values(state.ai.catalogs).some((catalog) => catalog.status === "success");
+      renderAIStatus();
+    }
+
     function applyHelperConfig(payload, allowImportedConsent = true) {
       const values = payload?.values || {};
       helperConfigIds.forEach((id) => {
         if (values[id] === undefined) return;
         if (id === "llmConsent" && !allowImportedConsent) return;
         if ($(id).type === "checkbox") $(id).checked = Boolean(values[id]);
-        else $(id).value = values[id];
+        else if ($(id).tagName === "SELECT" && ![...$(id).options].some((option) => option.value === values[id])) {
+          $(id).add(new Option(values[id], values[id]));
+          $(id).value = values[id];
+        } else $(id).value = values[id];
       });
       if (!allowImportedConsent) $("llmConsent").checked = false;
       $("ingestAzureFields").classList.toggle("hidden", $("ingestProvider").value !== "azure_openai");
@@ -4201,6 +4615,89 @@ Return strict JSON only:
       localStorage.setItem(HELPER_CONFIG_KEY, JSON.stringify(helperConfigPayload()));
       updateMissionDisplay();
       toast("Configuration enregistrée dans ce navigateur.");
+    }
+
+    function saveImprovedTranscript() {
+      const transcript = $("ingestTranscript").value.trim();
+      if (!transcript) return toast(localText("Aucune transcription à enregistrer.", "No transcript to save.", "Kein Transkript zum Speichern."), "error");
+      const code = clean($("missionCode").value) || "mission";
+      const payload = {
+        format: "CyberBenchHelper-improved-transcript",
+        version: 1,
+        missionCode: clean($("missionCode").value),
+        savedAt: new Date().toISOString(),
+        transcript
+      };
+      downloadBlob(`CyberBenchHelper-transcription-${code}.json`, new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
+      saveIngestSession(false);
+      toast(localText("Transcription validée et enregistrée.", "Transcript validated and saved.", "Transkript validiert und gespeichert."), "success");
+    }
+
+    async function loadImprovedTranscriptFile(file) {
+      if (!file) return;
+      try {
+        const payload = JSON.parse(await file.text());
+        const transcript = typeof payload === "string" ? payload : payload?.transcript;
+        if (!clean(transcript)) throw new Error(localText("Le JSON ne contient aucune transcription.", "The JSON contains no transcript.", "Die JSON-Datei enthält kein Transkript."));
+        $("ingestTranscript").value = String(transcript);
+        revealTranscriptResult();
+        saveIngestSession(false);
+        toast(localText("Transcription améliorée chargée.", "Improved transcript loaded.", "Verbessertes Transkript geladen."), "success");
+      } catch (error) {
+        toast(localText(`Transcription JSON invalide : ${error.message}`, `Invalid transcript JSON: ${error.message}`, `Ungültige Transkript-JSON-Datei: ${error.message}`), "error");
+      }
+    }
+
+    function saveIngestSession(showToast = false) {
+      if (!state.assessment) return;
+      try {
+        state.ingest.lastSavedAt = new Date().toISOString();
+        localStorage.setItem(INGEST_SESSION_KEY, JSON.stringify({
+          savedAt: state.ingest.lastSavedAt,
+          assessment: state.assessment,
+          transcriptSource: $("ingestTranscriptSource").value,
+          transcript: $("ingestTranscript").value,
+          ingest: {
+            domain: state.ingest.domain,
+            progress: state.ingest.progress,
+            log: state.ingest.log,
+            results: state.ingest.results,
+            challenges: state.ingest.challenges,
+            transcriptCorrections: state.ingest.transcriptCorrections,
+            applied: state.ingest.applied
+          }
+        }));
+        if ($("ingestReviewSummary") && state.ingest.results.length) {
+          const status = $("ingestReviewSummary").querySelector("span");
+          if (status) status.textContent = localText(`Sauvegarde locale : ${new Date(state.ingest.lastSavedAt).toLocaleTimeString()}`, `Local save: ${new Date(state.ingest.lastSavedAt).toLocaleTimeString()}`, `Lokale Speicherung: ${new Date(state.ingest.lastSavedAt).toLocaleTimeString()}`);
+        }
+        if (showToast) toast(localText("Session d’enrichissement sauvegardée.", "Enrichment session saved.", "Anreicherungssitzung gespeichert."), "success");
+      } catch (error) {
+        console.warn("Unable to save enrichment session:", error);
+        if (showToast) toast(localText("La sauvegarde locale a échoué.", "Local save failed.", "Lokale Speicherung fehlgeschlagen."), "error");
+      }
+    }
+
+    function restoreIngestSession() {
+      try {
+        const payload = JSON.parse(localStorage.getItem(INGEST_SESSION_KEY) || "null");
+        if (!payload?.assessment?.questions?.length) return false;
+        state.assessment = payload.assessment;
+        state.assessment.domainStats = buildDomainStats(state.assessment.questions);
+        Object.assign(state.ingest, payload.ingest || {});
+        state.ingest.running = false;
+        state.ingest.lastSavedAt = payload.savedAt || null;
+        $("ingestTranscriptSource").value = payload.transcriptSource || "";
+        $("ingestTranscript").value = payload.transcript || "";
+        $("transcriptResult").classList.toggle("hidden", !payload.transcript);
+        refs.assessmentMeta.innerHTML = `<strong>${html(state.assessment.sourceName || localText("Session locale restaurée", "Restored local session", "Lokale Sitzung wiederhergestellt"))}</strong><br>${state.assessment.questions.length} questions`;
+        refs.statusDot.className = "dot ready";
+        refs.statusText.textContent = localText("Session locale restaurée", "Local session restored", "Lokale Sitzung wiederhergestellt");
+        return true;
+      } catch (error) {
+        console.warn("Unable to restore enrichment session:", error);
+        return false;
+      }
     }
 
     function downloadBlob(name, blob) {
@@ -4301,14 +4798,16 @@ Return strict JSON only:
     $("ingestProvider").addEventListener("change", (event) => {
       const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "", google_gemini: "gemini-2.5-pro" };
       state.ingest.provider = event.target.value;
-      $("ingestModel").value = defaults[event.target.value];
+      populateModelSelect("analysis", DEFAULT_MODEL_OPTIONS[event.target.value], defaults[event.target.value]);
+      resetAIState("analysis");
       $("ingestAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
       $("ingestApiKeyField").classList.toggle("hidden", event.target.value === "azure_openai");
       scheduleModelRefresh("analysis");
     });
     $("challengeProvider").addEventListener("change", (event) => {
       const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "" };
-      $("challengeModel").value = defaults[event.target.value];
+      populateModelSelect("challenge", DEFAULT_MODEL_OPTIONS[event.target.value], defaults[event.target.value]);
+      resetAIState("challenge");
       scheduleModelRefresh("challenge");
     });
     $("llmConsent").addEventListener("change", () => {
@@ -4316,15 +4815,55 @@ Return strict JSON only:
       localStorage.setItem(HELPER_CONFIG_KEY, JSON.stringify(helperConfigPayload()));
       if (llmUseAuthorized()) refreshAvailableModels();
     });
-    ["ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => scheduleModelRefresh("analysis")));
-    ["challengeApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => scheduleModelRefresh("challenge")));
+    ["ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => { resetAIState("analysis"); scheduleModelRefresh("analysis"); }));
+    ["challengeApiKey", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => { resetAIState("challenge"); scheduleModelRefresh("challenge"); }));
     $("ingestDomain").addEventListener("change", (event) => { state.ingest.domain = event.target.value; });
     $("ingestTest").addEventListener("click", () => testModelConnection("analysis"));
     $("challengeTest").addEventListener("click", () => testModelConnection("challenge"));
     $("ingestRun").addEventListener("click", runIngest);
     $("improveTranscript").addEventListener("click", () => improveTranscript(false));
-    $("ingestApply").addEventListener("click", applyIngestResults);
-    $("ingestDownload").addEventListener("click", exportAssessmentWorkbook);
+    $("saveImprovedTranscript").addEventListener("click", saveImprovedTranscript);
+    $("loadImprovedTranscript").addEventListener("click", () => $("improvedTranscriptFile").click());
+    $("improvedTranscriptFile").addEventListener("change", async (event) => {
+      await loadImprovedTranscriptFile(event.target.files?.[0]);
+      event.target.value = "";
+    });
+    $("ingestApply").addEventListener("click", validateAllReviewResults);
+    $("ingestDownload").addEventListener("click", () => exportAssessmentWorkbook(false));
+    $("ingestReview").addEventListener("input", (event) => {
+      const card = event.target.closest("[data-review-id]");
+      if (!card) return;
+      const result = state.ingest.results.find((row) => row.id === card.dataset.reviewId);
+      if (!result) return;
+      if (event.target.matches("[data-review-level]")) {
+        result.levels[Number(event.target.dataset.reviewLevel)] = clamp(Number(event.target.value) || 0, 0, 100) / 100;
+      } else if (event.target.matches('[data-review-field="comment"]')) {
+        result.comment = event.target.value;
+      } else if (event.target.matches('[data-review-field="status"]')) {
+        result.status = event.target.value;
+      } else if (event.target.matches('[data-review-field="reliability"]')) {
+        result.reliability = event.target.value;
+      }
+      result.validated = false;
+      result.validationError = "";
+      state.ingest.applied = false;
+      card.classList.remove("validated");
+      card.querySelector(".review-status").textContent = localText("À valider", "To validate", "Zu validieren");
+      card.querySelector("[data-review-validate]").textContent = localText("Valider cette mesure", "Validate this measure", "Diese Maßnahme validieren");
+      $("ingestDownload").disabled = true;
+    });
+    $("ingestReview").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-review-validate]");
+      if (!button) return;
+      const card = button.closest("[data-review-id]");
+      const result = state.ingest.results.find((row) => row.id === card?.dataset.reviewId);
+      if (!result) return;
+      const valid = applyReviewResult(result);
+      toast(valid
+        ? localText(`Mesure ${result.id} validée.`, `Measure ${result.id} validated.`, `Maßnahme ${result.id} validiert.`)
+        : result.validationError,
+      valid ? "success" : "error");
+    });
     $("transcribeMedia").addEventListener("click", transcribeAzureMedia);
     $("ingestMedia").addEventListener("change", (event) => {
       const file = event.target.files?.[0];
@@ -4344,10 +4883,32 @@ Return strict JSON only:
     }));
     $("exportCsv").addEventListener("click", exportCsv);
     $("runChecks").addEventListener("click", runBusinessChecks);
+    $("checkEditor").addEventListener("change", (event) => {
+      const card = event.target.closest("[data-check-id]");
+      const question = state.assessment?.questions?.find((item) => item.id === card?.dataset.checkId);
+      if (!question) return;
+      if (event.target.matches("[data-check-level]")) {
+        question.levels[Number(event.target.dataset.checkLevel)] = clamp(Number(event.target.value) || 0, 0, 100) / 100;
+      } else if (event.target.matches('[data-check-field="status"]')) {
+        question.status = event.target.value;
+        if (question.status !== "scored") question.levels = [0, 0, 0, 0, 0];
+      } else if (event.target.matches('[data-check-field="reliability"]')) {
+        question.reliability = event.target.value;
+      } else if (event.target.matches('[data-check-field="comment"]')) {
+        question.comment = event.target.value;
+      }
+      question.levels = normalizeLevels(question.levels);
+      question.score = question.status === "scored" ? scoreFromLevels(question.levels) : null;
+      state.assessment.domainStats = buildDomainStats(state.assessment.questions);
+      saveIngestSession(false);
+      runBusinessChecks();
+      toast(localText(`Mesure ${question.id} mise à jour et contrôlée.`, `Measure ${question.id} updated and checked.`, `Maßnahme ${question.id} aktualisiert und geprüft.`), "success");
+    });
+    $("saveCheckedExcel").addEventListener("click", () => exportAssessmentWorkbook(true));
     $("emailChecks").addEventListener("click", emailChecks);
     $("saveHelperConfig").addEventListener("click", saveHelperConfig);
-    $("refreshAnalysisModels").addEventListener("click", () => refreshModelList("analysis").catch((error) => toast(`Impossible de récupérer les modèles : ${error.message}`)));
-    $("refreshChallengeModels").addEventListener("click", () => refreshModelList("challenge").catch((error) => toast(`Impossible de récupérer les modèles : ${error.message}`)));
+    $("refreshAnalysisModels").addEventListener("click", () => refreshModelList("analysis").catch((error) => toast(error.message, "error")));
+    $("refreshChallengeModels").addEventListener("click", () => refreshModelList("challenge").catch((error) => toast(error.message, "error")));
     $("exportHelperConfig").addEventListener("click", exportHelperConfig);
     $("importHelperConfig").addEventListener("click", () => $("helperConfigFile").click());
     $("helperConfigFile").addEventListener("change", async (event) => {
@@ -4357,7 +4918,7 @@ Return strict JSON only:
         saveHelperConfig();
       } catch (error) { toast(`Configuration invalide : ${error.message}`); }
     });
-    $("exportExcelWorkflow").addEventListener("click", exportAssessmentWorkbook);
+    $("exportExcelWorkflow").addEventListener("click", () => exportAssessmentWorkbook(false));
     $("exportCentralCsv").addEventListener("click", exportCentralCsv);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     $("exportStandaloneHtml").addEventListener("click", exportStandaloneHtml);
@@ -4369,7 +4930,12 @@ Return strict JSON only:
       const savedHelperConfig = localStorage.getItem(HELPER_CONFIG_KEY);
       if (savedHelperConfig) applyHelperConfig(JSON.parse(savedHelperConfig));
     } catch (error) { console.warn(error); }
+    const restoredIngestSession = !window.__CYBERBENCH_EXPORT__ && restoreIngestSession();
+    setInterval(() => saveIngestSession(false), 30000);
+    populateModelSelect("analysis", []);
+    populateModelSelect("challenge", []);
     updateLlmConsentState();
+    renderAIStatus();
     updateMissionDisplay();
     if (window.__CYBERBENCH_EXPORT__) {
       try {
@@ -4379,7 +4945,10 @@ Return strict JSON only:
         console.error(error);
         toast(t("exportHtmlError"));
       }
-    } else render();
+    } else {
+      render();
+      if (restoredIngestSession) toast(localText("La dernière session d’enrichissement a été restaurée.", "The latest enrichment session was restored.", "Die letzte Anreicherungssitzung wurde wiederhergestellt."), "success");
+    }
   </script>
 </body>
 </html>
