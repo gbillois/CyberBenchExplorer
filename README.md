@@ -6,8 +6,8 @@ The UI defaults to English and automatically switches to French when the browser
 ## Applications
 
 - `index.html`: workspace historique complet.
-- `CyberBenchHelper.html`: application utilisateur pour transcrire et diariser un entretien, corriger le transcript à partir de la terminologie du questionnaire, enrichir le questionnaire, lancer des passes indépendantes de Check & Challenge, contrôler le fichier et générer un email `.eml`.
-- `CyberBenchManager.html`: application équipe pour créer les missions, saisir manuellement les clés API, générer et envoyer la configuration Helper, contrôler les questionnaires reçus et produire l’Explorer HTML autonome.
+- `CyberBenchHelper.html`: application utilisateur pour transcrire et diariser un entretien (avec option d’anonymisation des noms, activée par défaut), corriger le transcript à partir de la terminologie du questionnaire, enrichir le questionnaire, lancer des passes indépendantes de Check & Challenge, contrôler le fichier (les anomalies sont signalées et corrigeables directement sur chaque mesure) et générer un email `.eml`. L’enrichissement et les corrections sont réécrits dans le fichier Excel/XLSM d’origine — sans recréer de nouveau fichier ni perdre les macros.
+- `CyberBenchManager.html`: application équipe simplifiée en trois onglets : **Import & Check** (charger un questionnaire reçu et vérifier sa cohérence ; la sauvegarde SharePoint ne s’active que si le fichier est conforme à 100 %), **Export results** (générer l’Explorer HTML autonome puis vérifier le rendu avec les modules de visualisation) et **Réglages** (répertoire SharePoint cible). La transcription et les réglages IA ne sont plus dans le Manager : ils restent uniquement dans le Helper.
 
 Helper et Manager conservent leur configuration dans le stockage local du navigateur. Les configurations et registres peuvent être exportés en JSON. Les JSON Helper et emails `.eml` peuvent contenir de véritables clés API et doivent être traités comme des secrets.
 

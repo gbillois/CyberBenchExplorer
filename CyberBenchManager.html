@@ -220,6 +220,8 @@
     .check-ok { color: #067647; }
     .check-error { color: #b42318; }
     .export-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .export-actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .export-actions .primary { font-size:14px; padding:11px 18px; }
     .export-card { padding: 20px; }
     .export-card h3 { margin: 0 0 8px; }
     .export-card p { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 58px; }
@@ -769,33 +771,17 @@
 
       <section class="side-section">
         <nav class="nav workflow-nav" id="nav">
-          <button data-workflow-tab="arrival" class="active" title="Accueil">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
-            Accueil
-          </button>
-          <button data-workflow-tab="create" title="Create">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path><circle cx="12" cy="12" r="9"></circle></svg>
-            Create
-          </button>
-          <button data-workflow-tab="ingest" title="Ingest">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path><path d="M4 5h5"></path><path d="M15 5h5"></path></svg>
-            Ingest
-          </button>
-          <button data-workflow-tab="check" title="Check">
+          <button data-workflow-tab="check" class="active" title="Import & Check">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"></path><path d="M4 4h16v16H4z"></path></svg>
-            Check
+            Import &amp; Check
           </button>
-          <button data-workflow-tab="explore" title="Explore">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
-            Explore
-          </button>
-          <button data-workflow-tab="export" title="Export">
+          <button data-workflow-tab="export" title="Export results">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9"></path><path d="m7 14 5-5 5 5"></path><path d="M5 3h14"></path></svg>
-            Export
+            Export results
           </button>
-          <button data-workflow-tab="configuration" title="Configuration">
+          <button data-workflow-tab="configuration" title="Réglages">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>
-            Configuration
+            Réglages
           </button>
         </nav>
       </section>
@@ -823,109 +809,40 @@
           </div>
         </section>
 
-        <section id="arrival" class="workflow-panel">
-          <div class="arrival-hero">
-            <div>
-              <h3>CyberBenchManager</h3>
-              <p>Créez les missions et configurations Helper, contrôlez les questionnaires reçus puis générez les Explorers clients.</p>
-              <div class="workflow-steps">
-                <div class="workflow-step"><b>1. Create</b><span>Enregistrez la mission, les clés fournies manuellement et le chef de projet.</span></div>
-                <div class="workflow-step"><b>2. Ingest & Check</b><span>Chargez et contrôlez le questionnaire reçu.</span></div>
-                <div class="workflow-step"><b>3. Explore</b><span>Chargez les moyennes et générez l’Explorer client autonome.</span></div>
-              </div>
-              <button class="primary" data-go-workflow="ingest" style="margin-top:28px;">Commencer</button>
-            </div>
-          </div>
-        </section>
-
-        <section id="create" class="workflow-panel hidden">
-          <div class="grid two">
-            <div class="card">
-              <div class="card-head"><h3>Nouvelle mission</h3></div>
-              <div class="card-body">
-                <div class="ingest-fields">
-                  <div><label for="managerMissionCode">Code mission unique</label><input id="managerMissionCode"></div>
-                  <div><label for="managerMissionName">Nom mission / client</label><input id="managerMissionName"></div>
-                  <div><label for="managerPmName">Chef de projet</label><input id="managerPmName"></div>
-                  <div><label for="managerPmEmail">Email chef de projet</label><input id="managerPmEmail" type="email"></div>
-                  <div><label for="managerAnalysisProvider">Fournisseur analyse</label><select id="managerAnalysisProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div>
-                  <div><label for="managerAnalysisModel">Modèle analyse</label><input id="managerAnalysisModel" value="claude-sonnet-4-20250514"></div>
-                  <div class="wide"><label for="managerAnalysisKey">Clé API analyse</label><input id="managerAnalysisKey" type="password"></div>
-                  <div><label for="managerChallengeProvider">Fournisseur contradiction</label><select id="managerChallengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div>
-                  <div><label for="managerChallengeModel">Modèle contradiction</label><input id="managerChallengeModel" value="claude-sonnet-4-20250514"></div>
-                  <div class="wide"><label for="managerChallengeKey">Clé API contradiction</label><input id="managerChallengeKey" type="password"></div>
-                  <div><label for="managerTranscriptionProvider">Transcription</label><select id="managerTranscriptionProvider"><option value="openai">OpenAI diarisation</option><option value="azure">Azure Speech</option></select></div>
-                  <div><label for="managerTranscriptionKey">Clé API transcription</label><input id="managerTranscriptionKey" type="password"></div>
-                  <div><label for="managerAzureEndpoint">Endpoint Azure OpenAI</label><input id="managerAzureEndpoint"></div>
-                  <div><label for="managerAzureDeployment">Déploiement Azure</label><input id="managerAzureDeployment"></div>
-                  <div><label for="managerSpeechRegion">Région Azure Speech</label><input id="managerSpeechRegion" value="westeurope"></div>
-                </div>
-                <div class="config-actions"><button class="primary" id="saveMission">Enregistrer la mission</button><button id="downloadMissionConfig">Télécharger config Helper</button><button id="emailMissionConfig">Télécharger email .eml</button></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-head"><h3>Registre local</h3><button id="exportMissionRegistry">Exporter JSON</button></div>
-              <div class="card-body"><div class="table-wrap"><table id="missionRegistry"><thead><tr><th>Code</th><th>Mission</th><th>Chef de projet</th><th>Fournisseurs</th><th>Création</th></tr></thead><tbody></tbody></table></div></div>
-            </div>
-          </div>
-        </section>
-
         <section id="check" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;"><div class="card-body">
+            <div class="source-grid" style="margin-bottom:0;">
+              <div><label for="assessmentFile">Questionnaire Excel à importer</label><input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><p id="assessmentHelp" class="muted"></p><div id="assessmentMeta" class="muted"></div></div>
+              <div style="align-self:end;"><button class="primary" id="runChecks">Contrôler la cohérence</button></div>
+            </div>
+          </div></div>
           <div class="check-summary">
             <div class="card kpi"><div class="label">Questions contrôlées</div><div class="value" id="checkTotal">-</div><div class="sub">Règles applicables</div></div>
             <div class="card kpi"><div class="label">Conformes</div><div class="value check-ok" id="checkOk">-</div><div class="sub">Sans anomalie</div></div>
-            <div class="card kpi"><div class="label">Anomalies</div><div class="value check-error" id="checkErrors">-</div><div class="sub">À corriger avant export</div></div>
+            <div class="card kpi"><div class="label">Anomalies</div><div class="value check-error" id="checkErrors">-</div><div class="sub">À corriger avant sauvegarde</div></div>
           </div>
           <div class="card">
-            <div class="card-head"><h3>Contrôles métier Cyberbenchmark</h3><button class="primary" id="runChecks">Relancer les contrôles</button></div>
+            <div class="card-head"><h3>Contrôles métier Cyberbenchmark</h3><button class="primary" id="saveSharePoint" disabled>Sauvegarder dans SharePoint</button></div>
             <div class="card-body">
-              <p class="muted">Règles initiales : identifiants uniques, pourcentages compris entre 0 et 100 %, somme de L1 à L4 égale à 100 % pour une réponse scorée, L5 traité comme bonus, et absence de score pour une réponse N/A.</p>
+              <p class="muted">Règles initiales : identifiants uniques, pourcentages compris entre 0 et 100 %, somme de L1 à L4 égale à 100 % pour une réponse scorée, L5 traité comme bonus, et absence de score pour une réponse N/A. Le bouton de sauvegarde s’active uniquement lorsque le fichier est conforme à 100 %.</p>
               <div class="table-wrap"><table id="checkTable"><thead><tr><th class="small">ID</th><th class="small">Domaine</th><th class="small">Sévérité</th><th>Règle</th><th>Détail</th></tr></thead><tbody></tbody></table></div>
             </div>
           </div>
         </section>
 
         <section id="export" class="workflow-panel hidden">
-          <div class="export-grid">
-            <div class="card export-card"><h3>Questionnaire contrôlé</h3><p>Téléchargez le questionnaire ou enregistrez-le dans un répertoire SharePoint synchronisé.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button><button id="saveSharePoint" style="margin-top:8px;">Enregistrer dans SharePoint</button></div>
-            <div class="card export-card"><h3>CSV base centrale</h3><p>Format tabulaire contrôlé pour ajout dans la base de données centrale Cyberbenchmark.</p><button class="primary" id="exportCentralCsv">Télécharger CSV</button></div>
-            <div class="card export-card"><h3>PowerPoint résultats</h3><p>Présentation 16:9 contenant l'ensemble des principaux visuels de l'Explorer.</p><button class="primary pptx-export" id="exportPptx">Télécharger PPTX</button></div>
-            <div class="card export-card"><h3 id="exportHtmlTitle">Exploration client autonome</h3><p id="exportHtmlText">Fichier HTML interactif avec résultats pré-calculés, sans benchmark ni données de calcul.</p><button class="primary" id="exportStandaloneHtml">Télécharger HTML autonome</button></div>
-          </div>
+          <div class="card" style="margin-bottom:16px;"><div class="card-body">
+            <div class="export-actions">
+              <button class="primary" id="exportStandaloneHtml">Générer l'HTML de résultat</button>
+              <button id="exportCentralCsv">CSV base centrale</button>
+              <button class="pptx-export" id="exportPptx">PowerPoint résultats</button>
+            </div>
+            <p class="muted" style="margin:12px 0 0;"><span id="exportHtmlTitle"></span> — <span id="exportHtmlText"></span></p>
+          </div></div>
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
-          <div class="card" style="margin-bottom:16px;"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de l’enregistrement.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
-          <div class="grid two">
-            <div class="card">
-              <div class="card-head"><h3>Configuration LLM</h3></div>
-              <div class="card-body">
-                <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés restent uniquement en mémoire.</div>
-                <div class="ingest-fields" style="margin-top:14px;">
-                  <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
-                  <div><label for="ingestModel">Modèle</label><input id="ingestModel" value="claude-sonnet-4-20250514"></div>
-                  <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
-                  <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
-                    <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
-                    <div><label for="ingestAzureDeployment">Déploiement</label><input id="ingestAzureDeployment"></div>
-                    <div><label for="ingestAzureKey">Clé Azure OpenAI</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
-                  </div></div>
-                </div>
-                <div class="ingest-actions"><button id="ingestTest">Tester la connexion LLM</button></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-head"><h3>Azure Speech-to-Text</h3></div>
-              <div class="card-body">
-                <div class="ingest-fields">
-                  <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
-                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
-                  <div><label for="azureSpeechLocale">Langue</label><input id="azureSpeechLocale" value="fr-FR"></div>
-                </div>
-                <p class="muted">Utilise l'API Fast Transcription Azure Speech. Les fichiers audio ou vidéo sont transmis directement à Microsoft Azure.</p>
-              </div>
-            </div>
-          </div>
+          <div class="card"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de la sauvegarde.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
         </section>
 
         <section id="exploreToolbar" class="workflow-panel hidden">
@@ -1167,45 +1084,6 @@
           </div>
         </section>
 
-        <section id="ingest" class="workflow-panel hidden">
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-head"><h3>Sources d'ingestion</h3></div>
-            <div class="card-body">
-              <div class="source-grid">
-                <div class="source-card"><h4>0. Questionnaire Cyberbenchmark</h4><label for="assessmentFile">Excel avec scores prépositionnés</label><input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><p id="assessmentHelp" class="muted">Le fichier sert de base à enrichir.</p><div id="assessmentMeta" class="muted"></div></div>
-                <div class="source-card"><h4>1. Audio ou vidéo</h4><label for="ingestMedia">Média à transcrire via Azure</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted">Configuration Azure Speech requise.</p><button id="transcribeMedia">Transcrire le média</button></div>
-                <div class="source-card"><h4>2. Transcription directe</h4><p class="muted">Collez la transcription dans la zone ci-dessous, puis lancez l'analyse.</p></div>
-              </div>
-            </div>
-          </div>
-          <div class="ingest-grid">
-            <div class="card">
-              <div class="card-head"><h3 id="ingestTranscriptTitle">Meeting transcript</h3></div>
-              <div class="card-body">
-                <label for="ingestTranscript" id="ingestTranscriptLabel">Transcript to analyze</label>
-                <textarea id="ingestTranscript" placeholder="Paste the complete meeting transcript here..."></textarea>
-                <div class="ingest-actions">
-                  <button class="primary" id="ingestRun">Run extraction + check &amp; challenge</button>
-                  <button id="ingestApply" disabled>Apply reviewed results</button>
-                </div>
-                <div class="ingest-progress hidden" id="ingestProgress">
-                  <div class="ingest-progress-line"><span id="ingestProgressBar" style="width:0%"></span></div>
-                  <strong id="ingestProgressText"></strong>
-                  <div class="ingest-log" id="ingestLog"></div>
-                </div>
-                <div class="ingest-review" id="ingestReview"></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-head"><h3>Options d'analyse</h3></div>
-              <div class="card-body">
-                <label for="ingestDomain">Périmètre</label><select id="ingestDomain"><option value="">Tous les domaines, séquentiellement</option></select>
-                <p class="muted">Pour une meilleure qualité, chaque domaine fait l'objet d'un appel d'extraction puis d'un appel indépendant de check &amp; challenge.</p>
-                <button data-go-workflow="configuration">Ouvrir la configuration API</button>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
   </div>
@@ -1631,8 +1509,10 @@
     const state = {
       assessment: null,
       benchmark: null,
-      workflowTab: "arrival",
+      workflowTab: "check",
       tab: "home",
+      sourceWorkbook: null,
+      sourceFileName: "",
       domainSort: "asc",
       tableSort: { key: "id", dir: "asc" },
       compareRef: "top",
@@ -1766,16 +1646,6 @@
         ["lagHelp", "lagHelp"], ["exploreTitle", "exploreTitle"], ["recommendationsListTitle", "recommendationsListTitle"],
         ["recommendationApiTitle", "recommendationApiTitle"], ["recommendationApiText", "recommendationApiText"], ["recommendationEnrich", "recommendationApiButton"]
       ].forEach(([id, key]) => setText(id, key));
-      [
-        ["ingestTranscriptTitle", "ingestTranscriptTitle"], ["ingestTranscriptLabel", "ingestTranscriptLabel"], ["ingestRun", "ingestRun"],
-        ["ingestApply", "ingestApply"], ["ingestExport", "ingestExport"], ["ingestConfigTitle", "ingestConfigTitle"],
-        ["ingestWarning", "ingestWarning"], ["ingestTest", "ingestTest"]
-      ].forEach(([id, key]) => setText(id, key));
-      $("ingestTranscript").placeholder = t("ingestTranscriptPlaceholder");
-      document.querySelector('label[for="ingestProvider"]').textContent = t("ingestProvider");
-      document.querySelector('label[for="ingestModel"]').textContent = t("ingestModel");
-      document.querySelector('label[for="ingestApiKey"]').textContent = t("ingestApiKey");
-      document.querySelector('label[for="ingestDomain"]').textContent = t("ingestScope");
 
       const noticeText = $("dummyNotice")?.querySelector("span:last-child");
       if (noticeText) noticeText.textContent = t("localDisplayNotice");
@@ -1930,7 +1800,7 @@
         reader.onload = () => {
           try {
             const data = new Uint8Array(reader.result);
-            resolve(XLSX.read(data, { type: "array", cellDates: true }));
+            resolve(XLSX.read(data, { type: "array", cellDates: true, bookVBA: true, cellStyles: true, cellNF: true }));
           } catch (error) {
             reject(error);
           }
@@ -2338,6 +2208,8 @@
         const assessment = parseAssessment(workbook);
         if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
         state.assessment = assessment;
+        state.sourceWorkbook = workbook;
+        state.sourceFileName = file.name;
         state.dummyAssessment = false;
         if (state.dummyBenchmark) {
           state.benchmark = null;
@@ -2642,7 +2514,11 @@ Return strict JSON only:
     }
 
     function renderChecks() {
-      if (!state.assessment) return;
+      const saveButton = $("saveSharePoint");
+      if (!state.assessment) {
+        if (saveButton) saveButton.disabled = true;
+        return;
+      }
       const results = state.checkResults;
       $("checkTotal").textContent = String(state.assessment.questions.length);
       $("checkErrors").textContent = String(results.length);
@@ -2650,6 +2526,8 @@ Return strict JSON only:
       $("checkTable").querySelector("tbody").innerHTML = results.length ? results.map((row) => `
         <tr><td class="small">${html(row.id)}</td><td class="small">${html(row.domain)}</td><td class="small check-error">${html(row.severity)}</td><td>${html(row.rule)}</td><td>${html(row.detail)}</td></tr>`).join("")
         : '<tr><td colspan="5" class="check-ok"><strong>Aucune anomalie détectée.</strong></td></tr>';
+      // The SharePoint save only unlocks for a real, 100% compliant questionnaire.
+      if (saveButton) saveButton.disabled = results.length > 0 || state.dummyAssessment;
     }
 
     function exportCentralCsv() {
@@ -2893,8 +2771,9 @@ Return strict JSON only:
       const ready = Boolean(state.assessment);
       refs.dummyNotice.classList.toggle("hidden", !(state.dummyAssessment || state.dummyBenchmark));
       refs.emptyState.classList.add("hidden");
-      refs.workflowPanels.forEach((panel) => panel.classList.toggle("hidden", panel.id !== state.workflowTab && !(panel.id === "exploreToolbar" && state.workflowTab === "explore")));
-      refs.analysisPanels.forEach((panel) => panel.classList.toggle("hidden", state.workflowTab !== "explore" || !ready || panel.id !== state.tab));
+      const visualizationTab = state.workflowTab === "explore" || state.workflowTab === "export";
+      refs.workflowPanels.forEach((panel) => panel.classList.toggle("hidden", panel.id !== state.workflowTab && !(panel.id === "exploreToolbar" && visualizationTab)));
+      refs.analysisPanels.forEach((panel) => panel.classList.toggle("hidden", !visualizationTab || !ready || panel.id !== state.tab));
       document.querySelectorAll("[data-workflow-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.workflowTab === state.workflowTab));
       document.querySelectorAll("[data-explore-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.exploreTab === state.tab));
       updateTitle();
@@ -2906,7 +2785,6 @@ Return strict JSON only:
       renderDomains();
       renderFindings();
       renderRecommendations();
-      renderIngest();
       renderQuestions();
       renderCompare();
       renderChecks();
@@ -2914,15 +2792,12 @@ Return strict JSON only:
 
     function updateTitle() {
       const titles = {
-        arrival: ["Cyberbenchmark Workspace", "Accueil et parcours de traitement du questionnaire Cyberbenchmark."],
-        create: ["Create", "Créez une mission et préparez la configuration CyberBenchHelper destinée au chef de projet."],
-        ingest: ["Ingest", "Chargez le questionnaire, transcrivez un média ou collez directement une transcription, puis enrichissez les scores."],
-        check: ["Check", "Vérifiez les règles métier avant intégration dans la base centrale Cyberbenchmark."],
-        explore: ["Explore", "Chargez le référentiel de scores et parcourez toutes les analyses existantes."],
-        export: ["Export", "Téléchargez les livrables enrichis, contrôlés et visualisés."],
-        configuration: ["Configuration", "Configurez les fournisseurs LLM et Azure Speech utilisés par l'ingestion."]
+        check: ["Import & Check", "Chargez un questionnaire reçu et vérifiez sa cohérence. La sauvegarde SharePoint s'active lorsque le fichier est conforme à 100 %."],
+        explore: ["Export results", "Parcourez les analyses du questionnaire contrôlé."],
+        export: ["Export results", "Générez l'HTML de résultat puis vérifiez le rendu avec les modules de visualisation ci-dessous."],
+        configuration: ["Réglages", "Configurez le répertoire SharePoint cible utilisé pour la sauvegarde."]
       };
-      const [title, intro] = titles[state.workflowTab];
+      const [title, intro] = titles[state.workflowTab] || titles.check;
       refs.pageTitle.textContent = title;
       refs.pageIntro.textContent = document.body.classList.contains("client-export") && state.workflowTab === "explore" ? t("clientExploreIntro") : intro;
     }
@@ -4107,17 +3982,30 @@ Return strict JSON only:
       return XLSX.write(workbook, { type: "array", bookType: "xlsx" });
     }
 
+    // Save the controlled questionnaire to SharePoint, keeping the original file (and macros) when available.
+    function managerWorkbookOutput() {
+      if (state.sourceWorkbook) {
+        const ext = (state.sourceFileName.split(".").pop() || "xlsx").toLowerCase();
+        const bookType = ["xlsm", "xlsb", "xlsx"].includes(ext) ? ext : "xlsx";
+        const bytes = XLSX.write(state.sourceWorkbook, { bookType, type: "array", bookVBA: bookType === "xlsm", cellStyles: true });
+        const name = state.sourceFileName || `CyberBenchmark-${new Date().toISOString().slice(0, 10)}.${bookType}`;
+        return { bytes, name };
+      }
+      return { bytes: managerAssessmentWorkbookArray(), name: `CyberBenchmark-${new Date().toISOString().slice(0, 10)}.xlsx` };
+    }
+
     async function saveSharePoint() {
       if (!state.assessment) return toast("Chargez d’abord un questionnaire.");
-      if (!window.showDirectoryPicker) return toast("La sélection de répertoire nécessite Chrome ou Edge. Utilisez Télécharger Excel.");
+      if (state.checkResults && state.checkResults.length) return toast("Corrigez les anomalies : la sauvegarde n’est possible qu’avec un fichier conforme à 100 %.");
+      if (!window.showDirectoryPicker) return toast("La sélection de répertoire nécessite Chrome ou Edge.");
       try {
         const directory = await window.showDirectoryPicker({ mode: "readwrite" });
-        const code = $("managerMissionCode").value.trim() || "mission";
-        const handle = await directory.getFileHandle(`CyberBenchmark-${code}-${new Date().toISOString().slice(0, 10)}.xlsx`, { create: true });
+        const output = managerWorkbookOutput();
+        const handle = await directory.getFileHandle(output.name, { create: true });
         const writable = await handle.createWritable();
-        await writable.write(managerAssessmentWorkbookArray());
+        await writable.write(output.bytes);
         await writable.close();
-        toast(`Questionnaire enregistré dans ${directory.name}.`);
+        toast(`Questionnaire « ${output.name} » enregistré dans ${directory.name}.`);
       } catch (error) {
         if (error.name !== "AbortError") toast(`Enregistrement impossible : ${error.message}`);
       }
@@ -4168,22 +4056,6 @@ Return strict JSON only:
       state.recommendationLimit = Number(event.target.value) || 10;
       if (state.assessment) renderRecommendations();
     });
-    $("ingestProvider").addEventListener("change", (event) => {
-      const defaults = { anthropic: "claude-sonnet-4-20250514", openai: "gpt-4.1", azure_openai: "", google_gemini: "gemini-2.5-pro" };
-      state.ingest.provider = event.target.value;
-      $("ingestModel").value = defaults[event.target.value];
-      $("ingestAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
-      $("ingestApiKeyField").classList.toggle("hidden", event.target.value === "azure_openai");
-    });
-    $("ingestDomain").addEventListener("change", (event) => { state.ingest.domain = event.target.value; });
-    $("ingestTest").addEventListener("click", testIngestConnection);
-    $("ingestRun").addEventListener("click", runIngest);
-    $("ingestApply").addEventListener("click", applyIngestResults);
-    $("transcribeMedia").addEventListener("click", transcribeAzureMedia);
-    $("ingestMedia").addEventListener("change", (event) => {
-      const file = event.target.files?.[0];
-      $("ingestMediaMeta").textContent = file ? `${file.name} · ${fmt.format(file.size / 1024 / 1024)} Mo` : "Configuration Azure Speech requise.";
-    });
     ["search", "domainFilter", "typeFilter", "statusFilter", "scoreFilter"].forEach((id) => {
       $(id).addEventListener("input", (event) => {
         const key = id.replace("Filter", "");
@@ -4198,16 +4070,11 @@ Return strict JSON only:
     }));
     $("exportCsv").addEventListener("click", exportCsv);
     $("runChecks").addEventListener("click", runBusinessChecks);
-    $("saveMission").addEventListener("click", saveMission);
-    $("downloadMissionConfig").addEventListener("click", downloadMissionConfig);
-    $("emailMissionConfig").addEventListener("click", emailMissionConfig);
-    $("exportMissionRegistry").addEventListener("click", () => downloadBlob("CyberBenchManager-missions.json", new Blob([JSON.stringify(missionRegistry, null, 2)], { type: "application/json" })));
     $("saveSharePoint").addEventListener("click", saveSharePoint);
     $("saveManagerSettings").addEventListener("click", () => {
       localStorage.setItem(MANAGER_SETTINGS_KEY, JSON.stringify({ sharePointPath: $("sharePointPath").value }));
       toast("Configuration Manager enregistrée.");
     });
-    $("exportExcelWorkflow").addEventListener("click", exportAssessmentWorkbook);
     $("exportCentralCsv").addEventListener("click", exportCentralCsv);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     $("exportStandaloneHtml").addEventListener("click", exportStandaloneHtml);
@@ -4215,11 +4082,9 @@ Return strict JSON only:
 
     applyLocale();
     try {
-      missionRegistry = JSON.parse(localStorage.getItem(MANAGER_REGISTRY_KEY) || "[]");
       const managerSettings = JSON.parse(localStorage.getItem(MANAGER_SETTINGS_KEY) || "{}");
       $("sharePointPath").value = managerSettings.sharePointPath || "";
     } catch (error) { console.warn(error); }
-    renderMissionRegistry();
     if (window.__CYBERBENCH_EXPORT__) {
       try {
         loadEmbeddedExport(window.__CYBERBENCH_EXPORT__);
@@ -4229,7 +4094,7 @@ Return strict JSON only:
         toast(t("exportHtmlError"));
       }
     } else {
-      loadDummyData().finally(render);
+      loadDummyData().finally(() => { runBusinessChecks(); render(); });
     }
   </script>
 </body>

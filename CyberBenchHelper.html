@@ -426,6 +426,8 @@
     .interview-choice { min-width:0; }
     .choice-separator { display:grid; grid-template-rows:1fr auto 1fr; gap:9px; align-items:center; justify-items:center; color:var(--cyan); font-size:11px; font-weight:900; letter-spacing:.08em; }
     .choice-separator::before, .choice-separator::after { content:""; width:1px; height:100%; background:var(--line); }
+    .anonymize-option { display:flex; gap:10px; align-items:flex-start; margin:6px 0 14px; padding:11px 13px; border:1px solid var(--line); border-radius:10px; background:var(--panel-3); font-size:12.5px; line-height:1.45; color:var(--text); text-transform:none; }
+    .anonymize-option input { width:auto; margin-top:2px; flex:0 0 auto; }
     .improve-transcript-action { margin-top:14px; }
     #improveTranscript { width:100%; background:linear-gradient(135deg, #137f9a, #13a59e); color:#fff; border-color:transparent; box-shadow:0 12px 24px rgba(14,126,148,.22); }
     .transcript-result { margin-top:18px; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--panel-3); }
@@ -690,7 +692,12 @@
     .measure-review-head strong { display:block; color:var(--text); font-size:14px; }
     .measure-review-head span { color:var(--muted); font-size:11px; }
     .review-status { padding:4px 8px; border-radius:999px; background:#fff7ed; color:#9a3412; font-size:11px; font-weight:800; white-space:nowrap; }
+    .review-status-error { background:#fee2e2; color:#b91c1c; }
     .validated .review-status { background:#dcfce7; color:#166534; }
+    .measure-review-flagged { border-color:#fca5a5; box-shadow:0 5px 16px rgba(185,28,28,.08); }
+    .check-issues { list-style:none; margin:0 0 12px; padding:10px 12px; border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:10px; background:#fef2f2; display:grid; gap:6px; }
+    .check-issues li { color:#7f1d1d; font-size:12px; line-height:1.45; }
+    .check-issue-severity { display:inline-block; margin-right:6px; padding:1px 7px; border-radius:999px; background:#ef4444; color:#fff; font-size:10px; font-weight:800; text-transform:uppercase; }
     .measure-review-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
     .review-version { padding:11px; border:1px solid var(--line-soft); border-radius:10px; background:#f8fbfc; }
     .review-version.final { background:#fff; }
@@ -904,8 +911,7 @@
           <div class="card">
             <div class="card-head"><h3 data-ui="businessCheckTitle">Contrôle des niveaux et règles métier</h3><div class="config-actions"><button id="saveCheckedExcel" disabled data-ui="saveCheckedExcel">Sauvegarder le fichier Excel</button><button id="emailChecks" disabled data-ui="sendTeam">Envoyer à l’équipe Cyber Bench</button></div></div>
             <div class="card-body">
-              <p class="muted" data-ui="businessCheckIntro">Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.</p>
-              <div class="table-wrap"><table id="checkTable"><thead><tr><th class="small">ID</th><th class="small" data-ui="domainHeader">Domaine</th><th class="small" data-ui="severityHeader">Sévérité</th><th data-ui="ruleHeader">Règle</th><th data-ui="detailHeader">Détail</th></tr></thead><tbody></tbody></table></div>
+              <p class="muted" data-ui="businessCheckIntro">Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A. Les anomalies sont indiquées directement sur chaque mesure ci-dessous, modifiable sur place.</p>
               <div id="checkEditorIntro" class="review-summary hidden"></div>
               <div id="checkEditor" class="ingest-review"></div>
             </div>
@@ -914,7 +920,7 @@
 
         <section id="export" class="workflow-panel hidden">
           <div class="export-grid">
-            <div class="card export-card"><h3>Excel enrichi</h3><p>Questionnaire Cyberbenchmark complété avec les scores, commentaires et niveaux revus.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button></div>
+            <div class="card export-card"><h3>Excel enrichi</h3><p>Met à jour le fichier d'origine (.xlsm/.xlsx) avec les scores, commentaires et niveaux revus, sans recréer de nouveau fichier ni perdre les macros.</p><button class="primary" id="exportExcelWorkflow">Mettre à jour le fichier d'origine</button></div>
             <div class="card export-card"><h3>CSV base centrale</h3><p>Format tabulaire contrôlé pour ajout dans la base de données centrale Cyberbenchmark.</p><button class="primary" id="exportCentralCsv">Télécharger CSV</button></div>
             <div class="card export-card"><h3>PowerPoint résultats</h3><p>Présentation 16:9 contenant l'ensemble des principaux visuels de l'Explorer.</p><button class="primary pptx-export" id="exportPptx">Télécharger PPTX</button></div>
             <div class="card export-card"><h3 id="exportHtmlTitle">Exploration client autonome</h3><p id="exportHtmlText">Fichier HTML interactif avec résultats pré-calculés, sans benchmark ni données de calcul.</p><button class="primary" id="exportStandaloneHtml">Télécharger HTML autonome</button></div>
@@ -1225,6 +1231,7 @@
             <div class="helper-step"><div class="helper-step-number">2</div><div>
               <h3 data-ui="stepInterviewTitle">Ajouter les données issues des entretiens</h3>
               <p data-ui="stepInterviewText">Sélectionnez un fichier audio ou vidéo à transcrire et diariser, ou ajoutez directement votre transcript existant.</p>
+              <label class="anonymize-option"><input id="anonymizeTranscript" type="checkbox" checked><span data-ui="anonymizeLabel">Anonymiser la transcription et les commentaires (remplacer les noms des personnes ayant fourni les informations par des rôles génériques). Décochez pour conserver les noms.</span></label>
               <div class="interview-choice-grid">
                 <div class="interview-choice"><label for="ingestMedia" data-ui="mediaLabel">Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted"></p><button id="transcribeMedia" data-ui="transcribeButton">Lancer la transcription de l'amélioration</button></div>
                 <div class="choice-separator" data-ui="orSeparator">OU</div>
@@ -1656,19 +1663,19 @@
         navHome:"Accueil", navEnrich:"Enrichir", navCheck:"Contrôler", navSettings:"Réglages", aiLive:"AI Live", followApiExchanges:"Suivre les échanges API", localNotice:"CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.",
         homeTitle:"Configurer ou charger votre mission", homeIntro:"Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.", apiRequired:"Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.", missionCode:"Code mission", missionName:"Nom mission / client", projectManager:"Chef de projet", projectManagerEmail:"Email chef de projet", saveBrowser:"Sauvegarder localement dans votre navigateur", downloadProject:"Télécharger la configuration du projet pour l'utiliser sur un autre ordinateur", loadProject:"Charger un projet sauvegardé", startEnrich:"Commencer l’enrichissement",
         ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi. Cet enrichissement peut être réalisé thème par thème ou globalement.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Sélectionnez un fichier audio ou vidéo à transcrire et améliorer, ou ajoutez directement votre transcript existant.", mediaLabel:"Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)", transcribeButton:"Lancer la transcription de l'amélioration", transcriptLabel:"Ajouter directement votre transcript existant", orSeparator:"OU", improveTranscript:"Lancer l'amélioration du transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
-        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", saveCheckedExcel:"Sauvegarder le fichier Excel", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API d'analyse et de vérification", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
+        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", saveCheckedExcel:"Sauvegarder le fichier Excel", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API d'analyse et de vérification", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", anonymizeLabel:"Anonymiser la transcription et les commentaires (remplacer les noms des personnes ayant fourni les informations par des rôles génériques). Décochez pour conserver les noms.", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
       },
       en: {
         navHome:"Home", navEnrich:"Enrich", navCheck:"Check", navSettings:"Settings", aiLive:"AI Live", followApiExchanges:"Follow API exchanges", localNotice:"CyberBenchHelper runs locally. Files stay in the browser except during direct calls to configured API providers.",
         homeTitle:"Configure or load your mission", homeIntro:"Enter the mission details before starting. They will be included in files and the return email.", apiRequired:"A transcription API key and an analysis API key must be configured in Settings before processing an interview.", missionCode:"Mission code", missionName:"Mission / client name", projectManager:"Project manager", projectManagerEmail:"Project manager email", saveBrowser:"Save locally in your browser", downloadProject:"Download the project configuration to use it on another computer", loadProject:"Load a saved project", startEnrich:"Start enrichment",
         ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file. Enrichment can be performed theme by theme or globally.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Select an audio or video file to transcribe and improve, or directly add your existing transcript.", mediaLabel:"Add an audio or video file (250 MB maximum with Azure, 25 MB with OpenAI)", transcribeButton:"Start transcription and improvement", transcriptLabel:"Directly add your existing transcript", orSeparator:"OR", improveTranscript:"Start transcript improvement", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
-        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", saveCheckedExcel:"Save Excel file", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and verification API", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
+        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", saveCheckedExcel:"Save Excel file", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and verification API", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", anonymizeLabel:"Anonymize the transcript and comments (replace the names of the people who provided the information with generic roles). Uncheck to keep the names.", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
       },
       de: {
         navHome:"Start", navEnrich:"Anreichern", navCheck:"Prüfen", navSettings:"Einstellungen", aiLive:"AI Live", followApiExchanges:"API-Austausch verfolgen", localNotice:"CyberBenchHelper läuft lokal. Dateien bleiben im Browser, außer bei direkten Aufrufen der konfigurierten API-Anbieter.",
         homeTitle:"Mission konfigurieren oder laden", homeIntro:"Geben Sie vor dem Start die Missionsdaten ein. Sie werden in Dateien und Rücksende-E-Mail übernommen.", apiRequired:"Vor der Verarbeitung eines Interviews müssen in den Einstellungen ein Transkriptions-API-Schlüssel und ein Analyse-API-Schlüssel konfiguriert werden.", missionCode:"Missionscode", missionName:"Mission / Kunde", projectManager:"Projektleiter", projectManagerEmail:"E-Mail des Projektleiters", saveBrowser:"Lokal im Browser speichern", downloadProject:"Projektkonfiguration zur Nutzung auf einem anderen Computer herunterladen", loadProject:"Projekt-JSON laden", startEnrich:"Anreicherung starten",
         ingestGuide:"Ablauf: vorausgefüllten Fragebogen laden, Interviewdaten hinzufügen, Analyse starten und angereicherte Datei herunterladen.", stepExcelTitle:"Vorausgefüllte Excel-Datei laden", stepExcelText:"Wählen Sie den Fragebogen mit den während des Interviews eingetragenen Reifegraden.", assessmentFileLabel:"Excel-Fragebogen", stepInterviewTitle:"Interviewdaten hinzufügen", stepInterviewText:"Wählen Sie eine Audio- oder Videodatei zur Transkription und Verbesserung oder fügen Sie ein vorhandenes Transkript hinzu.", mediaLabel:"Audio oder Video", transcribeButton:"Transkription und Verbesserung starten", transcriptLabel:"Vorhandenes Transkript direkt hinzufügen", improveTranscript:"Transkriptverbesserung starten", stepAnalyzeTitle:"Analysieren und angereicherte Datei herunterladen", stepAnalyzeText:"Die Analyse ergänzt Kommentare und prüft die Stufen. Der unabhängige Check & Challenge ist standardmäßig aktiviert.", scopeLabel:"Analyseumfang", analyzeButton:"Analyse starten", applyButton:"Ergebnisse übernehmen", downloadEnriched:"Angereicherte Datei herunterladen", openSettings:"API-Einstellungen öffnen",
-        checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden.", consentTitle:"Vertraulichkeitshinweis und LLM-Autorisierung", consentText:"Die Nutzung eines LLM und der konfigurierten Anbieter muss von der bewerteten Organisation ausdrücklich genehmigt sein. Interviewdaten und ausgewählte Fragebogeninformationen werden an die ausgewählten Anbieter übermittelt.", consentLabel:"Mir liegt eine schriftliche Genehmigung zur Nutzung eines LLM und der konfigurierten Anbieter vor.", modelGuidance:"Verwenden Sie für ausreichende Qualität mindestens GPT-5.5 oder Claude Opus 4.6 beziehungsweise eine neuere Version."
+        checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", anonymizeLabel:"Transkript und Kommentare anonymisieren (Namen der Personen, die Informationen bereitgestellt haben, durch generische Rollen ersetzen). Zum Beibehalten der Namen abwählen.", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden.", consentTitle:"Vertraulichkeitshinweis und LLM-Autorisierung", consentText:"Die Nutzung eines LLM und der konfigurierten Anbieter muss von der bewerteten Organisation ausdrücklich genehmigt sein. Interviewdaten und ausgewählte Fragebogeninformationen werden an die ausgewählten Anbieter übermittelt.", consentLabel:"Mir liegt eine schriftliche Genehmigung zur Nutzung eines LLM und der konfigurierten Anbieter vor.", modelGuidance:"Verwenden Sie für ausreichende Qualität mindestens GPT-5.5 oder Claude Opus 4.6 beziehungsweise eine neuere Version."
       }
     };
 
@@ -1752,7 +1759,10 @@
       apiActivity: { tasks: new Map(), exchanges: [], sequence: 0, clearTimer: null },
       checkResults: [],
       checkRan: false,
-      checkOriginals: new Map()
+      checkOriginals: new Map(),
+      sourceWorkbook: null,
+      sourceFileName: "",
+      sourceFileType: "xlsx"
     };
 
     const RECOMMENDATION_ENRICHMENT = {
@@ -2191,7 +2201,7 @@
         reader.onload = () => {
           try {
             const data = new Uint8Array(reader.result);
-            resolve(XLSX.read(data, { type: "array", cellDates: true }));
+            resolve(XLSX.read(data, { type: "array", cellDates: true, bookVBA: true, cellStyles: true, cellNF: true }));
           } catch (error) {
             reject(error);
           }
@@ -2238,6 +2248,10 @@
       domains.forEach((sheetName) => {
         const rows = sheetRows(workbook, sheetName);
         if (!rows.length) return;
+        const worksheet = workbook.Sheets[sheetName];
+        const range = worksheet && worksheet["!ref"] ? XLSX.utils.decode_range(worksheet["!ref"]) : { s: { r: 0, c: 0 } };
+        const originRow = range.s.r;
+        const originCol = range.s.c;
         const headers = rows[0].map(clean);
         const idx = {
           id: headerIndex(headers, ["ID"]),
@@ -2268,7 +2282,19 @@
           control: headerIndex(headers, ["CONTROL"])
         };
 
-        rows.slice(1).forEach((row) => {
+        const levelColumns = [idx.l1, idx.l2, idx.l3, idx.l4, idx.l5];
+        // Detect, per level column, whether the workbook stores whole percentages (25) or fractions (0.25),
+        // so values written back in place keep the template's original scale.
+        const levelScales = levelColumns.map((col) => {
+          if (col < 0) return 100;
+          for (let r = 1; r < rows.length; r++) {
+            const value = rows[r][col];
+            if (typeof value === "number" && value > 0) return value > 1 ? 100 : 1;
+          }
+          return 100;
+        });
+
+        rows.slice(1).forEach((row, sliceIndex) => {
           const id = clean(row[idx.id]);
           if (!id || !/^[A-Z]+[.\-]/i.test(id)) return;
           const parts = [idx.l1, idx.l2, idx.l3, idx.l4, idx.l5].map((i) => i >= 0 ? parsePercent(row[i]) : 0);
@@ -2301,7 +2327,16 @@
             nist11: clean(row[idx.nist11]),
             nist2: clean(row[idx.nist2]),
             function11: clean(row[idx.function11]),
-            function2: clean(row[idx.function2])
+            function2: clean(row[idx.function2]),
+            _src: {
+              sheet: sheetName,
+              row: originRow + sliceIndex + 1,
+              levelCols: levelColumns.map((col) => col >= 0 ? originCol + col : -1),
+              levelScales,
+              naCol: idx.na >= 0 ? originCol + idx.na : -1,
+              commentCol: idx.comment >= 0 ? originCol + idx.comment : -1,
+              reliabilityCol: idx.reliability >= 0 ? originCol + idx.reliability : -1
+            }
           });
         });
       });
@@ -2461,6 +2496,10 @@
         const assessment = parseAssessment(workbook);
         if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
         state.assessment = assessment;
+        state.sourceWorkbook = workbook;
+        state.sourceFileName = file.name;
+        const ext = (file.name.split(".").pop() || "xlsx").toLowerCase();
+        state.sourceFileType = ["xlsm", "xlsb", "xlsx"].includes(ext) ? ext : "xlsx";
         state.drill = { domain: "", questionId: "" };
         state.overviewDomain = "";
         state.overviewQuestion = "";
@@ -2608,33 +2647,48 @@
       return questions.map((q) => ({ id: q.id, domain: q.domain, topic: q.subtopic, assessmentPoint: q.question, evidence: q.evidence, requirements: q.requirements })).slice(0, 220);
     }
 
-    function transcriptCorrectionPrompts(transcript, questions) {
+    // Whether the transcript and generated comments should be anonymized (default true / box checked).
+    function anonymizeComments() {
+      const box = $("anonymizeTranscript");
+      return !box || box.checked;
+    }
+
+    function anonymizationDirective(anonymize) {
+      return anonymize
+        ? `PRIVACY / ANONYMIZATION: Replace every personal name of individuals (interviewees, colleagues, third parties) with a neutral role-based or generic placeholder such as [Interviewee], [CISO], [IT Manager], or [Speaker 1]. Remove first names, last names, initials, email addresses, phone numbers, and any other direct personal identifier from the transcript, comments, and citations. Keep company, product, and tool names. Preserve all factual content, attribution by role, and speaker boundaries.`
+        : `NAMES: You may keep the names of the people who provided the information when they help attribute statements. Do not invent names.`;
+    }
+
+    function transcriptCorrectionPrompts(transcript, questions, anonymize = true) {
       return {
         system: `You are editing a diarized cybersecurity interview transcript for audit use.
 Correct transcription errors only when the intended wording is strongly supported by the surrounding sentences or the supplied CyberBenchmark glossary.
 Preserve every factual claim, uncertainty, disagreement, negation, number, product name, date, and speaker boundary. Never add evidence or make a weak statement sound certain.
 Keep the original language of each sentence (French, English, or German). Keep speaker labels. Mark genuinely unintelligible passages as [inaudible] and uncertain corrections as [uncertain: ...].
+${anonymizationDirective(anonymize)}
 Return strict JSON only:
 {"transcript":"complete corrected transcript","corrections":[{"before":"short excerpt","after":"corrected excerpt","reason":"terminology|grammar|speaker attribution"}],"warnings":["possible ambiguity"]}`,
         user: `CYBERBENCHMARK GLOSSARY AND EXPECTED TERMINOLOGY:\n${JSON.stringify(transcriptGlossaryPayload(questions))}\n\nRAW DIARIZED TRANSCRIPT:\n${transcript}`
       };
     }
 
-    function transcriptChallengePrompts(rawTranscript, correctedTranscript, questions) {
+    function transcriptChallengePrompts(rawTranscript, correctedTranscript, questions, anonymize = true) {
       return {
         system: `You are an independent transcript quality reviewer. Compare the raw diarized transcript with the proposed corrected transcript.
 Reject semantic embellishment, invented cybersecurity evidence, removed uncertainty, altered numbers, changed negations, and incorrect speaker attribution.
 Use the glossary only to resolve obvious recognition errors; it is not evidence that a control exists.
 Return a final transcript that remains maximally faithful to the raw recording. Keep the original language and speaker labels.
+${anonymizationDirective(anonymize)}
 Return strict JSON only:
 {"transcript":"final challenged transcript","corrections":[{"before":"short excerpt","after":"final excerpt","reason":"why retained or reverted"}],"warnings":["remaining ambiguity"]}`,
         user: `CYBERBENCHMARK GLOSSARY:\n${JSON.stringify(transcriptGlossaryPayload(questions))}\n\nRAW TRANSCRIPT:\n${rawTranscript}\n\nPROPOSED CORRECTED TRANSCRIPT:\n${correctedTranscript}`
       };
     }
 
-    function extractionPrompts(transcript, questions) {
+    function extractionPrompts(transcript, questions, anonymize = true) {
       return {
         system: `You are a senior cybersecurity assessor enriching a CyberBenchmark questionnaire from an interview transcript.
+${anonymizationDirective(anonymize)}
 Evidence discipline:
 - Use only explicit statements from the transcript. Questionnaire wording and the existing answer are context, never evidence.
 - Never infer implementation merely because a control was discussed. Preserve uncertainty, scope limitations, exceptions, and negative statements.
@@ -2654,9 +2708,10 @@ Write comments in the transcript's primary language. Return strict JSON only:
       };
     }
 
-    function challengePrompts(transcript, questions, draft) {
+    function challengePrompts(transcript, questions, draft, anonymize = true) {
       return {
         system: `You are an independent lead cybersecurity auditor performing a strict Check & Challenge.
+${anonymizationDirective(anonymize)}
 For every question, independently reconstruct the justified answer from the transcript before comparing it with the draft.
 Test that every factual statement and citation is supported; negations, uncertainty, exceptions and scope limitations are preserved; N/A is explicit; each allocation matches the exact L1-L5 requirement; L1 through L4 sum exactly to 1 while L5 remains a separate bonus; and maturity is not overstated because a policy, tool, project, or intention was merely mentioned.
 Check that comments expose both strengths and gaps, contradictions are visible, and reliability reflects evidence specificity and consistency.
@@ -2806,18 +2861,19 @@ Return strict JSON only:
       const apiTask = beginApiAction(localText("Amélioration du transcript…", "Improving transcript…", "Transkript wird verbessert…"), 0);
       button.disabled = true;
       state.ingest.transcriptCorrections = [];
+      const anonymize = anonymizeComments();
       try {
         const chunks = transcriptChunks(rawTranscript);
         const improved = [];
         for (let index = 0; index < chunks.length; index++) {
           updateApiAction(apiTask, localText(`Amélioration du transcript ${index + 1}/${chunks.length}…`, `Improving transcript ${index + 1}/${chunks.length}…`, `Transkript wird verbessert ${index + 1}/${chunks.length}…`), index / chunks.length * 100);
           setIngestProgress(`Transcript: correction terminologique ${index + 1}/${chunks.length}.`, (index / chunks.length) * 40);
-          const prompts = transcriptCorrectionPrompts(chunks[index], state.assessment.questions);
+          const prompts = transcriptCorrectionPrompts(chunks[index], state.assessment.questions, anonymize);
           const correctedPayload = await callIngestLLM(prompts.system, prompts.user);
           let finalPayload = correctedPayload;
           if ($("challengeEnabled").checked) {
             setIngestProgress(`Transcript: Check & Challenge ${index + 1}/${chunks.length}.`, 40 + (index / chunks.length) * 40);
-            const challenge = transcriptChallengePrompts(chunks[index], correctedPayload.transcript || chunks[index], state.assessment.questions);
+            const challenge = transcriptChallengePrompts(chunks[index], correctedPayload.transcript || chunks[index], state.assessment.questions, anonymize);
             finalPayload = await callIngestLLM(challenge.system, challenge.user, challengeIngestConfig());
           }
           improved.push(String(finalPayload.transcript || "").trim() || chunks[index]);
@@ -2879,20 +2935,21 @@ Return strict JSON only:
       state.ingest.challenges = [];
       state.ingest.log = [];
       state.ingest.applied = false;
+      const anonymize = anonymizeComments();
       try {
         for (let index = 0; index < groups.length; index++) {
           const group = groups[index];
           const base = index / groups.length * 100;
           updateApiAction(apiTask, localText(`Analyse du thème ${group.domain}…`, `Analyzing theme ${group.domain}…`, `Thema ${group.domain} wird analysiert…`), base);
           setIngestProgress(`${group.domain}: analyst extraction started.`, base);
-          const extraction = extractionPrompts(transcript, group.questions);
+          const extraction = extractionPrompts(transcript, group.questions, anonymize);
           const draftPayload = await callIngestLLM(extraction.system, extraction.user);
           const draft = normalizeIngestAssessments(draftPayload, group.questions);
           let reviewed = draft;
           let reviewedPayload = {};
           if ($("challengeEnabled").checked) {
             setIngestProgress(`${group.domain}: ${draft.length} draft answers extracted; check & challenge started.`, base + 45 / groups.length);
-            const challenge = challengePrompts(transcript, group.questions, draft);
+            const challenge = challengePrompts(transcript, group.questions, draft, anonymize);
             reviewedPayload = await callIngestLLM(challenge.system, challenge.user, challengeIngestConfig());
             reviewed = normalizeIngestAssessments(reviewedPayload, group.questions);
           } else {
@@ -3035,8 +3092,7 @@ Return strict JSON only:
         $("emailChecks").disabled = true;
         $("saveCheckedExcel").disabled = true;
         $("checkEditorIntro").classList.add("hidden");
-        $("checkEditor").innerHTML = "";
-        $("checkTable").querySelector("tbody").innerHTML = `<tr><td colspan="5" class="muted">${localText("Le contrôle n’a pas encore été lancé.", "The check has not been run yet.", "Die Prüfung wurde noch nicht gestartet.")}</td></tr>`;
+        $("checkEditor").innerHTML = `<p class="muted">${localText("Le contrôle n’a pas encore été lancé.", "The check has not been run yet.", "Die Prüfung wurde noch nicht gestartet.")}</p>`;
         return;
       }
       const results = state.checkResults;
@@ -3057,25 +3113,34 @@ Return strict JSON only:
       $("contextDetails").textContent = contextIssues.length ? contextIssues.map((issue) => `${issue.sheet}: ${issue.field}`).join(" · ") : (contextFields.length ? contextMessages[0] : contextMessages[1]);
       $("emailChecks").disabled = !levelTotalsAreValid();
       $("saveCheckedExcel").disabled = false;
-      $("checkTable").querySelector("tbody").innerHTML = results.length ? results.map((row) => `
-        <tr><td class="small">${html(row.id)}</td><td class="small">${html(row.domain)}</td><td class="small check-error">${html(row.severity)}</td><td>${html(row.rule)}</td><td>${html(row.detail)}</td></tr>`).join("")
-        : `<tr><td colspan="5" class="check-ok"><strong>${localText("Aucune anomalie détectée.", "No issue detected.", "Kein Problem erkannt.")}</strong></td></tr>`;
       renderCheckEditor(results);
     }
 
     function renderCheckEditor(results) {
-      const affectedIds = [...new Set(results.map((result) => result.id).filter((id) => id && id !== "CONTEXT"))];
+      const errorsById = new Map();
+      results.filter((result) => result.id && result.id !== "CONTEXT").forEach((result) => {
+        if (!errorsById.has(result.id)) errorsById.set(result.id, []);
+        errorsById.get(result.id).push(result);
+      });
+      const affectedIds = [...errorsById.keys()];
       const questions = affectedIds.map((id) => state.assessment.questions.find((question) => question.id === id)).filter(Boolean);
       $("checkEditorIntro").classList.toggle("hidden", !questions.length);
       $("checkEditorIntro").innerHTML = questions.length
-        ? `<strong>${html(localText(`${questions.length} mesure(s) à corriger directement`, `${questions.length} measure(s) to correct directly`, `${questions.length} Maßnahme(n) direkt zu korrigieren`))}</strong><span>${html(localText("Les contrôles sont relancés après chaque modification.", "Checks rerun after every change.", "Die Prüfungen werden nach jeder Änderung erneut ausgeführt."))}</span>`
+        ? `<strong>${html(localText(`${questions.length} mesure(s) en anomalie à corriger directement`, `${questions.length} measure(s) flagged to correct directly`, `${questions.length} Maßnahme(n) mit Anomalie direkt zu korrigieren`))}</strong><span>${html(localText("Les contrôles sont relancés après chaque modification.", "Checks rerun after every change.", "Die Prüfungen werden nach jeder Änderung erneut ausgeführt."))}</span>`
         : "";
+      if (!questions.length) {
+        $("checkEditor").innerHTML = `<div class="review-summary"><strong class="check-ok">${html(localText("Aucune anomalie détectée sur les mesures.", "No measure-level issue detected.", "Keine Anomalie auf Maßnahmenebene erkannt."))}</strong><span>${html(localText("Le fichier peut être sauvegardé et envoyé.", "The file can be saved and sent.", "Die Datei kann gespeichert und gesendet werden."))}</span></div>`;
+        return;
+      }
       $("checkEditor").innerHTML = questions.map((question) => {
         const levels = normalizeLevels(question.levels);
         const original = state.checkOriginals.get(question.id) || { status: question.status, levels, comment: question.comment || "", reliability: question.reliability || "" };
         const originalLevels = normalizeLevels(original.levels);
-        return `<article class="measure-review" data-check-id="${html(question.id)}">
-          <div class="measure-review-head"><div><strong>${html(question.id)} · ${html(question.question || question.subtopic || "")}</strong><span>${html(question.domain || "")}</span></div><span class="review-status">${html(localText("À corriger", "To correct", "Zu korrigieren"))}</span></div>
+        const issues = errorsById.get(question.id) || [];
+        const issuesHtml = `<ul class="check-issues">${issues.map((issue) => `<li><span class="check-issue-severity">${html(issue.severity)}</span> <strong>${html(issue.rule)}</strong> — ${html(issue.detail)}</li>`).join("")}</ul>`;
+        return `<article class="measure-review measure-review-flagged" data-check-id="${html(question.id)}">
+          <div class="measure-review-head"><div><strong>${html(question.id)} · ${html(question.question || question.subtopic || "")}</strong><span>${html(question.domain || "")}</span></div><span class="review-status review-status-error">${html(localText(`${issues.length} anomalie(s)`, `${issues.length} issue(s)`, `${issues.length} Anomalie(n)`))}</span></div>
+          ${issuesHtml}
           <div class="measure-review-grid">
             <div class="review-version"><h4>${html(localText("État original", "Original state", "Originalzustand"))} · ${html(original.status || "missing")}</h4>
               <div class="level-grid">${originalLevels.map((value, index) => `<div class="level-cell"><span>L${index + 1}</span><div class="level-value">${Math.round(value * 100)} %</div></div>`).join("")}</div>
@@ -3135,6 +3200,70 @@ Return strict JSON only:
         XLSX.utils.book_append_sheet(workbook, sheet, domain);
       });
       XLSX.writeFile(workbook, `CyberBenchmark-ingested-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    function setWorkbookCell(worksheet, row, col, type, value) {
+      const address = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet[address] || {};
+      delete cell.w;
+      delete cell.r;
+      delete cell.h;
+      delete cell.f;
+      if (type === "s" && (value === "" || value === null || value === undefined)) {
+        cell.t = "z";
+        delete cell.v;
+      } else {
+        cell.t = type;
+        cell.v = value;
+      }
+      worksheet[address] = cell;
+    }
+
+    // Write the current answers back into the cells of the originally loaded workbook,
+    // preserving every other sheet, formatting and (for .xlsm) the VBA project.
+    function applyEditsToSourceWorkbook(workbook) {
+      if (!workbook || !state.assessment) return false;
+      state.assessment.questions.forEach((question) => {
+        const src = question._src;
+        if (!src) return;
+        const worksheet = workbook.Sheets[src.sheet];
+        if (!worksheet) return;
+        const levels = normalizeLevels(question.levels);
+        src.levelCols.forEach((col, index) => {
+          if (col < 0) return;
+          const scale = src.levelScales[index] || 100;
+          const numeric = question.status === "scored" ? levels[index] * scale : 0;
+          setWorkbookCell(worksheet, src.row, col, "n", Math.round(numeric * 1e6) / 1e6);
+        });
+        if (src.naCol >= 0) setWorkbookCell(worksheet, src.row, src.naCol, "s", question.status === "na" ? "x" : "");
+        if (src.commentCol >= 0) setWorkbookCell(worksheet, src.row, src.commentCol, "s", question.comment || "");
+        if (src.reliabilityCol >= 0) setWorkbookCell(worksheet, src.row, src.reliabilityCol, "s", question.reliability || "");
+      });
+      return true;
+    }
+
+    // Save corrections/enrichment back into the existing file instead of creating a new one.
+    function saveAssessmentInPlace() {
+      if (!window.XLSX) return toast(t("missingSheetJs"));
+      if (!state.assessment) return;
+      if (!state.sourceWorkbook) {
+        // No workbook kept in memory (e.g. restored session): fall back to building a fresh file.
+        return exportAssessmentWorkbook(true);
+      }
+      try {
+        applyEditsToSourceWorkbook(state.sourceWorkbook);
+        const bookType = ["xlsm", "xlsb", "xlsx"].includes(state.sourceFileType) ? state.sourceFileType : "xlsx";
+        const output = XLSX.write(state.sourceWorkbook, { bookType, type: "array", bookVBA: bookType === "xlsm", cellStyles: true });
+        const fileName = state.sourceFileName || `CyberBenchmark-${new Date().toISOString().slice(0, 10)}.${bookType}`;
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([output], { type: "application/octet-stream" }));
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        toast(localText(`Fichier « ${fileName} » mis à jour et enregistré.`, `File "${fileName}" updated and saved.`, `Datei „${fileName}" aktualisiert und gespeichert.`), "success");
+      } catch (error) {
+        toast(localText(`Enregistrement impossible : ${error.message}`, `Could not save: ${error.message}`, `Speichern nicht möglich: ${error.message}`), "error");
+      }
     }
 
     function varianceRange(value) {
@@ -4866,7 +4995,7 @@ Return strict JSON only:
       event.target.value = "";
     });
     $("ingestApply").addEventListener("click", validateAllReviewResults);
-    $("ingestDownload").addEventListener("click", () => exportAssessmentWorkbook(true));
+    $("ingestDownload").addEventListener("click", saveAssessmentInPlace);
     $("ingestReview").addEventListener("input", (event) => {
       const card = event.target.closest("[data-review-id]");
       if (!card) return;
@@ -4941,7 +5070,7 @@ Return strict JSON only:
       runBusinessChecks();
       toast(localText(`Mesure ${question.id} mise à jour et contrôlée.`, `Measure ${question.id} updated and checked.`, `Maßnahme ${question.id} aktualisiert und geprüft.`), "success");
     });
-    $("saveCheckedExcel").addEventListener("click", () => exportAssessmentWorkbook(true));
+    $("saveCheckedExcel").addEventListener("click", saveAssessmentInPlace);
     $("emailChecks").addEventListener("click", emailChecks);
     $("aiLivePill").addEventListener("click", () => {
       const details = $("apiExchangeDetails");
@@ -4966,7 +5095,7 @@ Return strict JSON only:
         saveHelperConfig();
       } catch (error) { toast(`Configuration invalide : ${error.message}`); }
     });
-    $("exportExcelWorkflow").addEventListener("click", () => exportAssessmentWorkbook(false));
+    $("exportExcelWorkflow").addEventListener("click", saveAssessmentInPlace);
     $("exportCentralCsv").addEventListener("click", exportCentralCsv);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     $("exportStandaloneHtml").addEventListener("click", exportStandaloneHtml);
