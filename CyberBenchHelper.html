@@ -427,6 +427,12 @@
     .context-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
     .context-item { padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg-soft); }
     .api-required { padding:14px 16px; border:1px solid #f0c84b; border-radius:12px; background:#fff9df; color:#765d00; font-weight:750; margin:16px 0; }
+    .llm-consent { background:#fef2f2; border:2px solid #dc2626; border-radius:12px; padding:16px; margin-bottom:16px; color:#991b1b; }
+    .llm-consent strong { display:block; margin-bottom:8px; }
+    .llm-consent label { display:flex; align-items:center; gap:10px; color:#991b1b; text-transform:none; letter-spacing:0; font-size:13px; cursor:pointer; margin:10px 0 0; }
+    .llm-consent input { width:18px; min-height:18px; accent-color:#dc2626; }
+    .llm-locked { opacity:.42; pointer-events:none; }
+    .model-guidance { margin-top:12px; padding:10px 12px; border-left:4px solid var(--cyan); border-radius:8px; background:var(--panel-3); color:var(--text); font-size:13px; line-height:1.45; }
 
     .empty {
       min-height: 360px;
@@ -878,6 +884,12 @@
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
+          <div class="llm-consent">
+            <strong data-ui="consentTitle">Avertissement de confidentialité et autorisation LLM</strong>
+            <div data-ui="consentText">L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.</div>
+            <label><input id="llmConsent" type="checkbox"><span data-ui="consentLabel">Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.</span></label>
+          </div>
+          <div id="apiConfigurationFields" class="llm-locked">
           <div class="grid two">
             <div class="card" style="grid-column:1/-1;">
               <div class="card-head"><h3 data-ui="transcriptionApiTitle">1. API de transcription</h3></div>
@@ -899,7 +911,7 @@
                 <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés restent uniquement en mémoire.</div>
                 <div class="ingest-fields" style="margin-top:14px;">
                   <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
-                  <div><label for="ingestModel">Modèle</label><input id="ingestModel" list="analysisModels" value="claude-sonnet-4-20250514"></div>
+                  <div><label for="ingestModel">Modèle</label><input id="ingestModel" list="analysisModels" value="claude-opus-4-6"></div>
                   <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
                   <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
                     <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
@@ -908,17 +920,20 @@
                   </div></div>
                 </div>
                 <div class="ingest-actions"><button id="refreshAnalysisModels">Récupérer les modèles</button><button id="ingestTest">Tester la connexion LLM</button></div>
+                <div class="model-guidance" data-ui="modelGuidance">Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure.</div>
               </div>
             </div>
             <div class="card">
             <div class="card-head"><h3 data-ui="challengeApiTitle">Modèle de Check &amp; Challenge</h3></div>
             <div class="card-body"><label style="display:flex;gap:10px;align-items:center;text-transform:none;"><input id="challengeEnabled" type="checkbox" checked style="width:auto;"><span data-ui="challengeEnabledLabel">Activer la seconde passe contradictoire par défaut</span></label><p class="muted" data-ui="challengeHelp">Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.</p>
-              <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><input id="challengeModel" list="challengeModels" value="claude-sonnet-4-20250514"></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
+              <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><input id="challengeModel" list="challengeModels" value="claude-opus-4-6"></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
               <div class="config-actions"><button id="refreshChallengeModels">Récupérer les modèles de contradiction</button></div>
+              <div class="model-guidance" data-ui="modelGuidance">Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure.</div>
             </div>
           </div>
           </div>
           <datalist id="analysisModels"></datalist><datalist id="challengeModels"></datalist>
+          </div>
         </section>
 
         <section id="exploreToolbar" class="workflow-panel hidden">
@@ -1605,19 +1620,19 @@
         navHome:"Accueil", navEnrich:"Enrichir", navCheck:"Contrôler", navSettings:"Réglages", localNotice:"CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.",
         homeTitle:"Configurer ou charger votre mission", homeIntro:"Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.", apiRequired:"Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.", missionCode:"Code mission", missionName:"Nom mission / client", projectManager:"Chef de projet", projectManagerEmail:"Email chef de projet", saveBrowser:"Sauvegarder", downloadProject:"Télécharger le projet JSON", loadProject:"Charger un projet JSON", startEnrich:"Commencer l’enrichissement",
         ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Collez la transcription Teams ou sélectionnez directement un fichier audio ou vidéo à transcrire et diariser.", mediaLabel:"Audio ou vidéo", transcribeButton:"Transcrire et diariser", transcriptLabel:"Transcription Teams ou texte à analyser", improveTranscript:"Améliorer le transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
-        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API Analyse et Check & Challenge", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent."
+        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API Analyse et Check & Challenge", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
       },
       en: {
         navHome:"Home", navEnrich:"Enrich", navCheck:"Check", navSettings:"Settings", localNotice:"CyberBenchHelper runs locally. Files stay in the browser except during direct calls to configured API providers.",
         homeTitle:"Configure or load your mission", homeIntro:"Enter the mission details before starting. They will be included in files and the return email.", apiRequired:"A transcription API key and an analysis API key must be configured in Settings before processing an interview.", missionCode:"Mission code", missionName:"Mission / client name", projectManager:"Project manager", projectManagerEmail:"Project manager email", saveBrowser:"Save", downloadProject:"Download project JSON", loadProject:"Load project JSON", startEnrich:"Start enrichment",
         ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Paste the Teams transcript or directly select an audio or video file for transcription and diarization.", mediaLabel:"Audio or video", transcribeButton:"Transcribe and diarize", transcriptLabel:"Teams transcript or text to analyze", improveTranscript:"Improve transcript", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
-        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and Check & Challenge APIs", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model."
+        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and Check & Challenge APIs", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
       },
       de: {
         navHome:"Start", navEnrich:"Anreichern", navCheck:"Prüfen", navSettings:"Einstellungen", localNotice:"CyberBenchHelper läuft lokal. Dateien bleiben im Browser, außer bei direkten Aufrufen der konfigurierten API-Anbieter.",
         homeTitle:"Mission konfigurieren oder laden", homeIntro:"Geben Sie vor dem Start die Missionsdaten ein. Sie werden in Dateien und Rücksende-E-Mail übernommen.", apiRequired:"Vor der Verarbeitung eines Interviews müssen in den Einstellungen ein Transkriptions-API-Schlüssel und ein Analyse-API-Schlüssel konfiguriert werden.", missionCode:"Missionscode", missionName:"Mission / Kunde", projectManager:"Projektleiter", projectManagerEmail:"E-Mail des Projektleiters", saveBrowser:"Speichern", downloadProject:"Projekt-JSON herunterladen", loadProject:"Projekt-JSON laden", startEnrich:"Anreicherung starten",
         ingestGuide:"Ablauf: vorausgefüllten Fragebogen laden, Interviewdaten hinzufügen, Analyse starten und angereicherte Datei herunterladen.", stepExcelTitle:"Vorausgefüllte Excel-Datei laden", stepExcelText:"Wählen Sie den Fragebogen mit den während des Interviews eingetragenen Reifegraden.", assessmentFileLabel:"Excel-Fragebogen", stepInterviewTitle:"Interviewdaten hinzufügen", stepInterviewText:"Fügen Sie das Teams-Transkript ein oder wählen Sie direkt eine Audio- oder Videodatei zur Transkription und Sprechertrennung.", mediaLabel:"Audio oder Video", transcribeButton:"Transkribieren und Sprecher trennen", transcriptLabel:"Teams-Transkript oder zu analysierender Text", improveTranscript:"Transkript verbessern", stepAnalyzeTitle:"Analysieren und angereicherte Datei herunterladen", stepAnalyzeText:"Die Analyse ergänzt Kommentare und prüft die Stufen. Der unabhängige Check & Challenge ist standardmäßig aktiviert.", scopeLabel:"Analyseumfang", analyzeButton:"Analyse starten", applyButton:"Ergebnisse übernehmen", downloadEnriched:"Angereicherte Datei herunterladen", openSettings:"API-Einstellungen öffnen",
-        checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden."
+        checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden.", consentTitle:"Vertraulichkeitshinweis und LLM-Autorisierung", consentText:"Die Nutzung eines LLM und der konfigurierten Anbieter muss von der bewerteten Organisation ausdrücklich genehmigt sein. Interviewdaten und ausgewählte Fragebogeninformationen werden an die ausgewählten Anbieter übermittelt.", consentLabel:"Mir liegt eine schriftliche Genehmigung zur Nutzung eines LLM und der konfigurierten Anbieter vor.", modelGuidance:"Verwenden Sie für ausreichende Qualität mindestens GPT-5.5 oder Claude Opus 4.6 beziehungsweise eine neuere Version."
       }
     };
 
@@ -2436,6 +2451,7 @@
     }
 
     async function callIngestLLM(systemPrompt, userPrompt, config = ingestConfig()) {
+      requireLlmAuthorization();
       if (!config.model && config.provider !== "azure_openai") throw new Error("A model name is required.");
       let response;
       if (config.provider === "anthropic") {
@@ -2607,6 +2623,7 @@ Return strict JSON only:
     }
 
     function analysisConfigReady() {
+      if (!llmUseAuthorized()) return false;
       const config = ingestConfig();
       return config.provider === "azure_openai"
         ? Boolean(config.azureEndpoint && config.azureDeployment && config.azureKey)
@@ -2762,6 +2779,8 @@ Return strict JSON only:
     async function transcribeAzureMedia() {
       const file = $("ingestMedia").files?.[0];
       if (!file) return toast("Sélectionnez un fichier audio ou vidéo.");
+      try { requireLlmAuthorization(); }
+      catch (error) { return toast(error.message); }
       const openAiMaxBytes = 25 * 1024 * 1024;
       const azureMaxBytes = 250 * 1024 * 1024;
       let provider = $("transcriptionProvider").value;
@@ -4249,42 +4268,104 @@ Return strict JSON only:
     }
 
     const HELPER_CONFIG_KEY = "cyberbench-helper-config-v1";
-    const helperConfigIds = ["missionCode", "missionName", "projectManagerName", "projectManagerEmail", "ingestProvider", "ingestModel", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureDeployment", "ingestAzureKey", "transcriptionProvider", "openaiTranscriptionKey", "azureSpeechKey", "azureSpeechRegion", "azureSpeechLocale", "challengeEnabled", "challengeProvider", "challengeModel", "challengeApiKey"];
+    const helperConfigIds = ["missionCode", "missionName", "projectManagerName", "projectManagerEmail", "llmConsent", "ingestProvider", "ingestModel", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureDeployment", "ingestAzureKey", "transcriptionProvider", "openaiTranscriptionKey", "azureSpeechKey", "azureSpeechRegion", "azureSpeechLocale", "challengeEnabled", "challengeProvider", "challengeModel", "challengeApiKey"];
+    const modelRefreshTimers = {};
 
-    function helperConfigPayload() {
+    function llmUseAuthorized() {
+      return $("llmConsent").checked;
+    }
+
+    function updateLlmConsentState() {
+      const locked = !llmUseAuthorized();
+      $("apiConfigurationFields").classList.toggle("llm-locked", locked);
+      $("apiConfigurationFields").inert = locked;
+      $("apiConfigurationFields").setAttribute("aria-disabled", String(locked));
+    }
+
+    function requireLlmAuthorization() {
+      if (!llmUseAuthorized()) {
+        throw new Error(localText(
+          "Confirmez d’abord que vous disposez d’une validation écrite autorisant l’utilisation d’un LLM.",
+          "First confirm that you have written approval authorizing the use of an LLM.",
+          "Bestätigen Sie zuerst, dass Ihnen eine schriftliche Genehmigung zur Nutzung eines LLM vorliegt."
+        ));
+      }
+    }
+
+    function helperConfigPayload(includeConsent = true) {
       const values = Object.fromEntries(helperConfigIds.map((id) => [id, $(id).type === "checkbox" ? $(id).checked : $(id).value]));
+      if (!includeConsent) values.llmConsent = false;
       return { version: 1, application: "CyberBenchHelper", exportedAt: new Date().toISOString(), mission: { code: values.missionCode, name: values.missionName, projectManager: { name: values.projectManagerName, email: values.projectManagerEmail } }, values };
     }
 
     async function refreshModelList(kind) {
+      requireLlmAuthorization();
       const challenge = kind === "challenge";
       const provider = $(challenge ? "challengeProvider" : "ingestProvider").value;
       const key = $(challenge ? "challengeApiKey" : "ingestApiKey").value.trim() || $("ingestApiKey").value.trim();
       let response;
-      if (provider === "openai") response = await fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` } });
-      else if (provider === "anthropic") response = await fetch("https://api.anthropic.com/v1/models", { headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" } });
-      else {
+      if (provider === "openai") {
+        if (!key) throw new Error(localText("Clé OpenAI manquante.", "OpenAI key missing.", "OpenAI-Schlüssel fehlt."));
+        response = await fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` } });
+      } else if (provider === "anthropic") {
+        if (!key) throw new Error(localText("Clé Anthropic manquante.", "Anthropic key missing.", "Anthropic-Schlüssel fehlt."));
+        response = await fetch("https://api.anthropic.com/v1/models", { headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" } });
+      } else if (provider === "google_gemini") {
+        if (!key) throw new Error(localText("Clé Google Gemini manquante.", "Google Gemini key missing.", "Google-Gemini-Schlüssel fehlt."));
+        response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
+      } else {
         const endpoint = $("ingestAzureEndpoint").value.trim().replace(/\/+$/, "");
         const azureKey = challenge ? ($("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim();
+        if (!endpoint || !azureKey) throw new Error(localText("Endpoint et clé Azure OpenAI manquants.", "Azure OpenAI endpoint and key missing.", "Azure-OpenAI-Endpunkt und Schlüssel fehlen."));
         response = await fetch(`${endpoint}/openai/deployments?api-version=2024-10-21`, { headers: { "api-key": azureKey } });
       }
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error?.message || `HTTP ${response.status}`);
-      const models = (data.data || data.value || []).map((item) => item.id || item.name || item.model).filter(Boolean).sort();
+      let models = (data.data || data.value || data.models || []).map((item) => item.id || item.name || item.model).filter(Boolean);
+      if (provider === "openai") models = models.filter((model) => /^(gpt-|o[1-9]|chatgpt-)/i.test(model) && !/(audio|transcribe|tts|realtime|image|embedding|moderation|search)/i.test(model));
+      if (provider === "google_gemini") models = models.map((model) => model.replace(/^models\//, "")).filter((model) => /gemini/i.test(model));
+      const currentModel = clean($(challenge ? "challengeModel" : "ingestModel").value);
+      models = [...new Set([...models, currentModel].filter(Boolean))].sort();
       const list = $(challenge ? "challengeModels" : "analysisModels");
       list.innerHTML = models.map((model) => `<option value="${html(model)}"></option>`).join("");
-      toast(`${models.length} modèles disponibles récupérés.`);
+      toast(localText(`${models.length} modèles disponibles récupérés.`, `${models.length} available models retrieved.`, `${models.length} verfügbare Modelle abgerufen.`));
     }
 
-    function applyHelperConfig(payload) {
+    function modelConfigReady(kind) {
+      const challenge = kind === "challenge";
+      const provider = $(challenge ? "challengeProvider" : "ingestProvider").value;
+      if (provider === "azure_openai") {
+        return Boolean($("ingestAzureEndpoint").value.trim() && (challenge ? ($("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim()));
+      }
+      return Boolean($(challenge ? "challengeApiKey" : "ingestApiKey").value.trim() || (challenge && $("ingestApiKey").value.trim()));
+    }
+
+    function scheduleModelRefresh(kind) {
+      clearTimeout(modelRefreshTimers[kind]);
+      modelRefreshTimers[kind] = setTimeout(() => {
+        if (!llmUseAuthorized() || !modelConfigReady(kind)) return;
+        refreshModelList(kind).catch((error) => console.warn(`Dynamic ${kind} model refresh failed:`, error));
+      }, 500);
+    }
+
+    function refreshAvailableModels() {
+      scheduleModelRefresh("analysis");
+      scheduleModelRefresh("challenge");
+    }
+
+    function applyHelperConfig(payload, allowImportedConsent = true) {
       const values = payload?.values || {};
       helperConfigIds.forEach((id) => {
         if (values[id] === undefined) return;
+        if (id === "llmConsent" && !allowImportedConsent) return;
         if ($(id).type === "checkbox") $(id).checked = Boolean(values[id]);
         else $(id).value = values[id];
       });
+      if (!allowImportedConsent) $("llmConsent").checked = false;
       $("ingestAzureFields").classList.toggle("hidden", $("ingestProvider").value !== "azure_openai");
       $("ingestApiKeyField").classList.toggle("hidden", $("ingestProvider").value === "azure_openai");
+      updateLlmConsentState();
+      refreshAvailableModels();
       updateMissionDisplay();
     }
 
@@ -4310,7 +4391,7 @@ Return strict JSON only:
 
     function exportHelperConfig() {
       const code = clean($("missionCode").value) || "mission";
-      downloadBlob(`CyberBenchHelper-config-${code}.json`, new Blob([JSON.stringify(helperConfigPayload(), null, 2)], { type: "application/json" }));
+      downloadBlob(`CyberBenchHelper-config-${code}.json`, new Blob([JSON.stringify(helperConfigPayload(false), null, 2)], { type: "application/json" }));
     }
 
     function arrayBufferBase64(buffer) {
@@ -4396,12 +4477,25 @@ Return strict JSON only:
       if (state.assessment) renderRecommendations();
     });
     $("ingestProvider").addEventListener("change", (event) => {
-      const defaults = { anthropic: "claude-sonnet-4-20250514", openai: "gpt-4.1", azure_openai: "", google_gemini: "gemini-2.5-pro" };
+      const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "", google_gemini: "gemini-2.5-pro" };
       state.ingest.provider = event.target.value;
       $("ingestModel").value = defaults[event.target.value];
       $("ingestAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
       $("ingestApiKeyField").classList.toggle("hidden", event.target.value === "azure_openai");
+      scheduleModelRefresh("analysis");
     });
+    $("challengeProvider").addEventListener("change", (event) => {
+      const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "" };
+      $("challengeModel").value = defaults[event.target.value];
+      scheduleModelRefresh("challenge");
+    });
+    $("llmConsent").addEventListener("change", () => {
+      updateLlmConsentState();
+      localStorage.setItem(HELPER_CONFIG_KEY, JSON.stringify(helperConfigPayload()));
+      if (llmUseAuthorized()) refreshAvailableModels();
+    });
+    ["ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => scheduleModelRefresh("analysis")));
+    ["challengeApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => scheduleModelRefresh("challenge")));
     $("ingestDomain").addEventListener("change", (event) => { state.ingest.domain = event.target.value; });
     $("ingestTest").addEventListener("click", testIngestConnection);
     $("ingestRun").addEventListener("click", runIngest);
@@ -4436,7 +4530,7 @@ Return strict JSON only:
     $("helperConfigFile").addEventListener("change", async (event) => {
       try {
         const payload = JSON.parse(await event.target.files?.[0]?.text());
-        applyHelperConfig(payload);
+        applyHelperConfig(payload, false);
         saveHelperConfig();
       } catch (error) { toast(`Configuration invalide : ${error.message}`); }
     });
@@ -4452,6 +4546,7 @@ Return strict JSON only:
       const savedHelperConfig = localStorage.getItem(HELPER_CONFIG_KEY);
       if (savedHelperConfig) applyHelperConfig(JSON.parse(savedHelperConfig));
     } catch (error) { console.warn(error); }
+    updateLlmConsentState();
     updateMissionDisplay();
     if (window.__CYBERBENCH_EXPORT__) {
       try {
