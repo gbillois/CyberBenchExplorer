@@ -3,6 +3,20 @@
 Standalone GitHub Pages workspace to ingest, check, explore, and export a completed W-CyberBenchmark assessment.
 The UI defaults to English and automatically switches to French when the browser language starts with `fr`.
 
+## Applications
+
+- `index.html`: workspace historique complet.
+- `CyberBenchHelper.html`: application utilisateur pour transcrire et diariser un entretien, corriger le transcript à partir de la terminologie du questionnaire, enrichir le questionnaire, lancer des passes indépendantes de Check & Challenge, contrôler le fichier et générer un email `.eml`.
+- `CyberBenchManager.html`: application équipe pour créer les missions, saisir manuellement les clés API, générer et envoyer la configuration Helper, contrôler les questionnaires reçus et produire l’Explorer HTML autonome.
+
+Helper et Manager conservent leur configuration dans le stockage local du navigateur. Les configurations et registres peuvent être exportés en JSON. Les JSON Helper et emails `.eml` peuvent contenir de véritables clés API et doivent être traités comme des secrets.
+
+L’enregistrement SharePoint depuis Manager cible un répertoire SharePoint synchronisé localement par OneDrive via l’API navigateur de sélection de répertoire, disponible principalement dans Chrome et Edge.
+
+Les règles métier considèrent que les pourcentages L1 à L4 doivent totaliser 100 %. L5 est un bonus additionnel, exclu de ce total.
+
+Pour la transcription, OpenAI accepte les fichiers jusqu’à 25 Mo. Helper bascule automatiquement vers Azure Speech lorsqu’une clé Azure est configurée et que le fichier dépasse cette limite. L’endpoint Azure Fast Transcription utilisé accepte les fichiers de moins de 2 heures et jusqu’à 250 Mo. Les fichiers dépassant ces limites doivent être découpés avant import.
+
 ## Utilisation
 
 1. Publish the repository with GitHub Pages.

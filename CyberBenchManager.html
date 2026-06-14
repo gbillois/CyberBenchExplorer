@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wavestone Cyberbenchmark Workspace</title>
+  <title>CyberBenchManager</title>
   <script src="vendor/xlsx.full.min.js"></script>
   <script src="vendor/pptxgen.bundle.js"></script>
   <style>
@@ -415,6 +415,8 @@
     td.small, th.small { width: 84px; white-space: nowrap; }
     .muted { color: var(--muted); }
     .hidden { display: none !important; }
+    .mission-table input { min-width:140px; }
+    .config-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
 
     .empty {
       min-height: 360px;
@@ -760,8 +762,8 @@
           </svg>
         </div>
         <div>
-          <h1>Wavestone Cyberbenchmark Workspace</h1>
-          <p>Ingest · Check · Explore · Export</p>
+          <h1>CyberBenchManager</h1>
+          <p>Create · Ingest · Explore</p>
         </div>
       </div>
 
@@ -770,6 +772,10 @@
           <button data-workflow-tab="arrival" class="active" title="Accueil">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
             Accueil
+          </button>
+          <button data-workflow-tab="create" title="Create">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path><circle cx="12" cy="12" r="9"></circle></svg>
+            Create
           </button>
           <button data-workflow-tab="ingest" title="Ingest">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path><path d="M4 5h5"></path><path d="M15 5h5"></path></svg>
@@ -799,7 +805,7 @@
       <div class="content">
         <div id="dummyNotice" class="dummy-notice" role="status">
           <span class="key" aria-hidden="true">!</span>
-          <span>W-CyberBenchmark Explorer: dummy data displayed to tests, upload your own data and benchmark referential on top of the window. Nothing is stored or shared on Internet, it’s only a local display</span>
+          <span>CyberBenchManager : registre local des missions, préparation des configurations Helper, contrôle et génération des Explorers autonomes.</span>
         </div>
 
         <div class="topbar">
@@ -820,15 +826,46 @@
         <section id="arrival" class="workflow-panel">
           <div class="arrival-hero">
             <div>
-              <h3>Cyberbenchmark Workspace</h3>
-              <p>Un parcours unifié pour ingérer les entretiens, contrôler les règles métier, explorer les résultats et produire les livrables Cyberbenchmark.</p>
+              <h3>CyberBenchManager</h3>
+              <p>Créez les missions et configurations Helper, contrôlez les questionnaires reçus puis générez les Explorers clients.</p>
               <div class="workflow-steps">
-                <div class="workflow-step"><b>1. Ingest</b><span>Chargez le questionnaire prérempli et analysez une transcription ou un média.</span></div>
-                <div class="workflow-step"><b>2. Check</b><span>Contrôlez les règles métier avant l'intégration dans la base centrale.</span></div>
-                <div class="workflow-step"><b>3. Explore</b><span>Comparez les scores et parcourez toutes les visualisations.</span></div>
-                <div class="workflow-step"><b>4. Export</b><span>Téléchargez les fichiers Excel, CSV et PowerPoint produits.</span></div>
+                <div class="workflow-step"><b>1. Create</b><span>Enregistrez la mission, les clés fournies manuellement et le chef de projet.</span></div>
+                <div class="workflow-step"><b>2. Ingest & Check</b><span>Chargez et contrôlez le questionnaire reçu.</span></div>
+                <div class="workflow-step"><b>3. Explore</b><span>Chargez les moyennes et générez l’Explorer client autonome.</span></div>
               </div>
               <button class="primary" data-go-workflow="ingest" style="margin-top:28px;">Commencer</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="create" class="workflow-panel hidden">
+          <div class="grid two">
+            <div class="card">
+              <div class="card-head"><h3>Nouvelle mission</h3></div>
+              <div class="card-body">
+                <div class="ingest-fields">
+                  <div><label for="managerMissionCode">Code mission unique</label><input id="managerMissionCode"></div>
+                  <div><label for="managerMissionName">Nom mission / client</label><input id="managerMissionName"></div>
+                  <div><label for="managerPmName">Chef de projet</label><input id="managerPmName"></div>
+                  <div><label for="managerPmEmail">Email chef de projet</label><input id="managerPmEmail" type="email"></div>
+                  <div><label for="managerAnalysisProvider">Fournisseur analyse</label><select id="managerAnalysisProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div>
+                  <div><label for="managerAnalysisModel">Modèle analyse</label><input id="managerAnalysisModel" value="claude-sonnet-4-20250514"></div>
+                  <div class="wide"><label for="managerAnalysisKey">Clé API analyse</label><input id="managerAnalysisKey" type="password"></div>
+                  <div><label for="managerChallengeProvider">Fournisseur contradiction</label><select id="managerChallengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div>
+                  <div><label for="managerChallengeModel">Modèle contradiction</label><input id="managerChallengeModel" value="claude-sonnet-4-20250514"></div>
+                  <div class="wide"><label for="managerChallengeKey">Clé API contradiction</label><input id="managerChallengeKey" type="password"></div>
+                  <div><label for="managerTranscriptionProvider">Transcription</label><select id="managerTranscriptionProvider"><option value="openai">OpenAI diarisation</option><option value="azure">Azure Speech</option></select></div>
+                  <div><label for="managerTranscriptionKey">Clé API transcription</label><input id="managerTranscriptionKey" type="password"></div>
+                  <div><label for="managerAzureEndpoint">Endpoint Azure OpenAI</label><input id="managerAzureEndpoint"></div>
+                  <div><label for="managerAzureDeployment">Déploiement Azure</label><input id="managerAzureDeployment"></div>
+                  <div><label for="managerSpeechRegion">Région Azure Speech</label><input id="managerSpeechRegion" value="westeurope"></div>
+                </div>
+                <div class="config-actions"><button class="primary" id="saveMission">Enregistrer la mission</button><button id="downloadMissionConfig">Télécharger config Helper</button><button id="emailMissionConfig">Télécharger email .eml</button></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Registre local</h3><button id="exportMissionRegistry">Exporter JSON</button></div>
+              <div class="card-body"><div class="table-wrap"><table id="missionRegistry"><thead><tr><th>Code</th><th>Mission</th><th>Chef de projet</th><th>Fournisseurs</th><th>Création</th></tr></thead><tbody></tbody></table></div></div>
             </div>
           </div>
         </section>
@@ -850,7 +887,7 @@
 
         <section id="export" class="workflow-panel hidden">
           <div class="export-grid">
-            <div class="card export-card"><h3>Excel enrichi</h3><p>Questionnaire Cyberbenchmark complété avec les scores, commentaires et niveaux revus.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button></div>
+            <div class="card export-card"><h3>Questionnaire contrôlé</h3><p>Téléchargez le questionnaire ou enregistrez-le dans un répertoire SharePoint synchronisé.</p><button class="primary" id="exportExcelWorkflow">Télécharger Excel</button><button id="saveSharePoint" style="margin-top:8px;">Enregistrer dans SharePoint</button></div>
             <div class="card export-card"><h3>CSV base centrale</h3><p>Format tabulaire contrôlé pour ajout dans la base de données centrale Cyberbenchmark.</p><button class="primary" id="exportCentralCsv">Télécharger CSV</button></div>
             <div class="card export-card"><h3>PowerPoint résultats</h3><p>Présentation 16:9 contenant l'ensemble des principaux visuels de l'Explorer.</p><button class="primary pptx-export" id="exportPptx">Télécharger PPTX</button></div>
             <div class="card export-card"><h3 id="exportHtmlTitle">Exploration client autonome</h3><p id="exportHtmlText">Fichier HTML interactif avec résultats pré-calculés, sans benchmark ni données de calcul.</p><button class="primary" id="exportStandaloneHtml">Télécharger HTML autonome</button></div>
@@ -858,6 +895,7 @@
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de l’enregistrement.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
           <div class="grid two">
             <div class="card">
               <div class="card-head"><h3>Configuration LLM</h3></div>
@@ -2008,7 +2046,11 @@
       });
 
       const domainStats = buildDomainStats(questions);
-      return { questions, domainStats, sheetCount: domains.length };
+      const contextIssues = workbook.SheetNames.filter((name) => !domains.includes(name) && /(context|contexte|company|entreprise|information)/i.test(name)).flatMap((name) => {
+        const rows = sheetRows(workbook, name);
+        return rows.filter((row) => clean(row?.[0]) && row.slice(1).some((value) => value !== null && value !== undefined) && !row.slice(1).some((value) => clean(value))).map((row) => ({ sheet: name, field: clean(row[0]) }));
+      });
+      return { questions, domainStats, sheetCount: domains.length, contextIssues };
     }
 
     function buildDomainStats(questions) {
@@ -2593,6 +2635,7 @@ Return strict JSON only:
       ids.forEach((count, id) => {
         if (count > 1) results.push({ id, domain: inferDomain(id), severity: "Erreur", rule: "Identifiant unique", detail: `${count} occurrences détectées.` });
       });
+      (state.assessment.contextIssues || []).forEach((issue) => results.push({ id: issue.sheet, domain: "CONTEXTE", severity: "Alerte", rule: "Complétude du contexte", detail: `Le champ "${issue.field}" semble vide dans l’onglet ${issue.sheet}.` }));
       state.checkResults = results;
       renderChecks();
       return results;
@@ -2872,6 +2915,7 @@ Return strict JSON only:
     function updateTitle() {
       const titles = {
         arrival: ["Cyberbenchmark Workspace", "Accueil et parcours de traitement du questionnaire Cyberbenchmark."],
+        create: ["Create", "Créez une mission et préparez la configuration CyberBenchHelper destinée au chef de projet."],
         ingest: ["Ingest", "Chargez le questionnaire, transcrivez un média ou collez directement une transcription, puis enrichissez les scores."],
         check: ["Check", "Vérifiez les règles métier avant intégration dans la base centrale Cyberbenchmark."],
         explore: ["Explore", "Chargez le référentiel de scores et parcourez toutes les analyses existantes."],
@@ -3977,6 +4021,108 @@ Return strict JSON only:
       }
     }
 
+    const MANAGER_REGISTRY_KEY = "cyberbench-manager-missions-v1";
+    const MANAGER_SETTINGS_KEY = "cyberbench-manager-settings-v1";
+    let missionRegistry = [];
+
+    function downloadBlob(name, blob) {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+
+    function missionConfigPayload() {
+      const analysisProvider = $("managerAnalysisProvider").value;
+      const transcriptionProvider = $("managerTranscriptionProvider").value;
+      const challengeKey = $("managerChallengeKey").value.trim();
+      return {
+        version: 1,
+        application: "CyberBenchHelper",
+        exportedAt: new Date().toISOString(),
+        mission: { code: $("managerMissionCode").value.trim(), name: $("managerMissionName").value.trim(), projectManager: { name: $("managerPmName").value.trim(), email: $("managerPmEmail").value.trim() } },
+        values: {
+          missionCode: $("managerMissionCode").value.trim(),
+          missionName: $("managerMissionName").value.trim(),
+          projectManagerName: $("managerPmName").value.trim(),
+          projectManagerEmail: $("managerPmEmail").value.trim(),
+          ingestProvider: analysisProvider,
+          ingestModel: $("managerAnalysisModel").value.trim(),
+          ingestApiKey: analysisProvider === "azure_openai" ? "" : $("managerAnalysisKey").value.trim(),
+          ingestAzureEndpoint: $("managerAzureEndpoint").value.trim(),
+          ingestAzureDeployment: $("managerAzureDeployment").value.trim(),
+          ingestAzureKey: analysisProvider === "azure_openai" ? $("managerAnalysisKey").value.trim() : "",
+          transcriptionProvider,
+          openaiTranscriptionKey: transcriptionProvider === "openai" ? $("managerTranscriptionKey").value.trim() : "",
+          azureSpeechKey: transcriptionProvider === "azure" ? $("managerTranscriptionKey").value.trim() : "",
+          azureSpeechRegion: $("managerSpeechRegion").value.trim() || "westeurope",
+          azureSpeechLocale: "fr-FR",
+          challengeEnabled: true,
+          challengeProvider: $("managerChallengeProvider").value,
+          challengeModel: $("managerChallengeModel").value.trim(),
+          challengeApiKey: challengeKey
+        }
+      };
+    }
+
+    function renderMissionRegistry() {
+      $("missionRegistry").querySelector("tbody").innerHTML = missionRegistry.length ? missionRegistry.map((item) => `<tr><td><strong>${html(item.mission.code)}</strong></td><td>${html(item.mission.name)}</td><td>${html(item.mission.projectManager.name)}<br><span class="muted">${html(item.mission.projectManager.email)}</span></td><td>${html([item.values.ingestProvider, item.values.challengeProvider, item.values.transcriptionProvider].filter(Boolean).join(" · "))}</td><td>${new Date(item.exportedAt).toLocaleDateString("fr-FR")}</td></tr>`).join("") : '<tr><td colspan="5" class="muted">Aucune mission enregistrée.</td></tr>';
+    }
+
+    function saveMission() {
+      const payload = missionConfigPayload();
+      if (!payload.mission.code) return toast("Le code mission est obligatoire.");
+      const existing = missionRegistry.findIndex((item) => item.mission.code === payload.mission.code);
+      if (existing >= 0) missionRegistry[existing] = payload;
+      else missionRegistry.unshift(payload);
+      localStorage.setItem(MANAGER_REGISTRY_KEY, JSON.stringify(missionRegistry));
+      renderMissionRegistry();
+      toast("Mission enregistrée dans ce navigateur.");
+    }
+
+    function downloadMissionConfig() {
+      const payload = missionConfigPayload();
+      if (!payload.mission.code) return toast("Le code mission est obligatoire.");
+      downloadBlob(`CyberBenchHelper-config-${payload.mission.code}.json`, new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
+    }
+
+    function emailMissionConfig() {
+      const payload = missionConfigPayload();
+      if (!payload.mission.code) return toast("Le code mission est obligatoire.");
+      const json = JSON.stringify(payload, null, 2);
+      const boundary = `CyberBench-${Date.now()}`;
+      const encoded = btoa(unescape(encodeURIComponent(json))).replace(/(.{76})/g, "$1\r\n");
+      const eml = [`To: ${payload.mission.projectManager.email}`, `Subject: [${payload.mission.code}] Configuration CyberBenchHelper`, "MIME-Version: 1.0", `Content-Type: multipart/mixed; boundary="${boundary}"`, "", `--${boundary}`, 'Content-Type: text/plain; charset="UTF-8"', "", `Bonjour ${payload.mission.projectManager.name},\r\n\r\nVeuillez importer la configuration jointe dans CyberBenchHelper. Ce fichier contient des clés API confidentielles et ne doit pas être transféré.`, `--${boundary}`, `Content-Type: application/json; name="CyberBenchHelper-config-${payload.mission.code}.json"`, "Content-Transfer-Encoding: base64", `Content-Disposition: attachment; filename="CyberBenchHelper-config-${payload.mission.code}.json"`, "", encoded, `--${boundary}--`].join("\r\n");
+      downloadBlob(`CyberBenchHelper-${payload.mission.code}.eml`, new Blob([eml], { type: "message/rfc822" }));
+    }
+
+    function managerAssessmentWorkbookArray() {
+      const headers = ["#", "ID", "TYPE", "SUBTOPIC", "ASSESSMENT POINT", "EVIDENCE REQUIRED", "REQUIREMENTS L1", "(1) %", "REQUIREMENTS L2", "(2) %", "REQUIREMENTS L3", "(3) %", "REQUIREMENTS L4", "(4) %", "REQUIREMENTS L5", "(5) %", "N/A", "COMMENT", "ANSWER RELIABILITY", "CONTROL"];
+      const workbook = XLSX.utils.book_new();
+      [...new Set(state.assessment.questions.map((q) => q.domain))].forEach((domain) => {
+        const rows = state.assessment.questions.filter((q) => q.domain === domain).map((q) => [q.order, q.id, q.type, q.subtopic, q.question, q.evidence, q.requirements[0], q.levels[0], q.requirements[1], q.levels[1], q.requirements[2], q.levels[2], q.requirements[3], q.levels[3], q.requirements[4], q.levels[4], q.status === "na" ? "x" : "", q.comment, q.reliability, q.control]);
+        XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([headers, ...rows]), domain);
+      });
+      return XLSX.write(workbook, { type: "array", bookType: "xlsx" });
+    }
+
+    async function saveSharePoint() {
+      if (!state.assessment) return toast("Chargez d’abord un questionnaire.");
+      if (!window.showDirectoryPicker) return toast("La sélection de répertoire nécessite Chrome ou Edge. Utilisez Télécharger Excel.");
+      try {
+        const directory = await window.showDirectoryPicker({ mode: "readwrite" });
+        const code = $("managerMissionCode").value.trim() || "mission";
+        const handle = await directory.getFileHandle(`CyberBenchmark-${code}-${new Date().toISOString().slice(0, 10)}.xlsx`, { create: true });
+        const writable = await handle.createWritable();
+        await writable.write(managerAssessmentWorkbookArray());
+        await writable.close();
+        toast(`Questionnaire enregistré dans ${directory.name}.`);
+      } catch (error) {
+        if (error.name !== "AbortError") toast(`Enregistrement impossible : ${error.message}`);
+      }
+    }
+
     refs.assessmentFile.addEventListener("change", (event) => {
       const [file] = event.target.files;
       if (file) handleAssessment(file);
@@ -4052,6 +4198,15 @@ Return strict JSON only:
     }));
     $("exportCsv").addEventListener("click", exportCsv);
     $("runChecks").addEventListener("click", runBusinessChecks);
+    $("saveMission").addEventListener("click", saveMission);
+    $("downloadMissionConfig").addEventListener("click", downloadMissionConfig);
+    $("emailMissionConfig").addEventListener("click", emailMissionConfig);
+    $("exportMissionRegistry").addEventListener("click", () => downloadBlob("CyberBenchManager-missions.json", new Blob([JSON.stringify(missionRegistry, null, 2)], { type: "application/json" })));
+    $("saveSharePoint").addEventListener("click", saveSharePoint);
+    $("saveManagerSettings").addEventListener("click", () => {
+      localStorage.setItem(MANAGER_SETTINGS_KEY, JSON.stringify({ sharePointPath: $("sharePointPath").value }));
+      toast("Configuration Manager enregistrée.");
+    });
     $("exportExcelWorkflow").addEventListener("click", exportAssessmentWorkbook);
     $("exportCentralCsv").addEventListener("click", exportCentralCsv);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
@@ -4059,6 +4214,12 @@ Return strict JSON only:
     document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
 
     applyLocale();
+    try {
+      missionRegistry = JSON.parse(localStorage.getItem(MANAGER_REGISTRY_KEY) || "[]");
+      const managerSettings = JSON.parse(localStorage.getItem(MANAGER_SETTINGS_KEY) || "{}");
+      $("sharePointPath").value = managerSettings.sharePointPath || "";
+    } catch (error) { console.warn(error); }
+    renderMissionRegistry();
     if (window.__CYBERBENCH_EXPORT__) {
       try {
         loadEmbeddedExport(window.__CYBERBENCH_EXPORT__);
