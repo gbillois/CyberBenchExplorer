@@ -253,8 +253,12 @@
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted-2); }
     .dot.ready { background: var(--green); box-shadow: 0 0 0 5px rgba(99,210,124,.1); }
     .dot.warn { background: var(--amber); box-shadow: 0 0 0 5px rgba(241,184,75,.1); }
-    .ai-live-pill { display:inline-flex; align-items:center; gap:8px; min-height:32px; padding:0 11px; border:1px solid #a7f3d0; border-radius:999px; background:#ecfdf5; color:#047857; font-size:12px; font-weight:850; white-space:nowrap; }
+    .ai-live-pill { display:inline-flex; align-items:center; gap:8px; min-height:32px; padding:0 11px; border:1px solid #cbd5e1; border-radius:999px; background:#f1f5f9; color:#64748b; font-size:12px; font-weight:850; white-space:nowrap; cursor:pointer; }
+    .ai-live-pill.live { border-color:#a7f3d0; background:#ecfdf5; color:#047857; }
     .ai-live-pill .dot { background:var(--green); box-shadow:0 0 0 4px rgba(46,211,155,.12); }
+    .ai-live-pill:not(.live) .dot { background:#94a3b8; box-shadow:none; }
+    .ai-live-arrow { font-size:10px; transition:transform .18s ease; }
+    .ai-live-pill[aria-expanded="true"] .ai-live-arrow { transform:rotate(180deg); }
     .api-activity { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:12px; align-items:center; margin:0 0 16px; padding:11px 13px; border:1px solid #bfdbfe; border-radius:12px; background:#eff6ff; color:#1d4ed8; box-shadow:0 6px 18px rgba(29,78,216,.08); }
     .api-activity.success { border-color:#a7f3d0; background:#ecfdf5; color:#047857; }
     .api-activity.error { border-color:#fecaca; background:#fef2f2; color:#b91c1c; }
@@ -266,9 +270,8 @@
     .api-activity-bar { height:100%; width:0; border-radius:999px; background:currentColor; transition:width .2s ease; }
     .api-activity.indeterminate .api-activity-bar { width:38%; animation:api-progress 1.2s ease-in-out infinite; }
     .api-activity-meta { font-size:11px; font-weight:800; white-space:nowrap; }
-    .api-exchange { margin:-8px 0 16px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.82); }
-    .api-exchange summary { padding:9px 12px; color:var(--muted); font-size:12px; font-weight:800; cursor:pointer; }
-    .api-exchange-log { max-height:220px; overflow:auto; padding:0 12px 10px; color:#36566b; font:11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .api-exchange { margin:-8px 0 16px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.82); }
+    .api-exchange-log { max-height:300px; overflow:auto; color:#36566b; font:11px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; }
     .api-exchange-entry { padding:6px 0; border-top:1px solid var(--line-soft); overflow-wrap:anywhere; }
     .api-exchange-entry.error { color:#b91c1c; }
     .api-exchange-entry.success { color:#047857; }
@@ -849,10 +852,10 @@
             <h2 id="pageTitle">Overview</h2>
             <p id="pageIntro">Upload a completed W-CyberBenchmark file to generate indicators, rankings, and exploration views.</p>
           </div>
-          <div class="topbar-actions"><div id="aiLivePill" class="ai-live-pill hidden"><span class="dot"></span><span data-ui="aiLive">AI Live</span></div><div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div></div>
+          <div class="topbar-actions"><button id="aiLivePill" class="ai-live-pill" type="button" aria-expanded="false" aria-controls="apiExchangeDetails"><span class="dot"></span><span data-ui="aiLive">AI Live</span><span class="ai-live-arrow">▼</span></button><div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for file</span></div></div>
         </div>
         <div id="apiActivity" class="api-activity hidden" role="status" aria-live="polite"><span class="api-activity-spinner"></span><div class="api-activity-main"><strong id="apiActivityText"></strong><div class="api-activity-track"><div id="apiActivityBar" class="api-activity-bar"></div></div></div><span id="apiActivityMeta" class="api-activity-meta"></span></div>
-        <details id="apiExchangeDetails" class="api-exchange hidden"><summary data-ui="followApiExchanges">Suivre les échanges API</summary><div id="apiExchangeLog" class="api-exchange-log"></div></details>
+        <div id="apiExchangeDetails" class="api-exchange hidden"><div id="apiExchangeLog" class="api-exchange-log"></div></div>
 
         <section id="emptyState" class="empty hidden">
           <div>
@@ -1227,7 +1230,7 @@
                 <div class="choice-separator" data-ui="orSeparator">OU</div>
                 <div class="interview-choice"><label for="ingestTranscriptSource" id="ingestTranscriptLabel" data-ui="transcriptLabel">Ajouter directement votre transcript existant</label><textarea id="ingestTranscriptSource" placeholder="Collez la transcription complète ici..."></textarea><div class="improve-transcript-action"><button id="improveTranscript" data-ui="improveTranscript">Lancer l'amélioration du transcript</button></div></div>
               </div>
-              <div id="transcriptResult" class="transcript-result hidden"><label for="ingestTranscript">Transcription améliorée à relire</label><textarea id="ingestTranscript" placeholder="La transcription traitée apparaîtra ici..."></textarea><div class="transcript-result-actions"><button class="primary" id="saveImprovedTranscript">Valider et enregistrer la transcription</button><button id="loadImprovedTranscript">Charger une transcription améliorée</button><input id="improvedTranscriptFile" class="hidden" type="file" accept=".json,application/json"></div></div>
+              <div id="transcriptResult" class="transcript-result hidden"><label for="ingestTranscript">Transcription à relire et à modifier ci-dessous</label><textarea id="ingestTranscript" placeholder="La transcription traitée apparaîtra ici..."></textarea><div class="transcript-result-actions"><button class="primary" id="saveImprovedTranscript">Valider et enregistrer la transcription</button><button id="loadImprovedTranscript">Charger une transcription améliorée</button><input id="improvedTranscriptFile" class="hidden" type="file" accept=".json,application/json"></div></div>
             </div></div>
             <div class="helper-step"><div class="helper-step-number">3</div><div>
               <h3 data-ui="stepAnalyzeTitle">Analyser et télécharger le fichier enrichi</h3>
@@ -1748,7 +1751,8 @@
       },
       apiActivity: { tasks: new Map(), exchanges: [], sequence: 0, clearTimer: null },
       checkResults: [],
-      checkRan: false
+      checkRan: false,
+      checkOriginals: new Map()
     };
 
     const RECOMMENDATION_ENRICHMENT = {
@@ -1951,7 +1955,10 @@
     }
 
     function renderAIStatus() {
-      $("aiLivePill").classList.toggle("hidden", !state.ai.live);
+      $("aiLivePill").classList.toggle("live", state.ai.live);
+      $("aiLivePill").title = state.ai.live
+        ? localText("IA configurée. Cliquer pour afficher les échanges API.", "AI configured. Click to display API exchanges.", "KI konfiguriert. Klicken, um API-Austausch anzuzeigen.")
+        : localText("Aucune IA configurée. Cliquer pour afficher le journal API.", "No AI configured. Click to display the API log.", "Keine KI konfiguriert. Klicken, um das API-Protokoll anzuzeigen.");
       ["analysis", "challenge"].forEach((kind) => {
         const connection = state.ai.connections[kind];
         const connectionElement = $(`${kind}ConnectionStatus`);
@@ -1985,8 +1992,7 @@
 
     function logApiExchange(message, status = "info") {
       state.apiActivity.exchanges.push({ message: clean(message), status, at: new Date() });
-      state.apiActivity.exchanges = state.apiActivity.exchanges.slice(-100);
-      $("apiExchangeDetails").classList.remove("hidden");
+      state.apiActivity.exchanges = state.apiActivity.exchanges.slice(-250);
       $("apiExchangeLog").innerHTML = state.apiActivity.exchanges.map((entry) => `<div class="api-exchange-entry ${entry.status}">[${entry.at.toLocaleTimeString()}] ${html(entry.message)}</div>`).join("");
       $("apiExchangeLog").scrollTop = $("apiExchangeLog").scrollHeight;
     }
@@ -2046,16 +2052,32 @@
 
     async function apiFetch(url, options = {}, label = localText("Appel API en cours…", "API call in progress…", "API-Aufruf läuft…")) {
       const taskId = beginApiAction(label);
+      const startedAt = performance.now();
+      const method = String(options.method || "GET").toUpperCase();
+      const safeEndpoint = (() => {
+        try {
+          const parsed = new URL(url);
+          return `${parsed.host}${parsed.pathname}`;
+        } catch {
+          return String(url).split("?")[0];
+        }
+      })();
+      logApiExchange(localText(`Préparation de la requête ${method} vers ${safeEndpoint}.`, `Preparing ${method} request to ${safeEndpoint}.`, `${method}-Anfrage an ${safeEndpoint} wird vorbereitet.`));
+      logApiExchange(localText("Envoi de la requête au fournisseur…", "Sending request to provider…", "Anfrage wird an den Anbieter gesendet…"));
       try {
         const response = await fetch(url, options);
+        const duration = Math.round(performance.now() - startedAt);
+        logApiExchange(localText(`Réponse reçue : HTTP ${response.status} ${response.statusText || ""} en ${duration} ms.`, `Response received: HTTP ${response.status} ${response.statusText || ""} in ${duration} ms.`, `Antwort erhalten: HTTP ${response.status} ${response.statusText || ""} in ${duration} ms.`), response.ok ? "success" : "error");
         if (!response.ok) {
           const payload = await response.clone().json().catch(() => ({}));
           const detail = payload.error?.message || payload.message || `HTTP ${response.status}`;
           throw new Error(detail);
         }
+        logApiExchange(localText("Réponse valide, traitement des données reçues…", "Valid response, processing received data…", "Gültige Antwort, empfangene Daten werden verarbeitet…"));
         completeApiAction(taskId, localText("Réponse API reçue.", "API response received.", "API-Antwort empfangen."));
         return response;
       } catch (error) {
+        logApiExchange(localText(`Interruption de l’échange après ${Math.round(performance.now() - startedAt)} ms.`, `Exchange interrupted after ${Math.round(performance.now() - startedAt)} ms.`, `Austausch nach ${Math.round(performance.now() - startedAt)} ms unterbrochen.`), "error");
         const message = friendlyLLMError(error);
         failApiAction(taskId, error, message);
         const wrapped = new Error(message);
