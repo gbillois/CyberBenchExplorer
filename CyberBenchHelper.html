@@ -106,7 +106,8 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      min-height: 44px;
+      height: 64px;
+      min-height: 64px;
       border: 0;
       background: linear-gradient(110deg, var(--nav-a) 0%, var(--nav-b) 58%, var(--nav-c) 100%);
       box-shadow: 0 10px 34px rgba(9, 53, 76, .24);
@@ -119,7 +120,7 @@
 
     main { min-width: 0; }
 
-    .brand { display: flex; align-items: center; gap: 12px; padding: 9px 14px; margin: 0; border-right: 1px solid rgba(255,255,255,.12); min-width: 0; }
+    .brand { display: flex; align-items: center; gap: 12px; height: 64px; padding: 9px 14px; margin: 0; border-right: 1px solid rgba(255,255,255,.12); min-width: 0; }
     .mark {
       width: 34px; height: 34px; border-radius: 10px;
       background: rgba(255,255,255,.14);
@@ -132,7 +133,7 @@
     .brand h1 { font-size: 14px; line-height: 1.05; margin: 0; font-weight: 850; letter-spacing: -0.01em; color: #fff; }
     .brand p { margin: 3px 0 0; color: rgba(244,250,255,.78); font-size: 10px; letter-spacing: .16em; font-weight: 800; text-transform: uppercase; }
 
-    .side-section { border-top: 0; border-right: 1px solid rgba(255,255,255,.12); padding: 7px 10px; margin: 0; min-width: 0; }
+    .side-section { height: 64px; border-top: 0; border-right: 1px solid rgba(255,255,255,.12); padding: 7px 10px; margin: 0; min-width: 0; }
     .side-section:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
     .side-section:first-of-type { padding: 7px 10px; }
     .stack { display: grid; gap: 4px; align-content: center; }
@@ -225,33 +226,6 @@
     .export-card p { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 58px; }
 
     .content { padding: 28px clamp(18px, 3vw, 36px) 44px; }
-    .dummy-notice {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 0 0 18px;
-      padding: 13px 15px;
-      border: 1px solid #f2cf73;
-      border-left: 5px solid var(--amber);
-      border-radius: 12px;
-      background: #fff8df;
-      color: #4d3b08;
-      box-shadow: 0 8px 22px rgba(134, 100, 13, .12);
-      line-height: 1.45;
-      font-size: 13px;
-      font-weight: 650;
-    }
-    .dummy-notice .key {
-      flex: 0 0 auto;
-      display: inline-grid;
-      place-items: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      background: #ffedac;
-      color: #6b4e00;
-      font-weight: 900;
-    }
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -418,11 +392,18 @@
     .mission-strip { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.82); }
     .mission-strip strong { color:var(--cyan); }
     .config-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .config-actions .action-break { flex-basis:100%; height:0; }
     .helper-step { display:grid; grid-template-columns:42px 1fr; gap:14px; align-items:start; padding:18px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
     .helper-step-number { width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:linear-gradient(135deg,var(--cyan),var(--green)); color:#fff; font-size:18px; font-weight:900; }
     .helper-step h3 { margin:0 0 6px; }
     .helper-step p { margin:0 0 12px; color:var(--muted); line-height:1.5; }
     .helper-flow { display:grid; gap:14px; }
+    .interview-choice-grid { display:grid; grid-template-columns:minmax(190px, .8fr) auto minmax(280px, 2fr); gap:16px; align-items:stretch; margin-bottom:16px; }
+    .interview-choice { min-width:0; }
+    .choice-separator { display:grid; grid-template-rows:1fr auto 1fr; gap:9px; align-items:center; justify-items:center; color:var(--cyan); font-size:11px; font-weight:900; letter-spacing:.08em; }
+    .choice-separator::before, .choice-separator::after { content:""; width:1px; height:100%; background:var(--line); }
+    .improve-transcript-action { margin-top:14px; }
+    #improveTranscript { width:100%; background:linear-gradient(135deg, #137f9a, #13a59e); color:#fff; border-color:transparent; box-shadow:0 12px 24px rgba(14,126,148,.22); }
     .context-check { margin-bottom:16px; }
     .context-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
     .context-item { padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg-soft); }
@@ -737,9 +718,10 @@
       aside {
         position: static;
         height: auto;
+        min-height: 0;
         grid-template-columns: 1fr;
       }
-      .brand, .side-section { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+      .brand, .side-section { height: auto; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.12); }
       .nav { flex-wrap: wrap; }
       .nav button { flex: 1 1 130px; min-height: 58px; border-bottom: 1px solid rgba(255,255,255,.12); }
       .grid.kpis, .grid.two, .grid.three { grid-template-columns: 1fr; }
@@ -749,7 +731,6 @@
 
     @media (max-width: 700px) {
       .content { padding: 20px 14px 36px; }
-      .dummy-notice { font-size: 12px; }
       .topbar { display: grid; }
       .toolbar { grid-template-columns: 1fr; }
       .matrix { grid-template-columns: 1fr; }
@@ -758,6 +739,9 @@
       .bar-row, .compare-row { grid-template-columns: 1fr; gap: 7px; }
       .recommendation-toolbar, .recommendation-head { grid-template-columns: 1fr; }
       .ingest-grid, .ingest-fields { grid-template-columns: 1fr; }
+      .interview-choice-grid { grid-template-columns:1fr; }
+      .choice-separator { grid-template-columns:1fr auto 1fr; grid-template-rows:auto; }
+      .choice-separator::before, .choice-separator::after { width:100%; height:1px; }
       .workflow-steps, .source-grid, .check-summary, .export-grid { grid-template-columns: 1fr; }
       .ingest-fields .wide { grid-column: auto; }
       .scatter-stage { min-height: 380px; }
@@ -807,11 +791,7 @@
 
     <main>
       <div class="content">
-        <div id="dummyNotice" class="dummy-notice" role="status">
-          <span class="key" aria-hidden="true">!</span>
-          <span data-ui="localNotice">CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.</span>
-        </div>
-        <div class="mission-strip"><span><span data-ui="missionStrip">Mission</span> : <strong id="missionDisplay">non configurée</strong></span><span><span data-ui="managerStrip">Chef de projet</span> : <strong id="managerDisplay">non configuré</strong></span></div>
+        <div id="missionStrip" class="mission-strip hidden"><span><span data-ui="missionStrip">Mission</span> : <strong id="missionDisplay">non configurée</strong></span><span><span data-ui="managerStrip">Chef de projet</span> : <strong id="managerDisplay">non configuré</strong></span></div>
 
         <div class="topbar">
           <div class="title">
@@ -840,7 +820,7 @@
                 <div><label for="projectManagerName" data-ui="projectManager">Chef de projet</label><input id="projectManagerName"></div>
                 <div><label for="projectManagerEmail" data-ui="projectManagerEmail">Email chef de projet</label><input id="projectManagerEmail" type="email"></div>
               </div>
-              <div class="config-actions"><button class="primary" id="saveHelperConfig" data-ui="saveBrowser">Sauvegarder</button><button id="exportHelperConfig" data-ui="downloadProject">Télécharger le projet JSON</button><button id="importHelperConfig" data-ui="loadProject">Charger un projet JSON</button><input id="helperConfigFile" class="hidden" type="file" accept=".json"><button data-go-workflow="ingest" data-ui="startEnrich">Commencer l’enrichissement</button></div>
+              <div class="config-actions"><button class="primary" id="saveHelperConfig" data-ui="saveBrowser">Sauvegarder localement dans votre navigateur</button><button id="exportHelperConfig" data-ui="downloadProject">Télécharger la configuration du projet pour l'utiliser sur un autre ordinateur</button><button id="importHelperConfig" data-ui="loadProject">Charger un projet sauvegardé</button><input id="helperConfigFile" class="hidden" type="file" accept=".json"><span class="action-break" aria-hidden="true"></span><button data-go-workflow="ingest" data-ui="startEnrich">Commencer l’enrichissement</button></div>
             </div>
           </div>
         </section>
@@ -904,7 +884,7 @@
                 <p class="muted" data-ui="transcriptionHelp">OpenAI utilise gpt-4o-transcribe-diarize jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure Fast Transcription accepte jusqu’à 250 Mo et moins de 2 heures.</p>
               </div>
             </div>
-            <div style="grid-column:1/-1;"><h3 data-ui="analysisChallengeGroup">2. API Analyse et Check &amp; Challenge</h3></div>
+            <div style="grid-column:1/-1;"><h3 data-ui="analysisChallengeGroup">2. API d'analyse et de vérification</h3></div>
             <div class="card">
               <div class="card-head"><h3 data-ui="analysisApiTitle">Modèle d’analyse</h3></div>
               <div class="card-body">
@@ -927,7 +907,7 @@
             <div class="card-head"><h3 data-ui="challengeApiTitle">Modèle de Check &amp; Challenge</h3></div>
             <div class="card-body"><label style="display:flex;gap:10px;align-items:center;text-transform:none;"><input id="challengeEnabled" type="checkbox" checked style="width:auto;"><span data-ui="challengeEnabledLabel">Activer la seconde passe contradictoire par défaut</span></label><p class="muted" data-ui="challengeHelp">Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.</p>
               <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><input id="challengeModel" list="challengeModels" value="claude-opus-4-6"></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
-              <div class="config-actions"><button id="refreshChallengeModels">Récupérer les modèles de contradiction</button></div>
+              <div class="config-actions"><button id="refreshChallengeModels">Récupérer la liste des modèles existants</button><button id="challengeTest">Tester la connexion</button></div>
               <div class="model-guidance" data-ui="modelGuidance">Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure.</div>
             </div>
           </div>
@@ -1185,10 +1165,11 @@
             </div></div>
             <div class="helper-step"><div class="helper-step-number">2</div><div>
               <h3 data-ui="stepInterviewTitle">Ajouter les données issues des entretiens</h3>
-              <p data-ui="stepInterviewText">Collez la transcription Teams ou sélectionnez directement un fichier audio ou vidéo à transcrire et diariser.</p>
-              <div class="source-grid">
-                <div><label for="ingestMedia" data-ui="mediaLabel">Audio ou vidéo</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted"></p><button id="transcribeMedia" data-ui="transcribeButton">Transcrire et diariser</button></div>
-                <div style="grid-column:span 2;"><label for="ingestTranscript" id="ingestTranscriptLabel" data-ui="transcriptLabel">Transcription Teams ou texte à analyser</label><textarea id="ingestTranscript" placeholder="Collez la transcription complète ici..."></textarea><div class="config-actions"><button id="improveTranscript" data-ui="improveTranscript">Améliorer le transcript</button></div></div>
+              <p data-ui="stepInterviewText">Sélectionnez un fichier audio ou vidéo à transcrire et diariser, ou ajoutez directement votre transcript existant.</p>
+              <div class="interview-choice-grid">
+                <div class="interview-choice"><label for="ingestMedia" data-ui="mediaLabel">Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted"></p><button id="transcribeMedia" data-ui="transcribeButton">Transcrire et diariser</button></div>
+                <div class="choice-separator" data-ui="orSeparator">OU</div>
+                <div class="interview-choice"><label for="ingestTranscript" id="ingestTranscriptLabel" data-ui="transcriptLabel">Ajouter directement votre transcript existant</label><textarea id="ingestTranscript" placeholder="Collez la transcription complète ici..."></textarea><div class="improve-transcript-action"><button id="improveTranscript" data-ui="improveTranscript">Améliorer le transcript</button></div></div>
               </div>
             </div></div>
             <div class="helper-step"><div class="helper-step-number">3</div><div>
@@ -1282,7 +1263,6 @@
         ingestTest: "Test connection",
         exploreTitle: "Explore the analyses",
         waitingFile: "Waiting for file",
-        dummyData: "Dummy data",
         assessmentLoaded: "Assessment loaded",
         emptyTitle: "Upload an assessment file",
         emptyText: "The file is parsed in your browser. Domain sheets, maturity levels, comments, and response reliability are extracted to generate the views.",
@@ -1387,7 +1367,6 @@
         noBlindspot: "No blind spot detected.",
         noCommonDomain: "No common domain between the assessment and the benchmark.",
         noLaggingMeasure: "No lagging measure detected for this referential, or the benchmark is not available at question ID level.",
-        fallbackToast: "Example JSON files are missing or invalid: minimal fallback loaded.",
         assessmentReadError: "The file could not be read.",
         missingSheetJs: "SheetJS is not loaded. Check the local vendor file.",
         noDomainSheet: "No W-CyberBenchmark domain sheet detected.",
@@ -1420,7 +1399,6 @@
         avgShortMarker: "Avg.",
         sectorShort: "Sector",
         topShort: "Top",
-        localDisplayNotice: "CyberBenchHelper: example assessment and benchmark data are loaded. Use Ingest to replace the questionnaire and Explore to replace the score referential."
       },
       fr: {
         all: "Tous",
@@ -1471,7 +1449,6 @@
         ingestTest: "Tester la connexion",
         exploreTitle: "Explorer les analyses",
         waitingFile: "En attente de fichier",
-        dummyData: "Données exemple",
         assessmentLoaded: "Evaluation chargée",
         emptyTitle: "Chargez un fichier d'évaluation",
         emptyText: "Le fichier est analysé côté navigateur. Les feuilles de domaines, les niveaux de maturité, les commentaires et la fiabilité des réponses sont extraits pour générer les vues.",
@@ -1576,7 +1553,6 @@
         noBlindspot: "Aucun angle mort détecté.",
         noCommonDomain: "Aucun domaine commun entre l'évaluation et le benchmark.",
         noLaggingMeasure: "Aucune mesure en retard détectée pour ce référentiel, ou le benchmark n'est pas au niveau ID de question.",
-        fallbackToast: "Fichiers JSON d'exemple absents ou invalides : fallback minimal chargé.",
         assessmentReadError: "Lecture du fichier impossible.",
         missingSheetJs: "La librairie SheetJS n'est pas chargée. Vérifiez le fichier local.",
         noDomainSheet: "Aucune feuille de domaine W-CyberBenchmark détectée.",
@@ -1609,28 +1585,27 @@
         avgShortMarker: "Moy.",
         sectorShort: "Sect.",
         topShort: "Top",
-        localDisplayNotice: "CyberBenchHelper : une évaluation exemple et le benchmark par défaut sont chargés. Utilisez Ingest pour remplacer le questionnaire et Explore pour remplacer le référentiel de scores."
       }
     };
 
-    I18N.de = { ...I18N.en, all: "Alle", assessmentLabel: "Bewertungsdatei XLS/XLSM", assessmentHelp: "Lokale Verarbeitung im Browser. Keine Datei wird hochgeladen.", waitingFile: "Warten auf Datei", dummyData: "Beispieldaten", assessmentLoaded: "Bewertung geladen", assessmentReadError: "Die Datei konnte nicht gelesen werden.", missingSheetJs: "SheetJS ist nicht geladen.", noDomainSheet: "Kein CyberBenchmark-Domainblatt erkannt.", comparedQuestionCount: "{count} Fragen", domainsCount: "{count} Bereiche" };
+    I18N.de = { ...I18N.en, all: "Alle", assessmentLabel: "Bewertungsdatei XLS/XLSM", assessmentHelp: "Lokale Verarbeitung im Browser. Keine Datei wird hochgeladen.", waitingFile: "Warten auf Datei", assessmentLoaded: "Bewertung geladen", assessmentReadError: "Die Datei konnte nicht gelesen werden.", missingSheetJs: "SheetJS ist nicht geladen.", noDomainSheet: "Kein CyberBenchmark-Domainblatt erkannt.", comparedQuestionCount: "{count} Fragen", domainsCount: "{count} Bereiche" };
 
     const HELPER_UI = {
       fr: {
         navHome:"Accueil", navEnrich:"Enrichir", navCheck:"Contrôler", navSettings:"Réglages", localNotice:"CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.",
-        homeTitle:"Configurer ou charger votre mission", homeIntro:"Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.", apiRequired:"Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.", missionCode:"Code mission", missionName:"Nom mission / client", projectManager:"Chef de projet", projectManagerEmail:"Email chef de projet", saveBrowser:"Sauvegarder", downloadProject:"Télécharger le projet JSON", loadProject:"Charger un projet JSON", startEnrich:"Commencer l’enrichissement",
-        ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Collez la transcription Teams ou sélectionnez directement un fichier audio ou vidéo à transcrire et diariser.", mediaLabel:"Audio ou vidéo", transcribeButton:"Transcrire et diariser", transcriptLabel:"Transcription Teams ou texte à analyser", improveTranscript:"Améliorer le transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
-        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API Analyse et Check & Challenge", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
+        homeTitle:"Configurer ou charger votre mission", homeIntro:"Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.", apiRequired:"Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.", missionCode:"Code mission", missionName:"Nom mission / client", projectManager:"Chef de projet", projectManagerEmail:"Email chef de projet", saveBrowser:"Sauvegarder localement dans votre navigateur", downloadProject:"Télécharger la configuration du projet pour l'utiliser sur un autre ordinateur", loadProject:"Charger un projet sauvegardé", startEnrich:"Commencer l’enrichissement",
+        ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi. Cet enrichissement peut être réalisé thème par thème ou globalement.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Sélectionnez un fichier audio ou vidéo à transcrire et diariser, ou ajoutez directement votre transcript existant.", mediaLabel:"Ajouter un fichier audio ou vidéo (250 Mo maximum avec Azure, 25 Mo avec OpenAI)", transcribeButton:"Transcrire et diariser", transcriptLabel:"Ajouter directement votre transcript existant", orSeparator:"OU", improveTranscript:"Améliorer le transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
+        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API d'analyse et de vérification", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.", consentTitle:"Avertissement de confidentialité et autorisation LLM", consentText:"L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.", consentLabel:"Je dispose d’une validation écrite autorisant l’utilisation d’un LLM et des fournisseurs configurés.", modelGuidance:"Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure."
       },
       en: {
         navHome:"Home", navEnrich:"Enrich", navCheck:"Check", navSettings:"Settings", localNotice:"CyberBenchHelper runs locally. Files stay in the browser except during direct calls to configured API providers.",
-        homeTitle:"Configure or load your mission", homeIntro:"Enter the mission details before starting. They will be included in files and the return email.", apiRequired:"A transcription API key and an analysis API key must be configured in Settings before processing an interview.", missionCode:"Mission code", missionName:"Mission / client name", projectManager:"Project manager", projectManagerEmail:"Project manager email", saveBrowser:"Save", downloadProject:"Download project JSON", loadProject:"Load project JSON", startEnrich:"Start enrichment",
-        ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Paste the Teams transcript or directly select an audio or video file for transcription and diarization.", mediaLabel:"Audio or video", transcribeButton:"Transcribe and diarize", transcriptLabel:"Teams transcript or text to analyze", improveTranscript:"Improve transcript", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
-        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and Check & Challenge APIs", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
+        homeTitle:"Configure or load your mission", homeIntro:"Enter the mission details before starting. They will be included in files and the return email.", apiRequired:"A transcription API key and an analysis API key must be configured in Settings before processing an interview.", missionCode:"Mission code", missionName:"Mission / client name", projectManager:"Project manager", projectManagerEmail:"Project manager email", saveBrowser:"Save locally in your browser", downloadProject:"Download the project configuration to use it on another computer", loadProject:"Load a saved project", startEnrich:"Start enrichment",
+        ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file. Enrichment can be performed theme by theme or globally.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Select an audio or video file to transcribe and diarize, or directly add your existing transcript.", mediaLabel:"Add an audio or video file (250 MB maximum with Azure, 25 MB with OpenAI)", transcribeButton:"Transcribe and diarize", transcriptLabel:"Directly add your existing transcript", orSeparator:"OR", improveTranscript:"Improve transcript", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
+        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and verification API", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model.", consentTitle:"Confidentiality warning and LLM authorization", consentText:"The use of an LLM and the configured providers must be explicitly approved by the assessed organization. Interview data and selected questionnaire information will be sent to the selected providers.", consentLabel:"I have written approval authorizing the use of an LLM and the configured providers.", modelGuidance:"For sufficient quality, use at least GPT-5.5 or Claude Opus 4.6, or a later version."
       },
       de: {
         navHome:"Start", navEnrich:"Anreichern", navCheck:"Prüfen", navSettings:"Einstellungen", localNotice:"CyberBenchHelper läuft lokal. Dateien bleiben im Browser, außer bei direkten Aufrufen der konfigurierten API-Anbieter.",
-        homeTitle:"Mission konfigurieren oder laden", homeIntro:"Geben Sie vor dem Start die Missionsdaten ein. Sie werden in Dateien und Rücksende-E-Mail übernommen.", apiRequired:"Vor der Verarbeitung eines Interviews müssen in den Einstellungen ein Transkriptions-API-Schlüssel und ein Analyse-API-Schlüssel konfiguriert werden.", missionCode:"Missionscode", missionName:"Mission / Kunde", projectManager:"Projektleiter", projectManagerEmail:"E-Mail des Projektleiters", saveBrowser:"Speichern", downloadProject:"Projekt-JSON herunterladen", loadProject:"Projekt-JSON laden", startEnrich:"Anreicherung starten",
+        homeTitle:"Mission konfigurieren oder laden", homeIntro:"Geben Sie vor dem Start die Missionsdaten ein. Sie werden in Dateien und Rücksende-E-Mail übernommen.", apiRequired:"Vor der Verarbeitung eines Interviews müssen in den Einstellungen ein Transkriptions-API-Schlüssel und ein Analyse-API-Schlüssel konfiguriert werden.", missionCode:"Missionscode", missionName:"Mission / Kunde", projectManager:"Projektleiter", projectManagerEmail:"E-Mail des Projektleiters", saveBrowser:"Lokal im Browser speichern", downloadProject:"Projektkonfiguration zur Nutzung auf einem anderen Computer herunterladen", loadProject:"Projekt-JSON laden", startEnrich:"Anreicherung starten",
         ingestGuide:"Ablauf: vorausgefüllten Fragebogen laden, Interviewdaten hinzufügen, Analyse starten und angereicherte Datei herunterladen.", stepExcelTitle:"Vorausgefüllte Excel-Datei laden", stepExcelText:"Wählen Sie den Fragebogen mit den während des Interviews eingetragenen Reifegraden.", assessmentFileLabel:"Excel-Fragebogen", stepInterviewTitle:"Interviewdaten hinzufügen", stepInterviewText:"Fügen Sie das Teams-Transkript ein oder wählen Sie direkt eine Audio- oder Videodatei zur Transkription und Sprechertrennung.", mediaLabel:"Audio oder Video", transcribeButton:"Transkribieren und Sprecher trennen", transcriptLabel:"Teams-Transkript oder zu analysierender Text", improveTranscript:"Transkript verbessern", stepAnalyzeTitle:"Analysieren und angereicherte Datei herunterladen", stepAnalyzeText:"Die Analyse ergänzt Kommentare und prüft die Stufen. Der unabhängige Check & Challenge ist standardmäßig aktiviert.", scopeLabel:"Analyseumfang", analyzeButton:"Analyse starten", applyButton:"Ergebnisse übernehmen", downloadEnriched:"Angereicherte Datei herunterladen", openSettings:"API-Einstellungen öffnen",
         checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden.", consentTitle:"Vertraulichkeitshinweis und LLM-Autorisierung", consentText:"Die Nutzung eines LLM und der konfigurierten Anbieter muss von der bewerteten Organisation ausdrücklich genehmigt sein. Interviewdaten und ausgewählte Fragebogeninformationen werden an die ausgewählten Anbieter übermittelt.", consentLabel:"Mir liegt eine schriftliche Genehmigung zur Nutzung eines LLM und der konfigurierten Anbieter vor.", modelGuidance:"Verwenden Sie für ausreichende Qualität mindestens GPT-5.5 oder Claude Opus 4.6 beziehungsweise eine neuere Version."
       }
@@ -1652,9 +1627,9 @@
         if (label) label.textContent = value;
       });
       const buttons = {
-        fr: { refreshAnalysisModels:"Récupérer les modèles", ingestTest:"Tester la connexion", refreshChallengeModels:"Récupérer les modèles de contradiction" },
-        en: { refreshAnalysisModels:"Retrieve models", ingestTest:"Test connection", refreshChallengeModels:"Retrieve challenge models" },
-        de: { refreshAnalysisModels:"Modelle abrufen", ingestTest:"Verbindung testen", refreshChallengeModels:"Gegenprüfungsmodelle abrufen" }
+        fr: { refreshAnalysisModels:"Récupérer la liste des modèles existants", ingestTest:"Tester la connexion", refreshChallengeModels:"Récupérer la liste des modèles existants", challengeTest:"Tester la connexion" },
+        en: { refreshAnalysisModels:"Retrieve the list of available models", ingestTest:"Test connection", refreshChallengeModels:"Retrieve the list of available models", challengeTest:"Test connection" },
+        de: { refreshAnalysisModels:"Liste der vorhandenen Modelle abrufen", ingestTest:"Verbindung testen", refreshChallengeModels:"Liste der vorhandenen Modelle abrufen", challengeTest:"Verbindung testen" }
       }[lang] || {};
       Object.entries(buttons).forEach(([id, value]) => { if ($(id)) $(id).textContent = value; });
       $("ingestTranscript").placeholder = lang === "fr" ? "Collez la transcription complète ici..." : (lang === "de" ? "Vollständiges Transkript hier einfügen..." : "Paste the complete transcript here...");
@@ -1701,8 +1676,6 @@
         applied: false
       },
       filters: { search: "", domain: "", type: "", status: "", score: "" },
-      dummyAssessment: false,
-      dummyBenchmark: false,
       checkResults: [],
       checkRan: false
     };
@@ -1767,7 +1740,6 @@
       benchmarkFile: $("benchmarkFile"),
       assessmentMeta: $("assessmentMeta"),
       benchmarkMeta: $("benchmarkMeta"),
-      dummyNotice: $("dummyNotice"),
       statusDot: $("statusDot"),
       statusText: $("statusText"),
       pageTitle: $("pageTitle"),
@@ -1822,8 +1794,6 @@
       document.querySelector('label[for="ingestApiKey"]').textContent = t("ingestApiKey");
       document.querySelector('label[for="ingestDomain"]').textContent = t("ingestScope");
 
-      const noticeText = $("dummyNotice")?.querySelector("span:last-child");
-      if (noticeText) noticeText.textContent = t("localDisplayNotice");
       $("benchmarkTemplate").textContent = t("benchmarkTemplate");
       $("exportPptx").textContent = t("exportPptx");
       setText("exportHtmlTitle", "exportHtmlTitle");
@@ -2237,146 +2207,6 @@
 
     const average = (values) => values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
 
-    function dummyQuestion({ id, type, subtopic, question, score, levels, status = "scored", comment, reliability = "Moyenne", evidence, requirements }) {
-      const domain = inferDomain(id);
-      const parsedScore = parseScore(score);
-      const normalizedLevels = normalizeLevels(levels, parsedScore, status);
-      const computedScore = normalizedLevels.some((value) => value > 0) ? scoreFromLevels(normalizedLevels) : parsedScore;
-      const genericRequirements = [
-        "Initial practice: informal, incomplete, or not consistently evidenced.",
-        "Defined practice: documented on a limited scope with partial ownership.",
-        "Managed practice: documented, deployed on core scope, and regularly evidenced.",
-        "Measured practice: monitored with indicators, exceptions, and management review.",
-        "Optimized practice: continuously tested, improved, and benchmarked against leading practice."
-      ];
-      const resolvedRequirements = Array.isArray(requirements) && requirements.some((value) => clean(value))
-        ? [0, 1, 2, 3, 4].map((index) => clean(requirements[index]) || genericRequirements[index])
-        : genericRequirements;
-      return {
-        id,
-        order: Number(id.split(".")[1]) || 0,
-        domain,
-        domainName: DOMAIN_NAMES[domain] || domain,
-        type,
-        subtopic,
-        question,
-        evidence: clean(evidence) || "Synthetic example: simulated evidence for demonstration.",
-        requirements: resolvedRequirements,
-        levels: normalizedLevels,
-        score: status === "scored" && Number.isFinite(computedScore) ? computedScore : null,
-        status,
-        comment,
-        reliability,
-        control: "Dummy control",
-        iso2013: "A.5 / A.6",
-        iso2022: "5.x / 8.x",
-        nist11: "ID / PR / DE / RS",
-        nist2: "GV / ID / PR / DE / RS",
-        function11: "Identify",
-        function2: "Govern"
-      };
-    }
-
-    function createDummyAssessment() {
-      const questions = [
-        dummyQuestion({ id: "GOV.01", type: "ORGA", subtopic: "Fallback", question: "Is fallback governance evidence available?", score: 70, comment: "Minimal fallback loaded because the example JSON file is unavailable." }),
-        dummyQuestion({ id: "IAM.01", type: "TECH", subtopic: "Fallback", question: "Is fallback access control evidence available?", score: 55, comment: "Load the example JSON files to use the complete synthetic data set." }),
-        dummyQuestion({ id: "DET.01", type: "TECH", subtopic: "Fallback", question: "Is fallback detection evidence available?", score: 45, comment: "This minimal data set prevents an empty screen." })
-      ];
-      return { questions, domainStats: buildDomainStats(questions), sheetCount: new Set(questions.map((q) => q.domain)).size };
-    }
-
-    function createDummyBenchmark() {
-      const records = [
-        { id: "GOV.01", domain: "GOV", all: 62, sector: 68, top: 84, topMaturityLevel: 4, topLevels: [0, 0, 0.64, 0.22, 0.14] },
-        { id: "IAM.01", domain: "IAM", all: 60, sector: 66, top: 86, topMaturityLevel: 4, topLevels: [0, 0, 0.56, 0.27, 0.17] },
-        { id: "DET.01", domain: "DET", all: 58, sector: 64, top: 82, topMaturityLevel: 4, topLevels: [0, 0, 0.72, 0.17, 0.11] }
-      ];
-      records.forEach((record) => record.references = { all: record.all, sector: record.sector, top: record.top });
-      return {
-        sourceSheet: "Fallback benchmark",
-        records,
-        recordMap: new Map(records.map((r) => [normalize(r.id), r])),
-        domainStats: aggregateBenchmark(records),
-        referenceOptions: [{ key: "all", label: t("average") }, { key: "sector", label: t("sector") }, { key: "top", label: "Top 10" }],
-        preferredRef: "top"
-      };
-    }
-
-    async function fetchJson(path) {
-      if (!window.fetch) throw new Error("Fetch indisponible.");
-      const response = await fetch(path, { cache: "no-store" });
-      if (!response.ok) throw new Error(`${path} introuvable.`);
-      return response.json();
-    }
-
-    async function fetchWorkbook(path) {
-      if (!window.fetch || !window.XLSX) throw new Error(t("missingSheetJs"));
-      const response = await fetch(path, { cache: "no-store" });
-      if (!response.ok) throw new Error(`${path} introuvable.`);
-      return XLSX.read(new Uint8Array(await response.arrayBuffer()), { type: "array", cellDates: true });
-    }
-
-    function normalizeDummyAssessment(payload) {
-      const questions = (payload.questions || []).map((item) => dummyQuestion(item)).filter((q) => q.id);
-      if (!questions.length) throw new Error("Questionnaire d'exemple vide.");
-      return {
-        questions,
-        domainStats: buildDomainStats(questions),
-        sheetCount: new Set(questions.map((q) => q.domain)).size,
-        sourceName: payload.name || "Dummy assessment"
-      };
-    }
-
-    function normalizeDummyBenchmark(payload) {
-      const records = (payload.records || []).map((item) => ({
-        id: clean(item.id),
-        domain: inferDomain(item.domain || item.id),
-        references: { all: parseScore(item.all), sector: parseScore(item.sector), top: parseScore(item.top) },
-        all: parseScore(item.all),
-        sector: parseScore(item.sector),
-        top: parseScore(item.top),
-        topLevels: normalizeLevels(item.topLevels || item.topMaturityLevels || item.levels, parseScore(item.top)),
-        topMaturityLevel: parseMaturityLevel(item.topMaturityLevel ?? item.topLevel ?? item.maturityLevel)
-      })).filter((r) => (r.id || r.domain) && [r.all, r.sector, r.top].some(Number.isFinite));
-      records.forEach((record) => {
-        if (!Number.isFinite(record.topMaturityLevel)) record.topMaturityLevel = maturityLevelFromLevels(record.topLevels) || maturityLevelFromScore(record.top);
-      });
-      if (!records.length) throw new Error("Benchmark d'exemple vide.");
-      return {
-        sourceSheet: payload.sourceSheet || payload.name || "Dummy benchmark",
-        records,
-        recordMap: new Map(records.map((r) => [normalize(r.id), r])),
-        domainStats: aggregateBenchmark(records),
-        referenceOptions: [{ key: "all", label: t("average") }, { key: "sector", label: t("sector") }, { key: "top", label: "Top 10" }],
-        preferredRef: payload.preferredRef || "top"
-      };
-    }
-
-    async function loadDummyData() {
-      let usedFallback = false;
-      try {
-        const [assessmentPayload, benchmarkWorkbook] = await Promise.all([
-          fetchJson("data/dummy-assessment.json"),
-          fetchWorkbook("data/Scores-CyberBenchmark-03062026.xlsx")
-        ]);
-        state.assessment = normalizeDummyAssessment(assessmentPayload);
-        state.benchmark = parseBenchmark(benchmarkWorkbook, "Scores-CyberBenchmark-03062026.xlsx");
-      } catch (error) {
-        usedFallback = true;
-        state.assessment = createDummyAssessment();
-        state.benchmark = createDummyBenchmark();
-        toast(t("fallbackToast"));
-      }
-      state.dummyAssessment = true;
-      state.dummyBenchmark = usedFallback;
-      state.compareRef = state.benchmark.preferredRef;
-      populateBenchmarkSelectors();
-      refs.assessmentMeta.innerHTML = `<strong>${state.assessment.sourceName || (usedFallback ? "Fallback assessment" : "Dummy assessment")}</strong><br>${t("comparedQuestionCount", { count: state.assessment.questions.length })} · ${t("domainsCount", { count: state.assessment.sheetCount })}`;
-      refs.benchmarkMeta.innerHTML = `<strong>${usedFallback ? "Fallback benchmark" : "Scores CyberBenchmark 03062026"}</strong><br>${t("rowsSheet", { rows: state.benchmark.records.length, sheet: state.benchmark.sourceSheet })}`;
-      refs.statusDot.className = "dot warn";
-      refs.statusText.textContent = t("dummyData");
-    }
 
     async function handleAssessment(file) {
       try {
@@ -2385,12 +2215,6 @@
         const assessment = parseAssessment(workbook);
         if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
         state.assessment = assessment;
-        state.dummyAssessment = false;
-        if (state.dummyBenchmark) {
-          state.benchmark = null;
-          state.dummyBenchmark = false;
-          refs.benchmarkMeta.innerHTML = "";
-        }
         state.drill = { domain: "", questionId: "" };
         state.overviewDomain = "";
         state.overviewQuestion = "";
@@ -2418,7 +2242,6 @@
         const workbook = await readWorkbook(file);
         const benchmark = parseBenchmark(workbook, file.name);
         state.benchmark = benchmark;
-        state.dummyBenchmark = false;
         if (!benchmark.referenceOptions.some((option) => option.key === state.compareRef)) state.compareRef = benchmark.preferredRef;
         populateBenchmarkSelectors();
         refs.benchmarkMeta.innerHTML = `<strong>${file.name}</strong><br>${t("rowsSheet", { rows: benchmark.records.length, sheet: benchmark.sourceSheet })}`;
@@ -2683,15 +2506,17 @@ Return strict JSON only:
       }
     }
 
-    async function testIngestConnection() {
-      $("ingestTest").disabled = true;
+    async function testModelConnection(kind = "analysis") {
+      const challenge = kind === "challenge";
+      const button = $(challenge ? "challengeTest" : "ingestTest");
+      button.disabled = true;
       try {
-        await callIngestLLM("Return strict JSON only.", 'Reply with {"ok":true}.');
+        await callIngestLLM("Return strict JSON only.", 'Reply with {"ok":true}.', challenge ? challengeIngestConfig() : ingestConfig());
         toast("LLM connection confirmed.");
       } catch (error) {
         toast(`LLM connection failed: ${error.message}`);
       } finally {
-        $("ingestTest").disabled = false;
+        button.disabled = false;
       }
     }
 
@@ -3064,7 +2889,6 @@ Return strict JSON only:
         const clientBootstrap = `<script>window.__CYBERBENCH_EXPORT__=${payload};<\/script>`;
         const clientStyles = `<style id="client-export-styles">
           body.client-export .workflow-nav,
-          body.client-export #dummyNotice,
           body.client-export #exploreToolbar > .card,
           body.client-export .status-pill,
           body.client-export [data-explore-tab="compare"],
@@ -3108,8 +2932,6 @@ Return strict JSON only:
       });
       state.workflowTab = "explore";
       state.tab = "home";
-      state.dummyAssessment = false;
-      state.dummyBenchmark = false;
       document.body.classList.add("client-export");
       document.title = lang === "fr" ? "Cyberbenchmark · Rapport client" : "Cyberbenchmark · Client report";
       populateBenchmarkSelectors();
@@ -3140,7 +2962,7 @@ Return strict JSON only:
 
     function render() {
       const ready = Boolean(state.assessment);
-      refs.dummyNotice.classList.toggle("hidden", !(state.dummyAssessment || state.dummyBenchmark));
+      $("missionStrip").classList.toggle("hidden", state.workflowTab === "arrival");
       refs.emptyState.classList.add("hidden");
       refs.workflowPanels.forEach((panel) => panel.classList.toggle("hidden", panel.id !== state.workflowTab && !(panel.id === "exploreToolbar" && state.workflowTab === "explore")));
       refs.analysisPanels.forEach((panel) => panel.classList.toggle("hidden", state.workflowTab !== "explore" || !ready || panel.id !== state.tab));
@@ -4497,7 +4319,8 @@ Return strict JSON only:
     ["ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => scheduleModelRefresh("analysis")));
     ["challengeApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => scheduleModelRefresh("challenge")));
     $("ingestDomain").addEventListener("change", (event) => { state.ingest.domain = event.target.value; });
-    $("ingestTest").addEventListener("click", testIngestConnection);
+    $("ingestTest").addEventListener("click", () => testModelConnection("analysis"));
+    $("challengeTest").addEventListener("click", () => testModelConnection("challenge"));
     $("ingestRun").addEventListener("click", runIngest);
     $("improveTranscript").addEventListener("click", () => improveTranscript(false));
     $("ingestApply").addEventListener("click", applyIngestResults);
@@ -4556,9 +4379,7 @@ Return strict JSON only:
         console.error(error);
         toast(t("exportHtmlError"));
       }
-    } else {
-      loadDummyData().finally(render);
-    }
+    } else render();
   </script>
 </body>
 </html>
