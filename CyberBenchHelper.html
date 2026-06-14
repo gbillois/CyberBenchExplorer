@@ -418,6 +418,15 @@
     .mission-strip { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:16px; padding:12px 16px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.82); }
     .mission-strip strong { color:var(--cyan); }
     .config-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .helper-step { display:grid; grid-template-columns:42px 1fr; gap:14px; align-items:start; padding:18px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+    .helper-step-number { width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:linear-gradient(135deg,var(--cyan),var(--green)); color:#fff; font-size:18px; font-weight:900; }
+    .helper-step h3 { margin:0 0 6px; }
+    .helper-step p { margin:0 0 12px; color:var(--muted); line-height:1.5; }
+    .helper-flow { display:grid; gap:14px; }
+    .context-check { margin-bottom:16px; }
+    .context-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .context-item { padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg-soft); }
+    .api-required { padding:14px 16px; border:1px solid #f0c84b; border-radius:12px; background:#fff9df; color:#765d00; font-weight:750; margin:16px 0; }
 
     .empty {
       min-height: 360px;
@@ -764,7 +773,7 @@
         </div>
         <div>
           <h1>CyberBenchHelper</h1>
-          <p>Transcript · Enrich · Check</p>
+          <p>Enrich · Check · Send</p>
         </div>
       </div>
 
@@ -772,27 +781,19 @@
         <nav class="nav workflow-nav" id="nav">
           <button data-workflow-tab="arrival" class="active" title="Accueil">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
-            Accueil
+            <span data-ui="navHome">Accueil</span>
           </button>
           <button data-workflow-tab="ingest" title="Ingest">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path><path d="M4 5h5"></path><path d="M15 5h5"></path></svg>
-            Transcript & Enrich
+            <span data-ui="navEnrich">Enrichir</span>
           </button>
           <button data-workflow-tab="check" title="Check">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"></path><path d="M4 4h16v16H4z"></path></svg>
-            Check
-          </button>
-          <button data-workflow-tab="explore" title="Explore">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
-            Explore
-          </button>
-          <button data-workflow-tab="export" title="Export">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9"></path><path d="m7 14 5-5 5 5"></path><path d="M5 3h14"></path></svg>
-            Export
+            <span data-ui="navCheck">Contrôler</span>
           </button>
           <button data-workflow-tab="configuration" title="Configuration">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>
-            Configuration
+            <span data-ui="navSettings">Réglages</span>
           </button>
         </nav>
       </section>
@@ -802,9 +803,9 @@
       <div class="content">
         <div id="dummyNotice" class="dummy-notice" role="status">
           <span class="key" aria-hidden="true">!</span>
-          <span>CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.</span>
+          <span data-ui="localNotice">CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.</span>
         </div>
-        <div class="mission-strip"><span>Mission : <strong id="missionDisplay">non configurée</strong></span><span>Chef de projet : <strong id="managerDisplay">non configuré</strong></span></div>
+        <div class="mission-strip"><span><span data-ui="missionStrip">Mission</span> : <strong id="missionDisplay">non configurée</strong></span><span><span data-ui="managerStrip">Chef de projet</span> : <strong id="managerDisplay">non configuré</strong></span></div>
 
         <div class="topbar">
           <div class="title">
@@ -822,31 +823,47 @@
         </section>
 
         <section id="arrival" class="workflow-panel">
-          <div class="arrival-hero">
-            <div>
-              <h3>CyberBenchHelper</h3>
-              <p>Transcrivez les entretiens, enrichissez le questionnaire et contrôlez sa cohérence avant envoi.</p>
-              <div class="workflow-steps">
-                <div class="workflow-step"><b>1. Transcript</b><span>Transcrivez un média avec diarisation OpenAI ou Azure Speech.</span></div>
-                <div class="workflow-step"><b>2. Enrich</b><span>Complétez commentaires et pourcentages depuis le transcript.</span></div>
-                <div class="workflow-step"><b>3. Check</b><span>Contrôlez les règles métier et préparez l’email de retour.</span></div>
+          <div class="card">
+            <div class="card-head"><h3 data-ui="homeTitle">Configurer ou charger votre mission</h3></div>
+            <div class="card-body">
+              <p class="muted" data-ui="homeIntro">Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.</p>
+              <div class="api-required" data-ui="apiRequired">Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.</div>
+              <div class="ingest-fields">
+                <div><label for="missionCode" data-ui="missionCode">Code mission</label><input id="missionCode"></div>
+                <div><label for="missionName" data-ui="missionName">Nom mission / client</label><input id="missionName"></div>
+                <div><label for="projectManagerName" data-ui="projectManager">Chef de projet</label><input id="projectManagerName"></div>
+                <div><label for="projectManagerEmail" data-ui="projectManagerEmail">Email chef de projet</label><input id="projectManagerEmail" type="email"></div>
               </div>
-              <button class="primary" data-go-workflow="ingest" style="margin-top:28px;">Commencer</button>
+              <div class="config-actions"><button class="primary" id="saveHelperConfig" data-ui="saveBrowser">Sauvegarder</button><button id="exportHelperConfig" data-ui="downloadProject">Télécharger le projet JSON</button><button id="importHelperConfig" data-ui="loadProject">Charger un projet JSON</button><input id="helperConfigFile" class="hidden" type="file" accept=".json"><button data-go-workflow="ingest" data-ui="startEnrich">Commencer l’enrichissement</button></div>
             </div>
           </div>
         </section>
 
         <section id="check" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;"><div class="card-body">
+            <div class="source-grid" style="margin-bottom:0;">
+              <div><label for="checkAssessmentFile" data-ui="checkFileLabel">Fichier Excel à contrôler</label><input id="checkAssessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><div id="checkAssessmentMeta" class="muted"></div></div>
+              <div style="align-self:end;"><button class="primary" id="runChecks" data-ui="runChecks">Contrôler le fichier</button></div>
+            </div>
+          </div></div>
           <div class="check-summary">
-            <div class="card kpi"><div class="label">Questions contrôlées</div><div class="value" id="checkTotal">-</div><div class="sub">Règles applicables</div></div>
-            <div class="card kpi"><div class="label">Conformes</div><div class="value check-ok" id="checkOk">-</div><div class="sub">Sans anomalie</div></div>
-            <div class="card kpi"><div class="label">Anomalies</div><div class="value check-error" id="checkErrors">-</div><div class="sub">À corriger avant export</div></div>
+            <div class="card kpi"><div class="label" data-ui="checkedQuestions">Questions contrôlées</div><div class="value" id="checkTotal">-</div><div class="sub" data-ui="applicableRules">Règles applicables</div></div>
+            <div class="card kpi"><div class="label" data-ui="compliant">Conformes</div><div class="value check-ok" id="checkOk">-</div><div class="sub" data-ui="withoutIssue">Sans anomalie</div></div>
+            <div class="card kpi"><div class="label" data-ui="issues">Anomalies</div><div class="value check-error" id="checkErrors">-</div><div class="sub" data-ui="toCorrect">À corriger avant envoi</div></div>
+          </div>
+          <div class="card context-check">
+            <div class="card-head"><h3 data-ui="companyCheckTitle">Complétude des informations sur l’entreprise</h3></div>
+            <div class="card-body"><div class="context-grid">
+              <div class="context-item"><div class="label" data-ui="contextFields">Champs contrôlés</div><div class="value" id="contextTotal">-</div></div>
+              <div class="context-item"><div class="label" data-ui="contextComplete">Statut</div><div class="value" id="contextStatus">-</div></div>
+              <div class="context-item"><div class="label" data-ui="contextMissing">Champs manquants</div><div class="value" id="contextMissing">-</div></div>
+            </div><div id="contextDetails" class="muted" style="margin-top:12px;"></div></div>
           </div>
           <div class="card">
-            <div class="card-head"><h3>Contrôles métier Cyberbenchmark</h3><div class="config-actions"><button id="emailChecks">Télécharger l’email .eml</button><button class="primary" id="runChecks">Relancer les contrôles</button></div></div>
+            <div class="card-head"><h3 data-ui="businessCheckTitle">Contrôle des niveaux et règles métier</h3><div class="config-actions"><button id="emailChecks" disabled data-ui="sendTeam">Envoyer à l’équipe Cyber Bench</button></div></div>
             <div class="card-body">
-              <p class="muted">Règles initiales : identifiants uniques, pourcentages compris entre 0 et 100 %, somme de L1 à L4 égale à 100 % pour une réponse scorée, L5 traité comme bonus, et absence de score pour une réponse N/A.</p>
-              <div class="table-wrap"><table id="checkTable"><thead><tr><th class="small">ID</th><th class="small">Domaine</th><th class="small">Sévérité</th><th>Règle</th><th>Détail</th></tr></thead><tbody></tbody></table></div>
+              <p class="muted" data-ui="businessCheckIntro">Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.</p>
+              <div class="table-wrap"><table id="checkTable"><thead><tr><th class="small">ID</th><th class="small" data-ui="domainHeader">Domaine</th><th class="small" data-ui="severityHeader">Sévérité</th><th data-ui="ruleHeader">Règle</th><th data-ui="detailHeader">Détail</th></tr></thead><tbody></tbody></table></div>
             </div>
           </div>
         </section>
@@ -861,21 +878,23 @@
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-head"><h3>Configuration de mission</h3></div>
-            <div class="card-body">
-              <div class="ingest-fields">
-                <div><label for="missionCode">Code mission</label><input id="missionCode"></div>
-                <div><label for="missionName">Nom mission / client</label><input id="missionName"></div>
-                <div><label for="projectManagerName">Chef de projet</label><input id="projectManagerName"></div>
-                <div><label for="projectManagerEmail">Email chef de projet</label><input id="projectManagerEmail" type="email"></div>
-              </div>
-              <div class="config-actions"><button class="primary" id="saveHelperConfig">Enregistrer dans ce navigateur</button><button id="importHelperConfig">Importer JSON</button><button id="exportHelperConfig">Exporter JSON</button><input id="helperConfigFile" class="hidden" type="file" accept=".json"></div>
-            </div>
-          </div>
           <div class="grid two">
+            <div class="card" style="grid-column:1/-1;">
+              <div class="card-head"><h3 data-ui="transcriptionApiTitle">1. API de transcription</h3></div>
+              <div class="card-body">
+                <div class="ingest-fields">
+                  <div><label for="transcriptionProvider">Fournisseur</label><select id="transcriptionProvider"><option value="openai">OpenAI diarisation</option><option value="azure">Azure Speech</option></select></div>
+                  <div><label for="openaiTranscriptionKey">Clé OpenAI transcription</label><input id="openaiTranscriptionKey" type="password" autocomplete="off"></div>
+                  <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
+                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
+                  <div><label for="azureSpeechLocale">Langue</label><select id="azureSpeechLocale"><option value="fr-FR">Français</option><option value="en-US">English</option><option value="de-DE">Deutsch</option></select></div>
+                </div>
+                <p class="muted" data-ui="transcriptionHelp">OpenAI utilise gpt-4o-transcribe-diarize jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure Fast Transcription accepte jusqu’à 250 Mo et moins de 2 heures.</p>
+              </div>
+            </div>
+            <div style="grid-column:1/-1;"><h3 data-ui="analysisChallengeGroup">2. API Analyse et Check &amp; Challenge</h3></div>
             <div class="card">
-              <div class="card-head"><h3>Configuration LLM</h3></div>
+              <div class="card-head"><h3 data-ui="analysisApiTitle">Modèle d’analyse</h3></div>
               <div class="card-body">
                 <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés restent uniquement en mémoire.</div>
                 <div class="ingest-fields" style="margin-top:14px;">
@@ -892,25 +911,12 @@
               </div>
             </div>
             <div class="card">
-              <div class="card-head"><h3>Transcription et diarisation</h3></div>
-              <div class="card-body">
-                <div class="ingest-fields">
-                  <div><label for="transcriptionProvider">Fournisseur</label><select id="transcriptionProvider"><option value="openai">OpenAI diarisation</option><option value="azure">Azure Speech</option></select></div>
-                  <div><label for="openaiTranscriptionKey">Clé OpenAI transcription</label><input id="openaiTranscriptionKey" type="password" autocomplete="off"></div>
-                  <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
-                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
-                  <div><label for="azureSpeechLocale">Langue</label><select id="azureSpeechLocale"><option value="fr-FR">Français</option><option value="en-US">English</option><option value="de-DE">Deutsch</option></select></div>
-                </div>
-                <p class="muted">OpenAI utilise gpt-4o-transcribe-diarize jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure Fast Transcription accepte jusqu’à 250 Mo et moins de 2 heures. Les fichiers plus grands doivent être découpés avant import.</p>
-              </div>
-            </div>
-          </div>
-          <div class="card" style="margin-top:16px;">
-            <div class="card-head"><h3>Check &amp; Challenge</h3></div>
-            <div class="card-body"><label style="display:flex;gap:10px;align-items:center;text-transform:none;"><input id="challengeEnabled" type="checkbox" checked style="width:auto;"> Activer la seconde passe contradictoire par défaut</label><p class="muted">Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.</p>
+            <div class="card-head"><h3 data-ui="challengeApiTitle">Modèle de Check &amp; Challenge</h3></div>
+            <div class="card-body"><label style="display:flex;gap:10px;align-items:center;text-transform:none;"><input id="challengeEnabled" type="checkbox" checked style="width:auto;"><span data-ui="challengeEnabledLabel">Activer la seconde passe contradictoire par défaut</span></label><p class="muted" data-ui="challengeHelp">Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.</p>
               <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><input id="challengeModel" list="challengeModels" value="claude-sonnet-4-20250514"></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
               <div class="config-actions"><button id="refreshChallengeModels">Récupérer les modèles de contradiction</button></div>
             </div>
+          </div>
           </div>
           <datalist id="analysisModels"></datalist><datalist id="challengeModels"></datalist>
         </section>
@@ -1155,43 +1161,29 @@
         </section>
 
         <section id="ingest" class="workflow-panel hidden">
-          <div class="card" style="margin-bottom:16px;">
-            <div class="card-head"><h3>Sources d'ingestion</h3></div>
-            <div class="card-body">
+          <div class="api-required" data-ui="ingestGuide">Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi.</div>
+          <div class="helper-flow">
+            <div class="helper-step"><div class="helper-step-number">1</div><div>
+              <h3 data-ui="stepExcelTitle">Charger le fichier Excel prérempli</h3>
+              <p data-ui="stepExcelText">Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.</p>
+              <label for="assessmentFile" data-ui="assessmentFileLabel">Questionnaire Excel</label><input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><div id="assessmentMeta" class="muted"></div><p id="assessmentHelp" class="muted"></p>
+            </div></div>
+            <div class="helper-step"><div class="helper-step-number">2</div><div>
+              <h3 data-ui="stepInterviewTitle">Ajouter les données issues des entretiens</h3>
+              <p data-ui="stepInterviewText">Collez la transcription Teams ou sélectionnez directement un fichier audio ou vidéo à transcrire et diariser.</p>
               <div class="source-grid">
-                <div class="source-card"><h4>0. Questionnaire Cyberbenchmark</h4><label for="assessmentFile">Excel avec scores prépositionnés</label><input id="assessmentFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><p id="assessmentHelp" class="muted">Le fichier sert de base à enrichir.</p><div id="assessmentMeta" class="muted"></div></div>
-                <div class="source-card"><h4>1. Audio ou vidéo</h4><label for="ingestMedia">Média à transcrire</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted">Configuration transcription requise.</p><button id="transcribeMedia">Transcrire et diariser</button></div>
-                <div class="source-card"><h4>2. Transcription directe</h4><p class="muted">Collez la transcription dans la zone ci-dessous, puis lancez l'analyse.</p></div>
+                <div><label for="ingestMedia" data-ui="mediaLabel">Audio ou vidéo</label><input id="ingestMedia" type="file" accept="audio/*,video/*"><p id="ingestMediaMeta" class="muted"></p><button id="transcribeMedia" data-ui="transcribeButton">Transcrire et diariser</button></div>
+                <div style="grid-column:span 2;"><label for="ingestTranscript" id="ingestTranscriptLabel" data-ui="transcriptLabel">Transcription Teams ou texte à analyser</label><textarea id="ingestTranscript" placeholder="Collez la transcription complète ici..."></textarea><div class="config-actions"><button id="improveTranscript" data-ui="improveTranscript">Améliorer le transcript</button></div></div>
               </div>
-            </div>
-          </div>
-          <div class="ingest-grid">
-            <div class="card">
-              <div class="card-head"><h3 id="ingestTranscriptTitle">Meeting transcript</h3></div>
-              <div class="card-body">
-                <label for="ingestTranscript" id="ingestTranscriptLabel">Transcript to analyze</label>
-                <textarea id="ingestTranscript" placeholder="Paste the complete meeting transcript here..."></textarea>
-                <div class="ingest-actions">
-                  <button id="improveTranscript">Améliorer le transcript</button>
-                  <button class="primary" id="ingestRun">Run extraction + check &amp; challenge</button>
-                  <button id="ingestApply" disabled>Apply reviewed results</button>
-                </div>
-                <div class="ingest-progress hidden" id="ingestProgress">
-                  <div class="ingest-progress-line"><span id="ingestProgressBar" style="width:0%"></span></div>
-                  <strong id="ingestProgressText"></strong>
-                  <div class="ingest-log" id="ingestLog"></div>
-                </div>
-                <div class="ingest-review" id="ingestReview"></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-head"><h3>Options d'analyse</h3></div>
-              <div class="card-body">
-                <label for="ingestDomain">Périmètre</label><select id="ingestDomain"><option value="">Tous les domaines, séquentiellement</option></select>
-                <p class="muted">Pour une meilleure qualité, chaque domaine fait l'objet d'un appel d'extraction puis d'un appel indépendant de check &amp; challenge.</p>
-                <button data-go-workflow="configuration">Ouvrir la configuration API</button>
-              </div>
-            </div>
+            </div></div>
+            <div class="helper-step"><div class="helper-step-number">3</div><div>
+              <h3 data-ui="stepAnalyzeTitle">Analyser et télécharger le fichier enrichi</h3>
+              <p data-ui="stepAnalyzeText">L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.</p>
+              <label for="ingestDomain" data-ui="scopeLabel">Périmètre d’analyse</label><select id="ingestDomain"><option value="">Tous les domaines, séquentiellement</option></select>
+              <div class="ingest-actions"><button class="primary" id="ingestRun" data-ui="analyzeButton">Lancer l’analyse</button><button id="ingestApply" disabled data-ui="applyButton">Appliquer les résultats</button><button id="ingestDownload" disabled data-ui="downloadEnriched">Télécharger le fichier enrichi</button><button data-go-workflow="configuration" data-ui="openSettings">Ouvrir les réglages API</button></div>
+              <div class="ingest-progress hidden" id="ingestProgress"><div class="ingest-progress-line"><span id="ingestProgressBar" style="width:0%"></span></div><strong id="ingestProgressText"></strong><div class="ingest-log" id="ingestLog"></div></div>
+              <div class="ingest-review" id="ingestReview"></div>
+            </div></div>
           </div>
         </section>
       </div>
@@ -1222,7 +1214,7 @@
     };
 
     const browserLanguage = typeof navigator !== "undefined" && navigator.language ? navigator.language : "en";
-    const lang = /^fr\b/i.test(browserLanguage) ? "fr" : "en";
+    const lang = /^fr\b/i.test(browserLanguage) ? "fr" : (/^de\b/i.test(browserLanguage) ? "de" : "en");
     if (document.documentElement) document.documentElement.lang = lang;
 
     const I18N = {
@@ -1413,7 +1405,7 @@
         avgShortMarker: "Avg.",
         sectorShort: "Sector",
         topShort: "Top",
-        localDisplayNotice: "Cyberbenchmark Workspace: example assessment and benchmark data are loaded. Use Ingest to replace the questionnaire and Explore to replace the score referential."
+        localDisplayNotice: "CyberBenchHelper: example assessment and benchmark data are loaded. Use Ingest to replace the questionnaire and Explore to replace the score referential."
       },
       fr: {
         all: "Tous",
@@ -1602,14 +1594,62 @@
         avgShortMarker: "Moy.",
         sectorShort: "Sect.",
         topShort: "Top",
-        localDisplayNotice: "Cyberbenchmark Workspace : une évaluation exemple et le benchmark par défaut sont chargés. Utilisez Ingest pour remplacer le questionnaire et Explore pour remplacer le référentiel de scores."
+        localDisplayNotice: "CyberBenchHelper : une évaluation exemple et le benchmark par défaut sont chargés. Utilisez Ingest pour remplacer le questionnaire et Explore pour remplacer le référentiel de scores."
       }
     };
+
+    I18N.de = { ...I18N.en, all: "Alle", assessmentLabel: "Bewertungsdatei XLS/XLSM", assessmentHelp: "Lokale Verarbeitung im Browser. Keine Datei wird hochgeladen.", waitingFile: "Warten auf Datei", dummyData: "Beispieldaten", assessmentLoaded: "Bewertung geladen", assessmentReadError: "Die Datei konnte nicht gelesen werden.", missingSheetJs: "SheetJS ist nicht geladen.", noDomainSheet: "Kein CyberBenchmark-Domainblatt erkannt.", comparedQuestionCount: "{count} Fragen", domainsCount: "{count} Bereiche" };
+
+    const HELPER_UI = {
+      fr: {
+        navHome:"Accueil", navEnrich:"Enrichir", navCheck:"Contrôler", navSettings:"Réglages", localNotice:"CyberBenchHelper fonctionne localement. Les fichiers restent dans le navigateur, sauf lors des appels directs aux fournisseurs API configurés.",
+        homeTitle:"Configurer ou charger votre mission", homeIntro:"Renseignez la mission avant de commencer. Ces informations seront reprises dans les fichiers et l’email de retour.", apiRequired:"Une clé API de transcription et une clé API d’analyse doivent être configurées dans Réglages avant de traiter un entretien.", missionCode:"Code mission", missionName:"Nom mission / client", projectManager:"Chef de projet", projectManagerEmail:"Email chef de projet", saveBrowser:"Sauvegarder", downloadProject:"Télécharger le projet JSON", loadProject:"Charger un projet JSON", startEnrich:"Commencer l’enrichissement",
+        ingestGuide:"Parcours : chargez le questionnaire prérempli, ajoutez les données d’entretien, lancez l’analyse puis téléchargez le fichier enrichi.", stepExcelTitle:"Charger le fichier Excel prérempli", stepExcelText:"Sélectionnez le questionnaire contenant déjà les niveaux renseignés pendant l’entretien.", assessmentFileLabel:"Questionnaire Excel", stepInterviewTitle:"Ajouter les données issues des entretiens", stepInterviewText:"Collez la transcription Teams ou sélectionnez directement un fichier audio ou vidéo à transcrire et diariser.", mediaLabel:"Audio ou vidéo", transcribeButton:"Transcrire et diariser", transcriptLabel:"Transcription Teams ou texte à analyser", improveTranscript:"Améliorer le transcript", stepAnalyzeTitle:"Analyser et télécharger le fichier enrichi", stepAnalyzeText:"L’analyse complète les commentaires et contrôle les niveaux. La seconde passe de Check & Challenge est activée par défaut.", scopeLabel:"Périmètre d’analyse", analyzeButton:"Lancer l’analyse", applyButton:"Appliquer les résultats", downloadEnriched:"Télécharger le fichier enrichi", openSettings:"Ouvrir les réglages API",
+        checkFileLabel:"Fichier Excel à contrôler", runChecks:"Contrôler le fichier", companyCheckTitle:"Complétude des informations sur l’entreprise", contextFields:"Champs contrôlés", contextComplete:"Statut", contextMissing:"Champs manquants", businessCheckTitle:"Contrôle des niveaux et règles métier", businessCheckIntro:"Le contrôle vérifie notamment les identifiants, les pourcentages, la somme de L1 à L4 égale à 100 % et la cohérence des réponses N/A.", sendTeam:"Envoyer à l’équipe Cyber Bench", transcriptionApiTitle:"1. API de transcription", analysisChallengeGroup:"2. API Analyse et Check & Challenge", analysisApiTitle:"Modèle d’analyse", challengeApiTitle:"Modèle de Check & Challenge", missionStrip:"Mission", managerStrip:"Chef de projet", checkedQuestions:"Questions contrôlées", applicableRules:"Règles applicables", compliant:"Conformes", withoutIssue:"Sans anomalie", issues:"Anomalies", toCorrect:"À corriger avant envoi", domainHeader:"Domaine", severityHeader:"Sévérité", ruleHeader:"Règle", detailHeader:"Détail", transcriptionHelp:"OpenAI accepte les fichiers jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure accepte jusqu’à 250 Mo et moins de 2 heures.", challengeEnabledLabel:"Activer la seconde passe contradictoire par défaut", challengeHelp:"Le modèle de contradiction peut utiliser un fournisseur ou modèle différent."
+      },
+      en: {
+        navHome:"Home", navEnrich:"Enrich", navCheck:"Check", navSettings:"Settings", localNotice:"CyberBenchHelper runs locally. Files stay in the browser except during direct calls to configured API providers.",
+        homeTitle:"Configure or load your mission", homeIntro:"Enter the mission details before starting. They will be included in files and the return email.", apiRequired:"A transcription API key and an analysis API key must be configured in Settings before processing an interview.", missionCode:"Mission code", missionName:"Mission / client name", projectManager:"Project manager", projectManagerEmail:"Project manager email", saveBrowser:"Save", downloadProject:"Download project JSON", loadProject:"Load project JSON", startEnrich:"Start enrichment",
+        ingestGuide:"Process: load the pre-filled questionnaire, add interview data, run the analysis, then download the enriched file.", stepExcelTitle:"Load the pre-filled Excel file", stepExcelText:"Select the questionnaire containing the maturity levels entered during the interview.", assessmentFileLabel:"Excel questionnaire", stepInterviewTitle:"Add interview data", stepInterviewText:"Paste the Teams transcript or directly select an audio or video file for transcription and diarization.", mediaLabel:"Audio or video", transcribeButton:"Transcribe and diarize", transcriptLabel:"Teams transcript or text to analyze", improveTranscript:"Improve transcript", stepAnalyzeTitle:"Analyze and download the enriched file", stepAnalyzeText:"The analysis completes comments and checks levels. The independent Check & Challenge pass is enabled by default.", scopeLabel:"Analysis scope", analyzeButton:"Run analysis", applyButton:"Apply results", downloadEnriched:"Download enriched file", openSettings:"Open API settings",
+        checkFileLabel:"Excel file to check", runChecks:"Check file", companyCheckTitle:"Company information completeness", contextFields:"Fields checked", contextComplete:"Status", contextMissing:"Missing fields", businessCheckTitle:"Level and business-rule checks", businessCheckIntro:"Checks include identifiers, percentages, L1-L4 totaling 100%, and N/A consistency.", sendTeam:"Send to the Cyber Bench team", transcriptionApiTitle:"1. Transcription API", analysisChallengeGroup:"2. Analysis and Check & Challenge APIs", analysisApiTitle:"Analysis model", challengeApiTitle:"Check & Challenge model", missionStrip:"Mission", managerStrip:"Project manager", checkedQuestions:"Questions checked", applicableRules:"Applicable rules", compliant:"Compliant", withoutIssue:"Without issue", issues:"Issues", toCorrect:"To correct before sending", domainHeader:"Domain", severityHeader:"Severity", ruleHeader:"Rule", detailHeader:"Detail", transcriptionHelp:"OpenAI accepts files up to 25 MB. Above that limit, Helper switches to Azure Speech when an Azure key is configured. Azure accepts up to 250 MB and less than two hours.", challengeEnabledLabel:"Enable the independent challenge pass by default", challengeHelp:"The challenge model may use a different provider or model."
+      },
+      de: {
+        navHome:"Start", navEnrich:"Anreichern", navCheck:"Prüfen", navSettings:"Einstellungen", localNotice:"CyberBenchHelper läuft lokal. Dateien bleiben im Browser, außer bei direkten Aufrufen der konfigurierten API-Anbieter.",
+        homeTitle:"Mission konfigurieren oder laden", homeIntro:"Geben Sie vor dem Start die Missionsdaten ein. Sie werden in Dateien und Rücksende-E-Mail übernommen.", apiRequired:"Vor der Verarbeitung eines Interviews müssen in den Einstellungen ein Transkriptions-API-Schlüssel und ein Analyse-API-Schlüssel konfiguriert werden.", missionCode:"Missionscode", missionName:"Mission / Kunde", projectManager:"Projektleiter", projectManagerEmail:"E-Mail des Projektleiters", saveBrowser:"Speichern", downloadProject:"Projekt-JSON herunterladen", loadProject:"Projekt-JSON laden", startEnrich:"Anreicherung starten",
+        ingestGuide:"Ablauf: vorausgefüllten Fragebogen laden, Interviewdaten hinzufügen, Analyse starten und angereicherte Datei herunterladen.", stepExcelTitle:"Vorausgefüllte Excel-Datei laden", stepExcelText:"Wählen Sie den Fragebogen mit den während des Interviews eingetragenen Reifegraden.", assessmentFileLabel:"Excel-Fragebogen", stepInterviewTitle:"Interviewdaten hinzufügen", stepInterviewText:"Fügen Sie das Teams-Transkript ein oder wählen Sie direkt eine Audio- oder Videodatei zur Transkription und Sprechertrennung.", mediaLabel:"Audio oder Video", transcribeButton:"Transkribieren und Sprecher trennen", transcriptLabel:"Teams-Transkript oder zu analysierender Text", improveTranscript:"Transkript verbessern", stepAnalyzeTitle:"Analysieren und angereicherte Datei herunterladen", stepAnalyzeText:"Die Analyse ergänzt Kommentare und prüft die Stufen. Der unabhängige Check & Challenge ist standardmäßig aktiviert.", scopeLabel:"Analyseumfang", analyzeButton:"Analyse starten", applyButton:"Ergebnisse übernehmen", downloadEnriched:"Angereicherte Datei herunterladen", openSettings:"API-Einstellungen öffnen",
+        checkFileLabel:"Zu prüfende Excel-Datei", runChecks:"Datei prüfen", companyCheckTitle:"Vollständigkeit der Unternehmensinformationen", contextFields:"Geprüfte Felder", contextComplete:"Status", contextMissing:"Fehlende Felder", businessCheckTitle:"Prüfung der Stufen und Geschäftsregeln", businessCheckIntro:"Geprüft werden Kennungen, Prozentsätze, die Summe L1-L4 von 100 % und die N/A-Konsistenz.", sendTeam:"An das Cyber-Bench-Team senden", transcriptionApiTitle:"1. Transkriptions-API", analysisChallengeGroup:"2. Analyse- und Check-&-Challenge-APIs", analysisApiTitle:"Analysemodell", challengeApiTitle:"Check-&-Challenge-Modell", missionStrip:"Mission", managerStrip:"Projektleiter", checkedQuestions:"Geprüfte Fragen", applicableRules:"Anwendbare Regeln", compliant:"Konform", withoutIssue:"Ohne Fehler", issues:"Probleme", toCorrect:"Vor dem Versand zu korrigieren", domainHeader:"Bereich", severityHeader:"Schweregrad", ruleHeader:"Regel", detailHeader:"Detail", transcriptionHelp:"OpenAI akzeptiert Dateien bis 25 MB. Darüber wechselt Helper zu Azure Speech, wenn ein Azure-Schlüssel konfiguriert ist. Azure akzeptiert bis zu 250 MB und weniger als zwei Stunden.", challengeEnabledLabel:"Unabhängige Gegenprüfung standardmäßig aktivieren", challengeHelp:"Für die Gegenprüfung kann ein anderer Anbieter oder ein anderes Modell verwendet werden."
+      }
+    };
+
+    function applyHelperLocale() {
+      const strings = HELPER_UI[lang] || HELPER_UI.en;
+      document.querySelectorAll("[data-ui]").forEach((element) => {
+        const value = strings[element.dataset.ui];
+        if (value) element.textContent = value;
+      });
+      const fields = {
+        fr: { transcriptionProvider:"Fournisseur", openaiTranscriptionKey:"Clé OpenAI transcription", azureSpeechKey:"Clé Azure Speech", azureSpeechRegion:"Région", azureSpeechLocale:"Langue", ingestProvider:"Fournisseur", ingestModel:"Modèle", ingestApiKey:"Clé API", ingestAzureEndpoint:"Endpoint Azure OpenAI", ingestAzureDeployment:"Déploiement", ingestAzureKey:"Clé Azure OpenAI", challengeProvider:"Fournisseur", challengeModel:"Modèle", challengeApiKey:"Clé API dédiée (laisser vide pour reprendre la clé d’analyse)" },
+        en: { transcriptionProvider:"Provider", openaiTranscriptionKey:"OpenAI transcription key", azureSpeechKey:"Azure Speech key", azureSpeechRegion:"Region", azureSpeechLocale:"Language", ingestProvider:"Provider", ingestModel:"Model", ingestApiKey:"API key", ingestAzureEndpoint:"Azure OpenAI endpoint", ingestAzureDeployment:"Deployment", ingestAzureKey:"Azure OpenAI key", challengeProvider:"Provider", challengeModel:"Model", challengeApiKey:"Dedicated API key (leave blank to reuse the analysis key)" },
+        de: { transcriptionProvider:"Anbieter", openaiTranscriptionKey:"OpenAI-Transkriptionsschlüssel", azureSpeechKey:"Azure-Speech-Schlüssel", azureSpeechRegion:"Region", azureSpeechLocale:"Sprache", ingestProvider:"Anbieter", ingestModel:"Modell", ingestApiKey:"API-Schlüssel", ingestAzureEndpoint:"Azure-OpenAI-Endpunkt", ingestAzureDeployment:"Bereitstellung", ingestAzureKey:"Azure-OpenAI-Schlüssel", challengeProvider:"Anbieter", challengeModel:"Modell", challengeApiKey:"Eigener API-Schlüssel (leer lassen, um den Analyseschlüssel zu verwenden)" }
+      }[lang] || {};
+      Object.entries(fields).forEach(([id, value]) => {
+        const label = document.querySelector(`label[for="${id}"]`);
+        if (label) label.textContent = value;
+      });
+      const buttons = {
+        fr: { refreshAnalysisModels:"Récupérer les modèles", ingestTest:"Tester la connexion", refreshChallengeModels:"Récupérer les modèles de contradiction" },
+        en: { refreshAnalysisModels:"Retrieve models", ingestTest:"Test connection", refreshChallengeModels:"Retrieve challenge models" },
+        de: { refreshAnalysisModels:"Modelle abrufen", ingestTest:"Verbindung testen", refreshChallengeModels:"Gegenprüfungsmodelle abrufen" }
+      }[lang] || {};
+      Object.entries(buttons).forEach(([id, value]) => { if ($(id)) $(id).textContent = value; });
+      $("ingestTranscript").placeholder = lang === "fr" ? "Collez la transcription complète ici..." : (lang === "de" ? "Vollständiges Transkript hier einfügen..." : "Paste the complete transcript here...");
+    }
 
     const t = (key, vars = {}) => {
       const text = I18N[lang][key] || I18N.en[key] || key;
       return Object.entries(vars).reduce((result, [name, value]) => result.replaceAll(`{${name}}`, value), text);
     };
+    const localText = (fr, en, de) => lang === "fr" ? fr : (lang === "de" ? de : en);
 
     function setText(id, key) {
       const el = $(id);
@@ -1648,7 +1688,8 @@
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
       dummyBenchmark: false,
-      checkResults: []
+      checkResults: [],
+      checkRan: false
     };
 
     const RECOMMENDATION_ENRICHMENT = {
@@ -1671,28 +1712,28 @@
     const BUSINESS_RULES = [
       {
         id: "percent-total",
-        severity: "Erreur",
-        label: "Somme des pourcentages",
+        severity: localText("Erreur", "Error", "Fehler"),
+        label: localText("Somme des pourcentages", "Percentage total", "Prozentsumme"),
         evaluate(question) {
           if (question.status !== "scored") return null;
           const total = normalizeLevels(question.levels).slice(0, 4).reduce((sum, value) => sum + value, 0);
-          return Math.abs(total - 1) > 0.001 ? `La somme des niveaux L1 à L4 vaut ${pct(total * 100)} au lieu de 100 %. Le niveau L5 est un bonus hors total.` : null;
+          return Math.abs(total - 1) > 0.001 ? localText(`La somme des niveaux L1 à L4 vaut ${pct(total * 100)} au lieu de 100 %.`, `The L1 to L4 total is ${pct(total * 100)} instead of 100%.`, `Die Summe der Stufen L1 bis L4 beträgt ${pct(total * 100)} statt 100%.`) : null;
         }
       },
       {
         id: "na-consistency",
-        severity: "Erreur",
-        label: "Cohérence N/A",
+        severity: localText("Erreur", "Error", "Fehler"),
+        label: localText("Cohérence N/A", "N/A consistency", "N/A-Konsistenz"),
         evaluate(question) {
           const total = normalizeLevels(question.levels).reduce((sum, value) => sum + value, 0);
-          return question.status === "na" && total > 0.001 ? "Une réponse N/A ne doit contenir aucun pourcentage." : null;
+          return question.status === "na" && total > 0.001 ? localText("Une réponse N/A ne doit contenir aucun pourcentage.", "An N/A answer must not contain percentages.", "Eine N/A-Antwort darf keine Prozentsätze enthalten.") : null;
         }
       },
       {
         id: "assessment-point-required",
-        severity: "Alerte",
-        label: "Point d'évaluation requis",
-        evaluate(question) { return question.question ? null : "Le libellé du point d'évaluation est vide."; }
+        severity: localText("Alerte", "Warning", "Warnung"),
+        label: localText("Point d'évaluation requis", "Assessment point required", "Bewertungspunkt erforderlich"),
+        evaluate(question) { return question.question ? null : localText("Le libellé du point d'évaluation est vide.", "The assessment point is empty.", "Der Bewertungspunkt ist leer."); }
       }
     ];
 
@@ -2035,11 +2076,13 @@
       });
 
       const domainStats = buildDomainStats(questions);
-      const contextIssues = workbook.SheetNames.filter((name) => !domains.includes(name) && /(context|contexte|company|entreprise|information)/i.test(name)).flatMap((name) => {
+      const contextSheets = workbook.SheetNames.filter((name) => !domains.includes(name) && /(context|contexte|company|entreprise|information)/i.test(name));
+      const contextFields = contextSheets.flatMap((name) => {
         const rows = sheetRows(workbook, name);
-        return rows.filter((row) => clean(row?.[0]) && row.slice(1).some((value) => value !== null && value !== undefined) && !row.slice(1).some((value) => clean(value))).map((row) => ({ sheet: name, field: clean(row[0]) }));
+        return rows.filter((row) => clean(row?.[0]) && row.length > 1).map((row) => ({ sheet: name, field: clean(row[0]), complete: row.slice(1).some((value) => clean(value)) }));
       });
-      return { questions, domainStats, sheetCount: domains.length, contextIssues };
+      const contextIssues = contextFields.filter((field) => !field.complete);
+      return { questions, domainStats, sheetCount: domains.length, contextFields, contextIssues };
     }
 
     function buildDomainStats(questions) {
@@ -2346,7 +2389,8 @@
         refs.assessmentMeta.innerHTML = `<strong>${file.name}</strong><br>${t("comparedQuestionCount", { count: assessment.questions.length })} · ${t("domainsCount", { count: assessment.sheetCount })}`;
         refs.statusDot.className = "dot ready";
         refs.statusText.textContent = t("assessmentLoaded");
-        runBusinessChecks();
+        state.checkResults = [];
+        state.checkRan = false;
         render();
       } catch (error) {
         toast(error.message);
@@ -2788,23 +2832,53 @@ Return strict JSON only:
         });
       });
       ids.forEach((count, id) => {
-        if (count > 1) results.push({ id, domain: inferDomain(id), severity: "Erreur", rule: "Identifiant unique", detail: `${count} occurrences détectées.` });
+        if (count > 1) results.push({ id, domain: inferDomain(id), severity: localText("Erreur", "Error", "Fehler"), rule: localText("Identifiant unique", "Unique identifier", "Eindeutige Kennung"), detail: localText(`${count} occurrences détectées.`, `${count} occurrences detected.`, `${count} Vorkommen erkannt.`) });
       });
-      (state.assessment.contextIssues || []).forEach((issue) => results.push({ id: issue.sheet, domain: "CONTEXTE", severity: "Alerte", rule: "Complétude du contexte", detail: `Le champ "${issue.field}" semble vide dans l’onglet ${issue.sheet}.` }));
       state.checkResults = results;
+      state.checkRan = true;
       renderChecks();
       return results;
     }
 
     function renderChecks() {
       if (!state.assessment) return;
+      if (!state.checkRan) {
+        $("checkTotal").textContent = "-";
+        $("checkErrors").textContent = "-";
+        $("checkOk").textContent = "-";
+        $("contextTotal").textContent = "-";
+        $("contextMissing").textContent = "-";
+        $("contextStatus").textContent = "-";
+        $("contextStatus").className = "value";
+        $("contextDetails").textContent = localText("Chargez un fichier puis cliquez sur Contrôler le fichier.", "Load a file, then click Check file.", "Laden Sie eine Datei und klicken Sie anschließend auf Datei prüfen.");
+        $("emailChecks").disabled = true;
+        $("checkTable").querySelector("tbody").innerHTML = `<tr><td colspan="5" class="muted">${localText("Le contrôle n’a pas encore été lancé.", "The check has not been run yet.", "Die Prüfung wurde noch nicht gestartet.")}</td></tr>`;
+        return;
+      }
       const results = state.checkResults;
       $("checkTotal").textContent = String(state.assessment.questions.length);
       $("checkErrors").textContent = String(results.length);
       $("checkOk").textContent = String(state.assessment.questions.length - new Set(results.map((row) => row.id)).size);
+      const contextFields = state.assessment.contextFields || [];
+      const contextIssues = state.assessment.contextIssues || [];
+      $("contextTotal").textContent = String(contextFields.length);
+      $("contextMissing").textContent = String(contextIssues.length);
+      $("contextStatus").textContent = contextFields.length && !contextIssues.length ? "100 %" : (contextFields.length ? pct((contextFields.length - contextIssues.length) / contextFields.length * 100) : "-");
+      $("contextStatus").className = `value ${contextFields.length && !contextIssues.length ? "check-ok" : "check-error"}`;
+      const contextMessages = {
+        fr: ["Toutes les informations détectées sont complètes.", "Aucun onglet d’informations entreprise détecté."],
+        en: ["All detected information is complete.", "No company-information sheet was detected."],
+        de: ["Alle erkannten Informationen sind vollständig.", "Kein Blatt mit Unternehmensinformationen wurde erkannt."]
+      }[lang] || [];
+      $("contextDetails").textContent = contextIssues.length ? contextIssues.map((issue) => `${issue.sheet}: ${issue.field}`).join(" · ") : (contextFields.length ? contextMessages[0] : contextMessages[1]);
+      $("emailChecks").disabled = !levelTotalsAreValid();
       $("checkTable").querySelector("tbody").innerHTML = results.length ? results.map((row) => `
         <tr><td class="small">${html(row.id)}</td><td class="small">${html(row.domain)}</td><td class="small check-error">${html(row.severity)}</td><td>${html(row.rule)}</td><td>${html(row.detail)}</td></tr>`).join("")
-        : '<tr><td colspan="5" class="check-ok"><strong>Aucune anomalie détectée.</strong></td></tr>';
+        : `<tr><td colspan="5" class="check-ok"><strong>${localText("Aucune anomalie détectée.", "No issue detected.", "Kein Problem erkannt.")}</strong></td></tr>`;
+    }
+
+    function levelTotalsAreValid() {
+      return Boolean(state.assessment?.questions?.length) && state.assessment.questions.every((question) => question.status !== "scored" || Math.abs(normalizeLevels(question.levels).slice(0, 4).reduce((sum, value) => sum + value, 0) - 1) <= 0.001);
     }
 
     function exportCentralCsv() {
@@ -3040,6 +3114,7 @@ Return strict JSON only:
       $("ingestLog").innerHTML = state.ingest.log.map((line) => `<div>${html(line)}</div>`).join("");
       $("ingestRun").disabled = state.ingest.running;
       $("ingestApply").disabled = state.ingest.running || !state.ingest.results.length;
+      $("ingestDownload").disabled = !state.ingest.applied;
       $("ingestReview").innerHTML = state.ingest.challenges.slice(0, 20).map((challenge) => `
         <div class="ingest-review-card"><strong>${html(challenge.id || "Review")}</strong><p>${html(challenge.issue || "")}</p><p><b>Correction:</b> ${html(challenge.correction || "")}</p></div>`).join("");
     }
@@ -3068,14 +3143,12 @@ Return strict JSON only:
     }
 
     function updateTitle() {
-      const titles = {
-        arrival: ["Cyberbenchmark Workspace", "Accueil et parcours de traitement du questionnaire Cyberbenchmark."],
-        ingest: ["Ingest", "Chargez le questionnaire, transcrivez un média ou collez directement une transcription, puis enrichissez les scores."],
-        check: ["Check", "Vérifiez les règles métier avant intégration dans la base centrale Cyberbenchmark."],
-        explore: ["Explore", "Chargez le référentiel de scores et parcourez toutes les analyses existantes."],
-        export: ["Export", "Téléchargez les livrables enrichis, contrôlés et visualisés."],
-        configuration: ["Configuration", "Configurez les fournisseurs LLM et Azure Speech utilisés par l'ingestion."]
+      const titlesByLanguage = {
+        fr: { arrival:["Accueil","Configurez ou chargez votre mission CyberBenchmark."], ingest:["Enrichir","Complétez le questionnaire à partir des données issues des entretiens."], check:["Contrôler","Vérifiez le questionnaire avant de l’envoyer à l’équipe Cyber Bench."], configuration:["Réglages","Configurez les API de transcription, d’analyse et de Check & Challenge."] },
+        en: { arrival:["Home","Configure or load your CyberBenchmark mission."], ingest:["Enrich","Complete the questionnaire using interview data."], check:["Check","Validate the questionnaire before sending it to the Cyber Bench team."], configuration:["Settings","Configure transcription, analysis, and Check & Challenge APIs."] },
+        de: { arrival:["Start","Konfigurieren oder laden Sie Ihre CyberBenchmark-Mission."], ingest:["Anreichern","Ergänzen Sie den Fragebogen anhand der Interviewdaten."], check:["Prüfen","Prüfen Sie den Fragebogen vor dem Versand an das Cyber-Bench-Team."], configuration:["Einstellungen","Konfigurieren Sie Transkriptions-, Analyse- und Check-&-Challenge-APIs."] }
       };
+      const titles = titlesByLanguage[lang] || titlesByLanguage.en;
       const [title, intro] = titles[state.workflowTab];
       refs.pageTitle.textContent = title;
       refs.pageIntro.textContent = document.body.classList.contains("client-export") && state.workflowTab === "explore" ? t("clientExploreIntro") : intro;
@@ -4216,8 +4289,9 @@ Return strict JSON only:
     }
 
     function updateMissionDisplay() {
-      $("missionDisplay").textContent = [$("missionCode").value, $("missionName").value].filter(Boolean).join(" · ") || "non configurée";
-      $("managerDisplay").textContent = [$("projectManagerName").value, $("projectManagerEmail").value].filter(Boolean).join(" · ") || "non configuré";
+      const empty = lang === "fr" ? ["non configurée", "non configuré"] : (lang === "de" ? ["nicht konfiguriert", "nicht konfiguriert"] : ["not configured", "not configured"]);
+      $("missionDisplay").textContent = [$("missionCode").value, $("missionName").value].filter(Boolean).join(" · ") || empty[0];
+      $("managerDisplay").textContent = [$("projectManagerName").value, $("projectManagerEmail").value].filter(Boolean).join(" · ") || empty[1];
     }
 
     function saveHelperConfig() {
@@ -4258,6 +4332,7 @@ Return strict JSON only:
 
     function emailChecks() {
       if (!state.assessment) return toast("Chargez d’abord le questionnaire.");
+      if (!levelTotalsAreValid()) return toast("L’envoi reste désactivé tant que toutes les sommes L1 à L4 ne sont pas égales à 100 %.");
       const checks = runBusinessChecks();
       const code = clean($("missionCode").value) || "mission";
       const report = ["Résultat du contrôle CyberBenchmark", `Mission: ${code}`, `Anomalies: ${checks.length}`, "", ...checks.map((row) => `${row.severity} | ${row.id} | ${row.rule} | ${row.detail}`)].join("\r\n");
@@ -4272,13 +4347,20 @@ Return strict JSON only:
       const [file] = event.target.files;
       if (file) handleAssessment(file);
     });
+    $("checkAssessmentFile").addEventListener("change", async (event) => {
+      const [file] = event.target.files;
+      if (!file) return;
+      await handleAssessment(file);
+      $("checkAssessmentMeta").textContent = `${file.name} · ${state.assessment?.questions?.length || 0} questions`;
+      state.checkResults = [];
+      renderChecks();
+    });
     refs.benchmarkFile.addEventListener("change", (event) => {
       const [file] = event.target.files;
       if (file) handleBenchmark(file);
     });
     document.querySelectorAll("[data-workflow-tab]").forEach((btn) => btn.addEventListener("click", () => {
       state.workflowTab = btn.dataset.workflowTab;
-      if (state.workflowTab === "check") runBusinessChecks();
       render();
     }));
     document.querySelectorAll("[data-go-workflow]").forEach((btn) => btn.addEventListener("click", () => {
@@ -4325,6 +4407,7 @@ Return strict JSON only:
     $("ingestRun").addEventListener("click", runIngest);
     $("improveTranscript").addEventListener("click", () => improveTranscript(false));
     $("ingestApply").addEventListener("click", applyIngestResults);
+    $("ingestDownload").addEventListener("click", exportAssessmentWorkbook);
     $("transcribeMedia").addEventListener("click", transcribeAzureMedia);
     $("ingestMedia").addEventListener("change", (event) => {
       const file = event.target.files?.[0];
@@ -4364,6 +4447,7 @@ Return strict JSON only:
     document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
 
     applyLocale();
+    applyHelperLocale();
     try {
       const savedHelperConfig = localStorage.getItem(HELPER_CONFIG_KEY);
       if (savedHelperConfig) applyHelperConfig(JSON.parse(savedHelperConfig));
