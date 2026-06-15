@@ -1685,6 +1685,7 @@
         const value = strings[element.dataset.ui];
         if (value) element.textContent = value;
       });
+      if (!state.assessment) $("contextDetails").textContent = localText("Chargez un fichier puis lancez le contrôle pour voir les champs de l'onglet Scope.", "Load a file and run the check to see the Scope tab fields.", "Laden Sie eine Datei und starten Sie die Prüfung, um die Scope-Felder anzuzeigen.");
       const fields = {
         fr: { transcriptionProvider:"Fournisseur", openaiTranscriptionKey:"Clé OpenAI transcription", azureSpeechKey:"Clé Azure Speech", azureSpeechRegion:"Région", azureSpeechLocale:"Langue", ingestProvider:"Fournisseur", ingestModel:"Modèle", ingestApiKey:"Clé API", ingestAzureEndpoint:"Endpoint Azure OpenAI", ingestAzureDeployment:"Déploiement", ingestAzureKey:"Clé Azure OpenAI", challengeProvider:"Fournisseur", challengeModel:"Modèle", challengeApiKey:"Clé API dédiée (laisser vide pour reprendre la clé d’analyse)" },
         en: { transcriptionProvider:"Provider", openaiTranscriptionKey:"OpenAI transcription key", azureSpeechKey:"Azure Speech key", azureSpeechRegion:"Region", azureSpeechLocale:"Language", ingestProvider:"Provider", ingestModel:"Model", ingestApiKey:"API key", ingestAzureEndpoint:"Azure OpenAI endpoint", ingestAzureDeployment:"Deployment", ingestAzureKey:"Azure OpenAI key", challengeProvider:"Provider", challengeModel:"Model", challengeApiKey:"Dedicated API key (leave blank to reuse the analysis key)" },
@@ -2343,10 +2344,23 @@
       });
 
       const domainStats = buildDomainStats(questions);
-      const contextSheets = workbook.SheetNames.filter((name) => !domains.includes(name) && /(context|contexte|company|entreprise|information|scope|p.rim.tre|perimetre)/i.test(name));
+      const SCOPE_RE = /(context|contexte|company|entreprise|information|scope|p.rim.tre|perimetre|mission|client|organisation|organization)/i;
+      const EXCLUDE_RE = /^(instructions?|guide|dashboard|summary|scores?|r.sultats?|readme|template|mod.le|example|exemple|changelog|help|aide)/i;
+      const contextSheets = workbook.SheetNames.filter((name) => {
+        if (domains.includes(name)) return false;
+        if (EXCLUDE_RE.test(name.trim())) return false;
+        if (SCOPE_RE.test(name)) return true;
+        const ws = workbook.Sheets[name];
+        if (!ws || !ws["!ref"]) return false;
+        return XLSX.utils.decode_range(ws["!ref"]).e.c >= 1;
+      });
       const contextFields = contextSheets.flatMap((name) => {
+        const ws = workbook.Sheets[name];
+        if (!ws || !ws["!ref"]) return [];
+        const range = XLSX.utils.decode_range(ws["!ref"]);
+        if (range.e.c < 1) return [];
         const rows = sheetRows(workbook, name);
-        return rows.filter((row) => clean(row?.[0]) && row.length > 1).map((row) => ({ sheet: name, field: clean(row[0]), complete: row.slice(1).some((value) => clean(value)) }));
+        return rows.filter((row) => clean(row?.[0])).map((row) => ({ sheet: name, field: clean(row[0]), complete: row.slice(1).some((value) => clean(value)) }));
       });
       const contextIssues = contextFields.filter((field) => !field.complete);
       return { questions, domainStats, sheetCount: domains.length, contextFields, contextIssues };
@@ -3090,7 +3104,7 @@ Return strict JSON only:
         $("contextMissing").textContent = "-";
         $("contextStatus").textContent = "-";
         $("contextStatus").className = "value";
-        $("contextDetails").textContent = localText("Chargez un fichier puis cliquez sur Contrôler le fichier.", "Load a file, then click Check file.", "Laden Sie eine Datei und klicken Sie anschließend auf Datei prüfen.");
+        $("contextDetails").textContent = localText("Cliquez sur « Contrôler le fichier » pour voir les champs de l'onglet Scope.", "Click "Check file" to see the Scope tab fields.", "Klicken Sie auf „Datei prüfen", um die Scope-Felder anzuzeigen.");
         $("emailChecks").disabled = true;
         $("saveCheckedExcel").disabled = true;
         $("checkEditorIntro").classList.add("hidden");
