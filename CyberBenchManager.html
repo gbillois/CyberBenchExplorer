@@ -911,6 +911,8 @@
               <div><label for="benchmarkFile">Fichier de références des scores</label><input id="benchmarkFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb,.csv"><div id="benchmarkMeta" class="muted"></div></div>
               <div><label for="benchmarkTarget">Cible de comparaison</label><select id="benchmarkTarget"></select></div>
               <div><a class="template-link" id="benchmarkTemplate" href="data/Scores-CyberBenchmark-03062026.xlsx" download>Télécharger le modèle de référence</a></div>
+              <div id="clientComparisonModeWrap" class="hidden"><label for="clientComparisonMode">Mode de comparaison</label><select id="clientComparisonMode"><option value="referential">Référentiels embarqués</option><option value="assessment">Autre fichier CyberBench</option></select></div>
+              <div id="clientComparisonFileWrap" class="hidden"><label for="clientComparisonFile">Fichier CyberBench de comparaison</label><input id="clientComparisonFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"><div id="clientComparisonMeta" class="muted"></div></div>
             </div>
           </div></div>
           <nav class="explore-nav" id="exploreNav">
@@ -1601,7 +1603,12 @@
       dummyBenchmark: false,
       checkResults: [],
       databaseEntries: [],
-      databasePending: null
+      databasePending: null,
+      clientComparisonMode: "referential",
+      embeddedBenchmark: null,
+      embeddedCompareRef: "",
+      comparisonAssessment: null,
+      comparisonBenchmark: null
     };
 
     const RECOMMENDATION_ENRICHMENT = {
@@ -2833,7 +2840,7 @@ Return strict JSON only:
         }];
       }));
       return {
-        version: 3,
+        version: 4,
         exportedAt: new Date().toISOString(),
         assessment: {
           sourceName: state.assessment.sourceName,
@@ -2873,35 +2880,40 @@ Return strict JSON only:
       };
     }
 
-    function exportStandaloneHtml() {
+    async function exportStandaloneHtml() {
       if (!state.assessment) return;
       try {
         const payload = JSON.stringify(standaloneExportPayload()).replace(/</g, "\\u003c");
         const clientBootstrap = `<script>window.__CYBERBENCH_EXPORT__=${payload};<\/script>`;
+        const xlsxResponse = await fetch("vendor/xlsx.full.min.js");
+        if (!xlsxResponse.ok) throw new Error(`SheetJS unavailable (${xlsxResponse.status})`);
+        const xlsxSource = (await xlsxResponse.text()).replace(/<\/script/gi, "<\\/script");
+        const clientLibraries = `<script>${xlsxSource}<\/script>`;
         const clientStyles = `<style id="client-export-styles">
           body.client-export .workflow-nav,
           body.client-export #dummyNotice,
           body.client-export .status-pill,
-          body.client-export [data-explore-tab="compare"],
-          body.client-export [data-nav-tab="compare"],
+          body.client-export:not(.has-comparison-assessment) [data-explore-tab="compare"],
+          body.client-export:not(.has-comparison-assessment) [data-nav-tab="compare"],
           body.client-export #exportCsv,
           body.client-export #questionsTable th:nth-child(n+6):nth-child(-n+10),
           body.client-export #questionsTable td:nth-child(n+6):nth-child(-n+10),
           body.client-export #questionsTable th:nth-child(12),
           body.client-export #questionsTable td:nth-child(12) { display: none !important; }
-          /* The benchmark toolbar is hidden unless a comparison base is embedded; then only the base selector is shown. */
-          body.client-export #exploreToolbar > .card { display: none !important; }
-          body.client-export.has-benchmark #exploreToolbar > .card { display: block !important; }
-          body.client-export #exploreToolbar .source-grid { grid-template-columns: minmax(0, 320px); }
+          body.client-export #exploreToolbar > .card { display: block !important; }
+          body.client-export #exploreToolbar .source-grid { grid-template-columns: repeat(3, minmax(0, 320px)); }
           body.client-export #exploreToolbar .source-grid > div:nth-child(1),
           body.client-export #exploreToolbar .source-grid > div:nth-child(3) { display: none !important; }
+          body.client-export #clientComparisonModeWrap { display: block !important; }
+          body.client-export.comparison-assessment-mode #exploreToolbar .source-grid > div:nth-child(2) { display: none !important; }
+          body.client-export.comparison-assessment-mode #clientComparisonFileWrap { display: block !important; }
           body.client-export .app { grid-template-columns: 1fr; }
           body.client-export aside { display: none !important; }
           body.client-export .content { width: min(1600px, 100%); margin: 0 auto; }
         </style>`;
         const documentHtml = `<!doctype html>\n${pristineDocumentHtml}`
           .replace(/<script[^>]+src=["'][^"']+["'][^>]*><\/script>\s*/gi, "")
-          .replace("</head>", `${clientStyles}${clientBootstrap}</head>`);
+          .replace(/<\/head>\s*<body/i, () => `${clientLibraries}${clientStyles}${clientBootstrap}</head><body`);
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([documentHtml], { type: "text/html;charset=utf-8" }));
         link.download = `CyberBenchmark-client-explorer-${new Date().toISOString().slice(0, 10)}.html`;
@@ -2917,6 +2929,7 @@ Return strict JSON only:
       if (!payload?.assessment?.questions?.length) throw new Error(t("exportHtmlError"));
       state.assessment = payload.assessment;
       state.benchmark = payload.benchmark || null;
+      state.embeddedBenchmark = state.benchmark;
       state.clientReport = payload.clientReport || null;
       if (state.benchmark) {
         state.benchmark.records = state.benchmark.records || [];
@@ -2927,6 +2940,8 @@ Return strict JSON only:
       ["compareRef", "compareGap", "domainSort", "recommendationLimit"].forEach((key) => {
         if (preferences[key] !== undefined) state[key] = preferences[key];
       });
+      state.embeddedCompareRef = state.compareRef;
+      state.clientComparisonMode = "referential";
       state.workflowTab = "explore";
       state.tab = "home";
       state.dummyAssessment = false;
@@ -2961,6 +2976,7 @@ Return strict JSON only:
 
     function render() {
       const ready = Boolean(state.assessment);
+      renderClientComparisonControls();
       refs.dummyNotice.classList.toggle("hidden", !(state.dummyAssessment || state.dummyBenchmark));
       refs.emptyState.classList.add("hidden");
       const visualizationTab = state.workflowTab === "explore" || state.workflowTab === "export";
@@ -3040,6 +3056,72 @@ Return strict JSON only:
       });
     }
 
+    function assessmentAsBenchmark(assessment, sourceName) {
+      const key = "assessment";
+      const label = String(sourceName || assessment.sourceName || "Questionnaire comparé").replace(/\.(xlsx?|xlsm|xlsb)$/i, "");
+      const records = assessment.questions.filter((question) => question.status === "scored" && Number.isFinite(question.score)).map((question) => ({
+        id: question.id,
+        domain: question.domain,
+        references: { [key]: question.score }
+      }));
+      const domainStats = assessment.domainStats.filter((domain) => Number.isFinite(domain.score)).map((domain) => ({
+        id: domain.id,
+        name: domain.name,
+        references: { [key]: domain.score }
+      }));
+      return {
+        sourceSheet: sourceName || assessment.sourceName || label,
+        records,
+        recordMap: new Map(records.map((record) => [normalize(record.id), record])),
+        domainStats,
+        referenceOptions: [{ key, label }],
+        preferredRef: key,
+        comparisonAssessment: true
+      };
+    }
+
+    function renderClientComparisonControls() {
+      if (!document.body.classList.contains("client-export")) return;
+      const assessmentMode = state.clientComparisonMode === "assessment";
+      $("clientComparisonMode").value = state.clientComparisonMode;
+      document.body.classList.toggle("comparison-assessment-mode", assessmentMode);
+      document.body.classList.toggle("has-comparison-assessment", assessmentMode && Boolean(state.comparisonBenchmark));
+      $("clientComparisonMeta").innerHTML = state.comparisonAssessment
+        ? `<strong>${html(state.comparisonAssessment.sourceName || "Questionnaire comparé")}</strong><br>${t("comparedQuestionCount", { count: state.comparisonAssessment.questions.length })}`
+        : `<span class="muted">Chargez un questionnaire CyberBench pour activer la comparaison détaillée.</span>`;
+    }
+
+    function setClientComparisonMode(mode) {
+      state.clientComparisonMode = mode === "assessment" ? "assessment" : "referential";
+      if (state.clientComparisonMode === "assessment") {
+        state.benchmark = state.comparisonBenchmark;
+        state.compareRef = state.comparisonBenchmark?.preferredRef || "assessment";
+      } else {
+        state.benchmark = state.embeddedBenchmark;
+        state.compareRef = state.embeddedCompareRef || state.embeddedBenchmark?.preferredRef || "";
+        if (state.tab === "compare") state.tab = "home";
+      }
+      document.body.classList.toggle("has-benchmark", Boolean(state.benchmark?.referenceOptions?.length));
+      populateBenchmarkSelectors();
+      render();
+    }
+
+    async function handleClientComparisonFile(file) {
+      try {
+        if (!window.XLSX) throw new Error(t("missingSheetJs"));
+        const workbook = await readWorkbook(file);
+        const assessment = parseAssessment(workbook);
+        if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
+        assessment.sourceName = file.name;
+        state.comparisonAssessment = assessment;
+        state.comparisonBenchmark = assessmentAsBenchmark(assessment, file.name);
+        setClientComparisonMode("assessment");
+      } catch (error) {
+        console.error(error);
+        toast(error.message);
+      }
+    }
+
     function setComparisonTarget(key) {
       if (!state.benchmark?.referenceOptions?.some((option) => option.key === key)) return;
       state.compareRef = key;
@@ -3073,8 +3155,13 @@ Return strict JSON only:
     }
 
     // In a sanitized client export, the pre-calculated score difference depends on the chosen comparison base.
+    function usesEmbeddedClientVariance() {
+      return Boolean(state.clientReport?.sanitized && state.clientComparisonMode !== "assessment");
+    }
+
     function clientVariance(question) {
       if (!question) return null;
+      if (state.clientComparisonMode === "assessment") return null;
       if (question.varianceByRef && Object.prototype.hasOwnProperty.call(question.varianceByRef, state.compareRef)) return question.varianceByRef[state.compareRef];
       return question.variance || null;
     }
@@ -3162,9 +3249,9 @@ Return strict JSON only:
         : null;
       if (state.drill.questionId && !selectedQuestion) state.drill.questionId = "";
       $("dashboardBack").classList.toggle("hidden", !selectedDomain);
-      const refLabel = state.clientReport?.sanitized ? referenceLabel() : (points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, ""));
+      const refLabel = usesEmbeddedClientVariance() ? referenceLabel() : (points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, ""));
       $("bubbleTitle").textContent = selectedDomain
-        ? (state.clientReport?.sanitized ? `${selectedDomain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: selectedDomain.id, ref: refLabel }))
+        ? (usesEmbeddedClientVariance() ? `${selectedDomain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: selectedDomain.id, ref: refLabel }))
         : t("maturityVs", { ref: refLabel });
 
       if (!points.length) {
@@ -3212,7 +3299,7 @@ Return strict JSON only:
         ${grid}
         <line class="slide-axis" x1="${pad.left}" y1="${h - pad.bottom}" x2="${w - pad.right}" y2="${h - pad.bottom}"></line>
         <line class="slide-axis" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${h - pad.bottom}"></line>
-        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${state.clientReport?.sanitized ? `${t("scoreVariance")} · ${html(refLabel)}` : t("gapWith", { ref: refLabel })}</text>
+        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${usesEmbeddedClientVariance() ? `${t("scoreVariance")} · ${html(refLabel)}` : t("gapWith", { ref: refLabel })}</text>
         <text class="slide-label" x="18" y="${h / 2}" transform="rotate(-90 18 ${h / 2})" text-anchor="middle">${selectedDomain ? t("maturityQuestion") : t("maturityEnterprise")}</text>
         ${bubbles}
       </svg>`;
@@ -3350,7 +3437,7 @@ Return strict JSON only:
         { tab: "compare", title: t("navCompare"), text: t("compareIntro"), preview: miniCompare() },
         { tab: "recommendations", title: t("navRecommendations"), text: t("recommendationsIntro"), preview: miniRecommendations() },
         { tab: "questions", title: t("navQuestions"), text: t("questionsIntro"), preview: miniTable() }
-      ].filter((tile) => !(state.clientReport?.sanitized && tile.tab === "compare"));
+      ].filter((tile) => !(usesEmbeddedClientVariance() && tile.tab === "compare"));
       $("thumbGrid").innerHTML = tiles.map((tile) => `
         <button class="thumb" type="button" data-nav-tab="${tile.tab}">
           <div class="thumb-preview">${tile.preview}</div>
@@ -3466,7 +3553,7 @@ Return strict JSON only:
         $("radarBack").textContent = selectedQuestion ? `← ${name}` : t("backToThemes");
         items = questions.map((q) => {
           const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
-          const refVal = state.clientReport?.sanitized ? clientReferenceValue(q) : benchmarkValue(ref);
+          const refVal = state.clientReport?.sanitized && state.clientComparisonMode !== "assessment" ? clientReferenceValue(q) : benchmarkValue(ref);
           const varianceText = clientVariance(q) ? ` · ${questionVarianceText(q)}` : "";
           return {
             label: q.id,
@@ -3484,7 +3571,7 @@ Return strict JSON only:
         $("radarBack").textContent = t("backToThemes");
         items = domains.map((d) => {
           const b = benchMap ? benchMap.get(d.id) : null;
-          const refVal = state.clientReport?.sanitized ? clientReferenceValue(d) : benchmarkValue(b);
+          const refVal = state.clientReport?.sanitized && state.clientComparisonMode !== "assessment" ? clientReferenceValue(d) : benchmarkValue(b);
           const variance = clientVariance(d);
           return {
             label: d.id,
@@ -3619,7 +3706,7 @@ Return strict JSON only:
       if (state.domainSort === "alpha") domains.sort((a, b) => a.id.localeCompare(b.id));
       $("domainBars").innerHTML = domains.map((d) => {
         const variance = clientVariance(d);
-        const reference = state.clientReport?.sanitized ? null : benchmarkReference(d.id);
+        const reference = state.clientReport?.sanitized && state.clientComparisonMode !== "assessment" ? null : benchmarkReference(d.id);
         const difference = variance?.value ?? (reference ? d.score - reference.value : null);
         return `
           <button class="bar-row" data-domain-focus="${html(d.id)}" title="${d.name}">
@@ -3670,13 +3757,13 @@ Return strict JSON only:
         <text class="axis-label" x="${x(q.gap) + 10}" y="${y(q.score) + 4}">${html(q.id)}</text>
         <title>${html(q.question)} · ${pct(q.score)} · ${html(pointDifferenceText(q))}</title>
       </g>`).join("");
-      const scatterTitle = state.clientReport?.sanitized ? `${domain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: domain.id, ref: referenceLabel() });
+      const scatterTitle = usesEmbeddedClientVariance() ? `${domain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: domain.id, ref: referenceLabel() });
       $("domainScatter").innerHTML = `<div class="domain-focus-head"><strong>${html(scatterTitle)}</strong><button class="ghost" data-domain-reset="1">${t("backDomains")}</button></div>
         <svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${html(scatterTitle)}">
           <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="rgba(255,255,255,.2)"></line>
           <line x1="${x(0)}" y1="${pad}" x2="${x(0)}" y2="${h-pad}" stroke="rgba(255,255,255,.18)" stroke-dasharray="4 5"></line>
-          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${html(state.clientReport?.sanitized ? t("scoreVariance") : t("gapWith", { ref: referenceLabel() }))}</text>
+          <text class="axis-label" x="${w/2}" y="${h-8}" text-anchor="middle">${html(usesEmbeddedClientVariance() ? t("scoreVariance") : t("gapWith", { ref: referenceLabel() }))}</text>
           <text class="axis-label" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">${t("questionScoreAxis")}</text>
           ${dots}
         </svg>`;
@@ -3878,7 +3965,7 @@ Return strict JSON only:
     function renderQuestions() {
       const rows = filteredQuestions();
       const tbody = $("questionsTable").querySelector("tbody");
-      const sanitized = Boolean(state.clientReport?.sanitized);
+      const sanitized = usesEmbeddedClientVariance();
       $("questionsTable").querySelectorAll("th")[10].textContent = sanitized ? t("scoreAxis") : referenceLabel();
       tbody.innerHTML = rows.map((q) => {
         const top = questionGap(q);
@@ -4424,6 +4511,11 @@ Return strict JSON only:
     }));
     ["benchmarkTarget", "compareTarget", "lagTarget"].forEach((id) => {
       $(id).addEventListener("change", (event) => setComparisonTarget(event.target.value));
+    });
+    $("clientComparisonMode").addEventListener("change", (event) => setClientComparisonMode(event.target.value));
+    $("clientComparisonFile").addEventListener("change", (event) => {
+      const [file] = event.target.files;
+      if (file) handleClientComparisonFile(file);
     });
     $("gapFilter").addEventListener("input", (event) => {
       state.compareGap = Number(event.target.value) || 0;
