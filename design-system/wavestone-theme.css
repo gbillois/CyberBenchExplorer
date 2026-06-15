@@ -1,0 +1,177 @@
+/* Opt-in CyberBench skin based on ../NotPetyaTimeline/design-system. */
+html[data-design-system="wavestone"] body {
+  --ws-indigo-50: #f1eefb;
+  --ws-indigo-100: #d1caf2;
+  --ws-indigo-500: #5a2be0;
+  --ws-indigo-600: #451dc7;
+  --ws-indigo-700: #36169b;
+  --ws-indigo-800: #2d1380;
+  --ws-indigo-900: #1e0d57;
+  --ws-green-50: #e1fded;
+  --ws-green-400: #04f06a;
+  --ws-green-700: #088a42;
+  --ws-ink-50: #f5f4f9;
+  --ws-ink-100: #e6e4ee;
+  --ws-ink-200: #cfccdc;
+  --ws-ink-400: #817c95;
+  --ws-ink-500: #6b6580;
+  --ws-ink-900: #16121f;
+  --bg: var(--ws-ink-50);
+  --bg-soft: #faf9fc;
+  --panel: #fff;
+  --panel-2: #faf9fc;
+  --panel-3: var(--ws-indigo-50);
+  --line: var(--ws-ink-100);
+  --line-soft: #efedf4;
+  --line-strong: var(--ws-ink-200);
+  --text: var(--ws-ink-900);
+  --muted: var(--ws-ink-500);
+  --muted-2: var(--ws-ink-400);
+  --blue: var(--ws-indigo-600);
+  --cyan: #228d95;
+  --green: var(--ws-green-400);
+  --amber: #c8861a;
+  --red: #d8412f;
+  --violet: var(--ws-indigo-500);
+  --nav-a: var(--ws-indigo-600);
+  --nav-b: var(--ws-indigo-700);
+  --nav-c: var(--ws-indigo-800);
+  --shadow: 0 12px 28px rgba(22, 18, 31, .12);
+  --radius: 16px;
+  background: linear-gradient(180deg, var(--ws-indigo-50) 0, var(--bg) 280px, #fff 100%);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html[data-design-system="wavestone"] body aside {
+  background: radial-gradient(120% 120% at 25% 15%, #5226e0 0%, #451dc7 38%, #2d1380 100%);
+  box-shadow: 0 12px 28px rgba(69, 29, 199, .28);
+}
+
+html[data-design-system="wavestone"] body .brand h1,
+html[data-design-system="wavestone"] body .title h2,
+html[data-design-system="wavestone"] body .arrival-hero h3,
+html[data-design-system="wavestone"] body .card-head h3,
+html[data-design-system="wavestone"] body .empty h3,
+html[data-design-system="wavestone"] body h3 {
+  font-family: Poppins, Inter, system-ui, sans-serif;
+}
+
+html[data-design-system="wavestone"] body .brand h1 {
+  letter-spacing: .02em;
+}
+
+html[data-design-system="wavestone"] body .mark {
+  background: var(--ws-green-400);
+  border-color: var(--ws-green-400);
+}
+
+html[data-design-system="wavestone"] body .mark svg {
+  color: var(--ws-indigo-900);
+}
+
+html[data-design-system="wavestone"] body .nav button.active::after {
+  background: var(--ws-green-400);
+}
+
+html[data-design-system="wavestone"] body .arrival-hero {
+  background: radial-gradient(120% 120% at 25% 15%, #5226e0 0%, #451dc7 38%, #2d1380 100%);
+  box-shadow: 0 24px 48px rgba(69, 29, 199, .3);
+}
+
+html[data-design-system="wavestone"] body button {
+  border-color: var(--ws-ink-200);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(22, 18, 31, .08);
+  font-weight: 600;
+}
+
+html[data-design-system="wavestone"] body button:hover {
+  border-color: var(--ws-indigo-500);
+  background: var(--ws-indigo-50);
+}
+
+html[data-design-system="wavestone"] body button:focus-visible,
+html[data-design-system="wavestone"] body input:focus,
+html[data-design-system="wavestone"] body select:focus,
+html[data-design-system="wavestone"] body textarea:focus {
+  outline: none;
+  border-color: var(--ws-indigo-500);
+  box-shadow: 0 0 0 3px rgba(90, 43, 224, .35);
+}
+
+html[data-design-system="wavestone"] body button.primary {
+  background: var(--ws-indigo-600);
+  border-color: var(--ws-indigo-600);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(69, 29, 199, .3);
+}
+
+html[data-design-system="wavestone"] body button.primary:hover {
+  background: var(--ws-indigo-700);
+  border-color: var(--ws-indigo-700);
+}
+
+html[data-design-system="wavestone"] body button.active {
+  background: var(--ws-indigo-50);
+  border-color: var(--ws-indigo-600);
+  color: var(--ws-indigo-600);
+}
+
+html[data-design-system="wavestone"] body input,
+html[data-design-system="wavestone"] body select,
+html[data-design-system="wavestone"] body textarea {
+  border-color: var(--ws-ink-200);
+  border-radius: 8px;
+}
+
+html[data-design-system="wavestone"] body .card,
+html[data-design-system="wavestone"] body .empty,
+html[data-design-system="wavestone"] body .table-wrap,
+html[data-design-system="wavestone"] body .mission-strip,
+html[data-design-system="wavestone"] body .explore-nav {
+  border-color: var(--ws-ink-100);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(22, 18, 31, .08), 0 1px 2px rgba(22, 18, 31, .06);
+}
+
+html[data-design-system="wavestone"] body .card-head {
+  border-bottom-color: var(--ws-ink-100);
+  background: linear-gradient(90deg, var(--ws-indigo-50), #fff);
+}
+
+html[data-design-system="wavestone"] body .card-head h3,
+html[data-design-system="wavestone"] body .title h2,
+html[data-design-system="wavestone"] body .kpi .value {
+  color: var(--ws-indigo-600);
+}
+
+html[data-design-system="wavestone"] body .kpi {
+  border-top: 3px solid var(--ws-green-400);
+}
+
+html[data-design-system="wavestone"] body .status-pill {
+  border-color: var(--ws-indigo-100);
+  background: var(--ws-indigo-50);
+}
+
+html[data-design-system="wavestone"] body .score-badge,
+html[data-design-system="wavestone"] body .chip {
+  background: var(--ws-indigo-50);
+  color: var(--ws-indigo-600);
+  border-color: var(--ws-indigo-100);
+}
+
+html[data-design-system="wavestone"] body .bar-fill {
+  background: linear-gradient(90deg, var(--ws-indigo-600), #228d95, var(--ws-green-400));
+}
+
+html[data-design-system="wavestone"] body a,
+html[data-design-system="wavestone"] body .template-link,
+html[data-design-system="wavestone"] body .mission-strip strong {
+  color: var(--ws-indigo-600);
+}
+
+html[data-design-system="wavestone"] body .side-section .template-link {
+  color: #fff;
+}

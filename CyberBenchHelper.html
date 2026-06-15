@@ -6,6 +6,12 @@
   <title>CyberBenchHelper</title>
   <script src="vendor/xlsx.full.min.js"></script>
   <script src="vendor/pptxgen.bundle.js"></script>
+  <link rel="stylesheet" href="design-system/wavestone-theme.css">
+  <script>
+    try {
+      if (localStorage.getItem("cyberbench-design-system") === "wavestone") document.documentElement.dataset.designSystem = "wavestone";
+    } catch (error) {}
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -812,7 +818,7 @@
     }
   </style>
 </head>
-<body>
+<body data-design-system="">
   <div class="app">
     <aside>
       <div class="brand">
@@ -928,6 +934,10 @@
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-head"><h3>Apparence</h3></div>
+            <div class="card-body"><label for="designSystem">Design system</label><select id="designSystem"><option value="current">Style actuel (par défaut)</option><option value="wavestone">Wavestone</option></select><p class="muted">Le choix est appliqué à CyberBench Explorer, Helper et Manager dans ce navigateur.</p></div>
+          </div>
           <div class="llm-consent">
             <strong data-ui="consentTitle">Avertissement de confidentialité et autorisation LLM</strong>
             <div data-ui="consentText">L’utilisation d’un LLM et des fournisseurs configurés doit être explicitement autorisée par l’organisation évaluée. Les données d’entretien et certaines informations du questionnaire seront transmises aux fournisseurs sélectionnés.</div>
@@ -942,7 +952,7 @@
                   <div><label for="transcriptionProvider">Fournisseur</label><select id="transcriptionProvider"><option value="openai">OpenAI diarisation</option><option value="azure">Azure Speech</option></select></div>
                   <div><label for="openaiTranscriptionKey">Clé OpenAI transcription</label><input id="openaiTranscriptionKey" type="password" autocomplete="off"></div>
                   <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
-                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
+                  <div><label for="azureSpeechRegion">Région Azure Speech</label><select id="azureSpeechRegion"><option value="westeurope">West Europe</option><option value="francecentral">France Central</option><option value="northeurope">North Europe</option><option value="uksouth">UK South</option><option value="eastus">East US</option><option value="eastus2">East US 2</option><option value="westus">West US</option><option value="westus2">West US 2</option><option value="southeastasia">Southeast Asia</option><option value="eastasia">East Asia</option><option value="centralus">Central US</option><option value="germanywestcentral">Germany West Central</option><option value="japaneast">Japan East</option><option value="australiaeast">Australia East</option><option value="canadacentral">Canada Central</option></select></div>
                   <div><label for="azureSpeechLocale">Langue</label><select id="azureSpeechLocale"><option value="fr-FR">Français</option><option value="en-US">English</option><option value="de-DE">Deutsch</option></select></div>
                 </div>
                 <p class="muted" data-ui="transcriptionHelp">OpenAI utilise gpt-4o-transcribe-diarize jusqu’à 25 Mo. Au-delà, Helper bascule vers Azure Speech si une clé Azure est configurée. Azure Fast Transcription accepte jusqu’à 250 Mo et moins de 2 heures.</p>
@@ -959,8 +969,10 @@
                   <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
                   <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
                     <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
-                    <div><label for="ingestAzureDeployment">Déploiement</label><input id="ingestAzureDeployment"></div>
+                    <div><label for="ingestAzureRegion">Région Azure</label><select id="ingestAzureRegion"><option value="westeurope">West Europe</option><option value="francecentral">France Central</option><option value="northeurope">North Europe</option><option value="uksouth">UK South</option><option value="eastus">East US</option><option value="eastus2">East US 2</option><option value="westus">West US</option><option value="swedencentral">Sweden Central</option><option value="germanywestcentral">Germany West Central</option><option value="switzerlandnorth">Switzerland North</option></select></div>
+                    <div><label for="ingestAzureDeployment">Nom du déploiement Azure</label><input id="ingestAzureDeployment" placeholder="gpt-4o"></div>
                     <div><label for="ingestAzureKey">Clé Azure OpenAI</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
+                    <p class="muted wide">La région documente la zone Azure utilisée. L’endpoint HTTPS reste l’adresse effectivement appelée.</p>
                   </div></div>
                 </div>
                 <div class="ingest-actions"><button id="refreshAnalysisModels">Récupérer les modèles</button><button id="ingestTest">Tester la connexion LLM</button></div>
@@ -971,7 +983,7 @@
             <div class="card">
             <div class="card-head"><h3 data-ui="challengeApiTitle">Modèle de Check &amp; Challenge</h3></div>
             <div class="card-body"><label style="display:flex;gap:10px;align-items:center;text-transform:none;"><input id="challengeEnabled" type="checkbox" checked style="width:auto;"><span data-ui="challengeEnabledLabel">Activer la seconde passe contradictoire par défaut</span></label><p class="muted" data-ui="challengeHelp">Le modèle de contradiction peut utiliser un fournisseur ou modèle différent.</p>
-              <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><select id="challengeModel"><option value="claude-opus-4-6">claude-opus-4-6</option></select><div id="challengeModelStatus" class="model-catalog-status"></div></div><div class="wide"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div></div>
+              <div class="ingest-fields"><div><label for="challengeProvider">Fournisseur</label><select id="challengeProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option></select></div><div><label for="challengeModel">Modèle</label><select id="challengeModel"><option value="claude-opus-4-6">claude-opus-4-6</option></select><div id="challengeModelStatus" class="model-catalog-status"></div></div><div class="wide" id="challengeApiKeyField"><label for="challengeApiKey">Clé API dédiée (laisser vide pour reprendre la clé d’analyse)</label><input id="challengeApiKey" type="password" autocomplete="off"></div><div class="wide hidden" id="challengeAzureFields"><div class="ingest-fields"><div class="wide"><label for="challengeAzureEndpoint">Endpoint Azure OpenAI dédié</label><input id="challengeAzureEndpoint" type="url" placeholder="Laisser vide pour reprendre l’endpoint d’analyse"></div><div><label for="challengeAzureRegion">Région Azure</label><select id="challengeAzureRegion"><option value="">Reprendre la région d’analyse</option><option value="westeurope">West Europe</option><option value="francecentral">France Central</option><option value="northeurope">North Europe</option><option value="uksouth">UK South</option><option value="eastus">East US</option><option value="eastus2">East US 2</option><option value="westus">West US</option><option value="swedencentral">Sweden Central</option><option value="germanywestcentral">Germany West Central</option><option value="switzerlandnorth">Switzerland North</option></select></div><div><label for="challengeAzureDeployment">Nom du déploiement Azure</label><input id="challengeAzureDeployment" placeholder="Laisser vide pour reprendre le déploiement d’analyse"></div><div><label for="challengeAzureKey">Clé Azure OpenAI dédiée</label><input id="challengeAzureKey" type="password" autocomplete="off" placeholder="Laisser vide pour reprendre la clé d’analyse"></div></div></div></div>
               <div class="config-actions"><button id="refreshChallengeModels">Récupérer la liste des modèles existants</button><button id="challengeTest">Tester la connexion</button></div>
               <div id="challengeConnectionStatus" class="connection-status hidden"></div>
               <div class="model-guidance" data-ui="modelGuidance">Pour garantir une qualité suffisante, utilisez au minimum GPT-5.5 ou Claude Opus 4.6, ou une version supérieure.</div>
@@ -1686,9 +1698,9 @@
         if (value) element.textContent = value;
       });
       const fields = {
-        fr: { transcriptionProvider:"Fournisseur", openaiTranscriptionKey:"Clé OpenAI transcription", azureSpeechKey:"Clé Azure Speech", azureSpeechRegion:"Région", azureSpeechLocale:"Langue", ingestProvider:"Fournisseur", ingestModel:"Modèle", ingestApiKey:"Clé API", ingestAzureEndpoint:"Endpoint Azure OpenAI", ingestAzureDeployment:"Déploiement", ingestAzureKey:"Clé Azure OpenAI", challengeProvider:"Fournisseur", challengeModel:"Modèle", challengeApiKey:"Clé API dédiée (laisser vide pour reprendre la clé d’analyse)" },
-        en: { transcriptionProvider:"Provider", openaiTranscriptionKey:"OpenAI transcription key", azureSpeechKey:"Azure Speech key", azureSpeechRegion:"Region", azureSpeechLocale:"Language", ingestProvider:"Provider", ingestModel:"Model", ingestApiKey:"API key", ingestAzureEndpoint:"Azure OpenAI endpoint", ingestAzureDeployment:"Deployment", ingestAzureKey:"Azure OpenAI key", challengeProvider:"Provider", challengeModel:"Model", challengeApiKey:"Dedicated API key (leave blank to reuse the analysis key)" },
-        de: { transcriptionProvider:"Anbieter", openaiTranscriptionKey:"OpenAI-Transkriptionsschlüssel", azureSpeechKey:"Azure-Speech-Schlüssel", azureSpeechRegion:"Region", azureSpeechLocale:"Sprache", ingestProvider:"Anbieter", ingestModel:"Modell", ingestApiKey:"API-Schlüssel", ingestAzureEndpoint:"Azure-OpenAI-Endpunkt", ingestAzureDeployment:"Bereitstellung", ingestAzureKey:"Azure-OpenAI-Schlüssel", challengeProvider:"Anbieter", challengeModel:"Modell", challengeApiKey:"Eigener API-Schlüssel (leer lassen, um den Analyseschlüssel zu verwenden)" }
+        fr: { transcriptionProvider:"Fournisseur", openaiTranscriptionKey:"Clé OpenAI transcription", azureSpeechKey:"Clé Azure Speech", azureSpeechRegion:"Région Azure Speech", azureSpeechLocale:"Langue", ingestProvider:"Fournisseur", ingestModel:"Modèle", ingestApiKey:"Clé API", ingestAzureEndpoint:"Endpoint Azure OpenAI", ingestAzureRegion:"Région Azure", ingestAzureDeployment:"Nom du déploiement Azure", ingestAzureKey:"Clé Azure OpenAI", challengeProvider:"Fournisseur", challengeModel:"Modèle", challengeApiKey:"Clé API dédiée (laisser vide pour reprendre la clé d’analyse)", challengeAzureEndpoint:"Endpoint Azure OpenAI dédié", challengeAzureRegion:"Région Azure", challengeAzureDeployment:"Nom du déploiement Azure", challengeAzureKey:"Clé Azure OpenAI dédiée" },
+        en: { transcriptionProvider:"Provider", openaiTranscriptionKey:"OpenAI transcription key", azureSpeechKey:"Azure Speech key", azureSpeechRegion:"Azure Speech region", azureSpeechLocale:"Language", ingestProvider:"Provider", ingestModel:"Model", ingestApiKey:"API key", ingestAzureEndpoint:"Azure OpenAI endpoint", ingestAzureRegion:"Azure region", ingestAzureDeployment:"Azure deployment name", ingestAzureKey:"Azure OpenAI key", challengeProvider:"Provider", challengeModel:"Model", challengeApiKey:"Dedicated API key (leave blank to reuse the analysis key)", challengeAzureEndpoint:"Dedicated Azure OpenAI endpoint", challengeAzureRegion:"Azure region", challengeAzureDeployment:"Azure deployment name", challengeAzureKey:"Dedicated Azure OpenAI key" },
+        de: { transcriptionProvider:"Anbieter", openaiTranscriptionKey:"OpenAI-Transkriptionsschlüssel", azureSpeechKey:"Azure-Speech-Schlüssel", azureSpeechRegion:"Azure-Speech-Region", azureSpeechLocale:"Sprache", ingestProvider:"Anbieter", ingestModel:"Modell", ingestApiKey:"API-Schlüssel", ingestAzureEndpoint:"Azure-OpenAI-Endpunkt", ingestAzureRegion:"Azure-Region", ingestAzureDeployment:"Azure-Bereitstellungsname", ingestAzureKey:"Azure-OpenAI-Schlüssel", challengeProvider:"Anbieter", challengeModel:"Modell", challengeApiKey:"Eigener API-Schlüssel (leer lassen, um den Analyseschlüssel zu verwenden)", challengeAzureEndpoint:"Eigener Azure-OpenAI-Endpunkt", challengeAzureRegion:"Azure-Region", challengeAzureDeployment:"Azure-Bereitstellungsname", challengeAzureKey:"Eigener Azure-OpenAI-Schlüssel" }
       }[lang] || {};
       Object.entries(fields).forEach(([id, value]) => {
         const label = document.querySelector(`label[for="${id}"]`);
@@ -2551,9 +2563,19 @@
         model: clean($("ingestModel").value),
         apiKey: $("ingestApiKey").value.trim(),
         azureEndpoint: $("ingestAzureEndpoint").value.trim(),
+        azureRegion: $("ingestAzureRegion").value,
         azureDeployment: $("ingestAzureDeployment").value.trim(),
         azureKey: $("ingestAzureKey").value.trim()
       };
+    }
+
+    function normalizedAzureEndpoint(value) {
+      const endpoint = String(value || "").trim().replace(/\/+$/, "");
+      let parsed;
+      try { parsed = new URL(endpoint); }
+      catch { throw new Error(localText("URL d’endpoint Azure invalide.", "Invalid Azure endpoint URL.", "Ungültige Azure-Endpunkt-URL.")); }
+      if (parsed.protocol !== "https:") throw new Error(localText("L’endpoint Azure doit utiliser HTTPS.", "Azure endpoint must use HTTPS.", "Der Azure-Endpunkt muss HTTPS verwenden."));
+      return endpoint;
     }
 
     function parseLLMJson(text) {
@@ -2595,13 +2617,12 @@
       }
       if (config.provider === "azure_openai") {
         if (!config.azureEndpoint || !config.azureDeployment || !config.azureKey) throw new Error("Azure endpoint, deployment, and API key are required.");
-        const endpoint = config.azureEndpoint.replace(/\/+$/, "");
-        if (!endpoint.startsWith("https://")) throw new Error("Azure endpoint must use HTTPS.");
+        const endpoint = normalizedAzureEndpoint(config.azureEndpoint);
         response = await apiFetch(`${endpoint}/openai/deployments/${encodeURIComponent(config.azureDeployment)}/chat/completions?api-version=2024-02-01`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "api-key": config.azureKey },
           body: JSON.stringify({ messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
-        }, localText("Analyse Azure OpenAI en cours…", "Azure OpenAI analysis in progress…", "Azure-OpenAI-Analyse läuft…"));
+        }, localText(`Analyse Azure OpenAI (${config.azureRegion || "région non précisée"}) en cours…`, `Azure OpenAI analysis (${config.azureRegion || "region not specified"}) in progress…`, `Azure-OpenAI-Analyse (${config.azureRegion || "Region nicht angegeben"}) läuft…`));
         const data = await response.json();
         if (!response.ok) throw new Error(data.error?.message || `Azure OpenAI HTTP ${response.status}`);
         return parseLLMJson(data.choices?.[0]?.message?.content || "");
@@ -2819,13 +2840,16 @@ Return strict JSON only:
 
     function challengeIngestConfig() {
       const baseConfig = ingestConfig();
+      const azureChallenge = $("challengeProvider").value === "azure_openai";
       return {
         ...baseConfig,
         provider: $("challengeProvider").value,
         model: clean($("challengeModel").value),
         apiKey: $("challengeApiKey").value.trim() || baseConfig.apiKey,
-        azureDeployment: $("challengeProvider").value === "azure_openai" ? clean($("challengeModel").value) : baseConfig.azureDeployment,
-        azureKey: $("challengeApiKey").value.trim() || baseConfig.azureKey
+        azureEndpoint: azureChallenge ? ($("challengeAzureEndpoint").value.trim() || baseConfig.azureEndpoint) : baseConfig.azureEndpoint,
+        azureRegion: azureChallenge ? ($("challengeAzureRegion").value || baseConfig.azureRegion) : baseConfig.azureRegion,
+        azureDeployment: azureChallenge ? ($("challengeAzureDeployment").value.trim() || baseConfig.azureDeployment) : baseConfig.azureDeployment,
+        azureKey: azureChallenge ? ($("challengeAzureKey").value.trim() || $("challengeApiKey").value.trim() || baseConfig.azureKey) : baseConfig.azureKey
       };
     }
 
@@ -3600,11 +3624,14 @@ Return strict JSON only:
       };
     }
 
-    function exportStandaloneHtml() {
+    async function exportStandaloneHtml() {
       if (!state.assessment) return;
       try {
         const payload = JSON.stringify(standaloneExportPayload()).replace(/</g, "\\u003c");
         const clientBootstrap = `<script>window.__CYBERBENCH_EXPORT__=${payload};<\/script>`;
+        const themeResponse = await fetch("design-system/wavestone-theme.css");
+        if (!themeResponse.ok) throw new Error(`Wavestone theme unavailable (${themeResponse.status})`);
+        const themeStyles = `<style id="wavestone-theme">${(await themeResponse.text()).replace(/<\/style/gi, "<\\/style")}</style>`;
         const clientStyles = `<style id="client-export-styles">
           body.client-export .workflow-nav,
           body.client-export #exploreToolbar > .card,
@@ -3622,6 +3649,8 @@ Return strict JSON only:
         </style>`;
         const documentHtml = `<!doctype html>\n${pristineDocumentHtml}`
           .replace(/<script[^>]+src=["'][^"']+["'][^>]*><\/script>\s*/gi, "")
+          .replace(/<link[^>]+href=["']design-system\/wavestone-theme\.css["'][^>]*>\s*/i, themeStyles)
+          .replace(/<html\b([^>]*)>/i, (match, attrs) => `<html${attrs.replace(/\sdata-design-system="[^"]*"/i, "")} data-design-system="${document.documentElement.dataset.designSystem || ""}">`)
           .replace("</head>", `${clientStyles}${clientBootstrap}</head>`);
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([documentHtml], { type: "text/html;charset=utf-8" }));
@@ -4837,7 +4866,8 @@ Return strict JSON only:
 
     const HELPER_CONFIG_KEY = "cyberbench-helper-config-v1";
     const INGEST_SESSION_KEY = "cyberbench-helper-ingest-session-v1";
-    const helperConfigIds = ["missionCode", "missionName", "projectManagerName", "projectManagerEmail", "llmConsent", "ingestProvider", "ingestModel", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureDeployment", "ingestAzureKey", "transcriptionProvider", "openaiTranscriptionKey", "azureSpeechKey", "azureSpeechRegion", "azureSpeechLocale", "challengeEnabled", "challengeProvider", "challengeModel", "challengeApiKey"];
+    const DESIGN_SYSTEM_KEY = "cyberbench-design-system";
+    const helperConfigIds = ["missionCode", "missionName", "projectManagerName", "projectManagerEmail", "llmConsent", "ingestProvider", "ingestModel", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureRegion", "ingestAzureDeployment", "ingestAzureKey", "transcriptionProvider", "openaiTranscriptionKey", "azureSpeechKey", "azureSpeechRegion", "azureSpeechLocale", "challengeEnabled", "challengeProvider", "challengeModel", "challengeApiKey", "challengeAzureEndpoint", "challengeAzureRegion", "challengeAzureDeployment", "challengeAzureKey"];
     const modelRefreshTimers = {};
     const DEFAULT_MODEL_OPTIONS = {
       anthropic: ["claude-opus-4-6", "claude-sonnet-4-20250514"],
@@ -4845,6 +4875,13 @@ Return strict JSON only:
       azure_openai: [],
       google_gemini: ["gemini-2.5-pro", "gemini-2.5-flash"]
     };
+
+    function applyDesignSystem(value) {
+      const designSystem = value === "wavestone" ? "wavestone" : "current";
+      document.body.dataset.designSystem = designSystem === "wavestone" ? "wavestone" : "";
+      document.documentElement.dataset.designSystem = document.body.dataset.designSystem;
+      $("designSystem").value = designSystem;
+    }
 
     function llmUseAuthorized() {
       return $("llmConsent").checked;
@@ -4909,9 +4946,10 @@ Return strict JSON only:
           if (!key) throw new Error(localText("Clé Google Gemini manquante.", "Google Gemini key missing.", "Google-Gemini-Schlüssel fehlt."));
           response = await apiFetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`, {}, localText("Chargement des modèles Google Gemini…", "Loading Google Gemini models…", "Google-Gemini-Modelle werden geladen…"));
         } else {
-          const endpoint = $("ingestAzureEndpoint").value.trim().replace(/\/+$/, "");
-          const azureKey = challenge ? ($("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim();
-          if (!endpoint || !azureKey) throw new Error(localText("Endpoint et clé Azure OpenAI manquants.", "Azure OpenAI endpoint and key missing.", "Azure-OpenAI-Endpunkt und Schlüssel fehlen."));
+          const endpointValue = challenge ? ($("challengeAzureEndpoint").value.trim() || $("ingestAzureEndpoint").value.trim()) : $("ingestAzureEndpoint").value.trim();
+          const azureKey = challenge ? ($("challengeAzureKey").value.trim() || $("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim();
+          if (!endpointValue || !azureKey) throw new Error(localText("Endpoint et clé Azure OpenAI manquants.", "Azure OpenAI endpoint and key missing.", "Azure-OpenAI-Endpunkt und Schlüssel fehlen."));
+          const endpoint = normalizedAzureEndpoint(endpointValue);
           response = await apiFetch(`${endpoint}/openai/deployments?api-version=2024-10-21`, { headers: { "api-key": azureKey } }, localText("Chargement des déploiements Azure OpenAI…", "Loading Azure OpenAI deployments…", "Azure-OpenAI-Bereitstellungen werden geladen…"));
         }
         const data = await response.json().catch(() => ({}));
@@ -4924,6 +4962,10 @@ Return strict JSON only:
         models = [...new Set(models)].sort((a, b) => a.localeCompare(b));
         if (!models.length) throw new Error(localText("Le fournisseur n’a renvoyé aucun modèle compatible.", "The provider returned no compatible models.", "Der Anbieter hat keine kompatiblen Modelle zurückgegeben."));
         populateModelSelect(kind, models);
+        if (provider === "azure_openai") {
+          const deploymentField = $(challenge ? "challengeAzureDeployment" : "ingestAzureDeployment");
+          if (!deploymentField.value.trim()) deploymentField.value = models[0];
+        }
         const message = localText(`${models.length} modèles chargés depuis le fournisseur.`, `${models.length} models loaded from the provider.`, `${models.length} Modelle vom Anbieter geladen.`);
         setCatalogState(kind, "success", message);
         completeApiAction(apiTask, message);
@@ -4942,7 +4984,10 @@ Return strict JSON only:
       const challenge = kind === "challenge";
       const provider = $(challenge ? "challengeProvider" : "ingestProvider").value;
       if (provider === "azure_openai") {
-        return Boolean($("ingestAzureEndpoint").value.trim() && (challenge ? ($("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim()));
+        return Boolean(
+          (challenge ? ($("challengeAzureEndpoint").value.trim() || $("ingestAzureEndpoint").value.trim()) : $("ingestAzureEndpoint").value.trim())
+          && (challenge ? ($("challengeAzureKey").value.trim() || $("challengeApiKey").value.trim() || $("ingestAzureKey").value.trim()) : $("ingestAzureKey").value.trim())
+        );
       }
       return Boolean($(challenge ? "challengeApiKey" : "ingestApiKey").value.trim() || (challenge && $("ingestApiKey").value.trim()));
     }
@@ -4982,6 +5027,8 @@ Return strict JSON only:
       if (!allowImportedConsent) $("llmConsent").checked = false;
       $("ingestAzureFields").classList.toggle("hidden", $("ingestProvider").value !== "azure_openai");
       $("ingestApiKeyField").classList.toggle("hidden", $("ingestProvider").value === "azure_openai");
+      $("challengeAzureFields").classList.toggle("hidden", $("challengeProvider").value !== "azure_openai");
+      $("challengeApiKeyField").classList.toggle("hidden", $("challengeProvider").value === "azure_openai");
       updateLlmConsentState();
       refreshAvailableModels();
       updateMissionDisplay();
@@ -5192,6 +5239,8 @@ Return strict JSON only:
       const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "" };
       populateModelSelect("challenge", DEFAULT_MODEL_OPTIONS[event.target.value], defaults[event.target.value]);
       resetAIState("challenge");
+      $("challengeAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
+      $("challengeApiKeyField").classList.toggle("hidden", event.target.value === "azure_openai");
       scheduleModelRefresh("challenge");
     });
     $("llmConsent").addEventListener("change", () => {
@@ -5199,8 +5248,8 @@ Return strict JSON only:
       localStorage.setItem(HELPER_CONFIG_KEY, JSON.stringify(helperConfigPayload()));
       if (llmUseAuthorized()) refreshAvailableModels();
     });
-    ["ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => { resetAIState("analysis"); scheduleModelRefresh("analysis"); }));
-    ["challengeApiKey", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => { resetAIState("challenge"); scheduleModelRefresh("challenge"); }));
+    ["ingestApiKey", "ingestAzureEndpoint", "ingestAzureRegion", "ingestAzureDeployment", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => { resetAIState("analysis"); scheduleModelRefresh("analysis"); }));
+    ["challengeApiKey", "challengeAzureEndpoint", "challengeAzureRegion", "challengeAzureDeployment", "challengeAzureKey", "ingestApiKey", "ingestAzureEndpoint", "ingestAzureRegion", "ingestAzureDeployment", "ingestAzureKey"].forEach((id) => $(id).addEventListener("change", () => { resetAIState("challenge"); scheduleModelRefresh("challenge"); }));
     $("ingestDomain").addEventListener("change", (event) => { state.ingest.domain = event.target.value; });
     $("ingestTest").addEventListener("click", () => testModelConnection("analysis"));
     $("challengeTest").addEventListener("click", () => testModelConnection("challenge"));
@@ -5302,6 +5351,10 @@ Return strict JSON only:
       }
     });
     $("saveHelperConfig").addEventListener("click", saveHelperConfig);
+    $("designSystem").addEventListener("change", (event) => {
+      localStorage.setItem(DESIGN_SYSTEM_KEY, event.target.value);
+      applyDesignSystem(event.target.value);
+    });
     $("refreshAnalysisModels").addEventListener("click", () => refreshModelList("analysis").catch((error) => toast(error.message, "error")));
     $("refreshChallengeModels").addEventListener("click", () => refreshModelList("challenge").catch((error) => toast(error.message, "error")));
     $("exportHelperConfig").addEventListener("click", exportHelperConfig);
@@ -5321,6 +5374,7 @@ Return strict JSON only:
 
     applyLocale();
     applyHelperLocale();
+    applyDesignSystem(localStorage.getItem(DESIGN_SYSTEM_KEY) || "current");
     try {
       const savedHelperConfig = localStorage.getItem(HELPER_CONFIG_KEY);
       if (savedHelperConfig) applyHelperConfig(JSON.parse(savedHelperConfig));

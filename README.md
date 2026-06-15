@@ -11,11 +11,15 @@ The UI defaults to English and automatically switches to French when the browser
 
 Helper et Manager conservent leur configuration dans le stockage local du navigateur. Les configurations et registres peuvent être exportés en JSON. Les JSON Helper et emails `.eml` peuvent contenir de véritables clés API et doivent être traités comme des secrets.
 
+Les réglages de Helper et Manager proposent un design system Wavestone optionnel, partagé avec l'Explorer dans le même navigateur. Le style historique reste sélectionné par défaut. Les exports HTML autonomes embarquent le thème actif.
+
 L’enregistrement SharePoint depuis Manager cible un répertoire SharePoint synchronisé localement par OneDrive via l’API navigateur de sélection de répertoire, disponible principalement dans Chrome et Edge.
 
 Les règles métier considèrent que les pourcentages L1 à L4 doivent totaliser 100 %. L5 est un bonus additionnel, exclu de ce total.
 
 Pour la transcription, OpenAI accepte les fichiers jusqu’à 25 Mo. Helper bascule automatiquement vers Azure Speech lorsqu’une clé Azure est configurée et que le fichier dépasse cette limite. L’endpoint Azure Fast Transcription utilisé accepte les fichiers de moins de 2 heures et jusqu’à 250 Mo. Les fichiers dépassant ces limites doivent être découpés avant import.
+
+Azure OpenAI peut être utilisé pour l’analyse et pour la passe indépendante de Check & Challenge. Chaque configuration indique l’endpoint HTTPS, la région Azure utilisée (`westeurope` par défaut), le nom du déploiement et la clé API. La seconde passe peut réutiliser la configuration Azure d’analyse ou définir ses propres valeurs.
 
 ## Utilisation
 

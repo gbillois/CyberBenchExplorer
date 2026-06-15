@@ -6,6 +6,12 @@
   <title>CyberBenchManager</title>
   <script src="vendor/xlsx.full.min.js"></script>
   <script src="vendor/pptxgen.bundle.js"></script>
+  <link rel="stylesheet" href="design-system/wavestone-theme.css">
+  <script>
+    try {
+      if (localStorage.getItem("cyberbench-design-system") === "wavestone") document.documentElement.dataset.designSystem = "wavestone";
+    } catch (error) {}
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -761,7 +767,7 @@
     }
   </style>
 </head>
-<body>
+<body data-design-system="">
   <div class="app">
     <aside>
       <div class="brand">
@@ -902,7 +908,10 @@
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
-          <div class="card"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de la sauvegarde.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
+          <div class="grid two">
+            <div class="card"><div class="card-head"><h3>Apparence</h3></div><div class="card-body"><label for="designSystem">Design system</label><select id="designSystem"><option value="current">Style actuel (par défaut)</option><option value="wavestone">Wavestone</option></select><p class="muted">Le choix est appliqué à CyberBench Explorer, Helper et Manager dans ce navigateur.</p></div></div>
+            <div class="card"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de la sauvegarde.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
+          </div>
         </section>
 
         <section id="exploreToolbar" class="workflow-panel hidden">
@@ -2889,6 +2898,9 @@ Return strict JSON only:
         if (!xlsxResponse.ok) throw new Error(`SheetJS unavailable (${xlsxResponse.status})`);
         const xlsxSource = (await xlsxResponse.text()).replace(/<\/script/gi, "<\\/script");
         const clientLibraries = `<script>${xlsxSource}<\/script>`;
+        const themeResponse = await fetch("design-system/wavestone-theme.css");
+        if (!themeResponse.ok) throw new Error(`Wavestone theme unavailable (${themeResponse.status})`);
+        const themeStyles = `<style id="wavestone-theme">${(await themeResponse.text()).replace(/<\/style/gi, "<\\/style")}</style>`;
         const clientStyles = `<style id="client-export-styles">
           body.client-export .workflow-nav,
           body.client-export #dummyNotice,
@@ -2913,6 +2925,8 @@ Return strict JSON only:
         </style>`;
         const documentHtml = `<!doctype html>\n${pristineDocumentHtml}`
           .replace(/<script[^>]+src=["'][^"']+["'][^>]*><\/script>\s*/gi, "")
+          .replace(/<link[^>]+href=["']design-system\/wavestone-theme\.css["'][^>]*>\s*/i, themeStyles)
+          .replace(/<html\b([^>]*)>/i, (match, attrs) => `<html${attrs.replace(/\sdata-design-system="[^"]*"/i, "")} data-design-system="${document.documentElement.dataset.designSystem || ""}">`)
           .replace(/<\/head>\s*<body/i, () => `${clientLibraries}${clientStyles}${clientBootstrap}</head><body`);
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([documentHtml], { type: "text/html;charset=utf-8" }));
@@ -4214,7 +4228,15 @@ Return strict JSON only:
     const MANAGER_REGISTRY_KEY = "cyberbench-manager-missions-v1";
     const MANAGER_SETTINGS_KEY = "cyberbench-manager-settings-v1";
     const MANAGER_DATABASE_KEY = "cyberbench-manager-assessments-v1";
+    const DESIGN_SYSTEM_KEY = "cyberbench-design-system";
     let missionRegistry = [];
+
+    function applyDesignSystem(value) {
+      const designSystem = value === "wavestone" ? "wavestone" : "current";
+      document.body.dataset.designSystem = designSystem === "wavestone" ? "wavestone" : "";
+      document.documentElement.dataset.designSystem = document.body.dataset.designSystem;
+      $("designSystem").value = designSystem;
+    }
 
     function compactDatabaseEntry(assessment, metadata, sourceName) {
       const scored = assessment.questions.filter((question) => question.status === "scored" && Number.isFinite(question.score));
@@ -4398,6 +4420,7 @@ Return strict JSON only:
           ingestModel: $("managerAnalysisModel").value.trim(),
           ingestApiKey: analysisProvider === "azure_openai" ? "" : $("managerAnalysisKey").value.trim(),
           ingestAzureEndpoint: $("managerAzureEndpoint").value.trim(),
+          ingestAzureRegion: $("managerAzureRegion")?.value || "westeurope",
           ingestAzureDeployment: $("managerAzureDeployment").value.trim(),
           ingestAzureKey: analysisProvider === "azure_openai" ? $("managerAnalysisKey").value.trim() : "",
           transcriptionProvider,
@@ -4408,7 +4431,11 @@ Return strict JSON only:
           challengeEnabled: true,
           challengeProvider: $("managerChallengeProvider").value,
           challengeModel: $("managerChallengeModel").value.trim(),
-          challengeApiKey: challengeKey
+          challengeApiKey: $("managerChallengeProvider").value === "azure_openai" ? "" : challengeKey,
+          challengeAzureEndpoint: $("managerChallengeProvider").value === "azure_openai" ? $("managerAzureEndpoint").value.trim() : "",
+          challengeAzureRegion: $("managerChallengeProvider").value === "azure_openai" ? ($("managerAzureRegion")?.value || "westeurope") : "",
+          challengeAzureDeployment: $("managerChallengeProvider").value === "azure_openai" ? $("managerChallengeModel").value.trim() : "",
+          challengeAzureKey: $("managerChallengeProvider").value === "azure_openai" ? challengeKey : ""
         }
       };
     }
@@ -4549,8 +4576,13 @@ Return strict JSON only:
     $("runChecks").addEventListener("click", runBusinessChecks);
     $("saveSharePoint").addEventListener("click", saveSharePoint);
     $("saveManagerSettings").addEventListener("click", () => {
-      localStorage.setItem(MANAGER_SETTINGS_KEY, JSON.stringify({ sharePointPath: $("sharePointPath").value }));
+      localStorage.setItem(MANAGER_SETTINGS_KEY, JSON.stringify({ sharePointPath: $("sharePointPath").value, designSystem: $("designSystem").value }));
+      localStorage.setItem(DESIGN_SYSTEM_KEY, $("designSystem").value);
       toast("Configuration Manager enregistrée.");
+    });
+    $("designSystem").addEventListener("change", (event) => {
+      localStorage.setItem(DESIGN_SYSTEM_KEY, event.target.value);
+      applyDesignSystem(event.target.value);
     });
     $("exportResultsExcel").addEventListener("click", exportResultsWorkbook);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
@@ -4593,6 +4625,7 @@ Return strict JSON only:
     try {
       const managerSettings = JSON.parse(localStorage.getItem(MANAGER_SETTINGS_KEY) || "{}");
       $("sharePointPath").value = managerSettings.sharePointPath || "";
+      applyDesignSystem(localStorage.getItem(DESIGN_SYSTEM_KEY) || managerSettings.designSystem || "current");
     } catch (error) { console.warn(error); }
     try {
       const databaseEntries = JSON.parse(localStorage.getItem(MANAGER_DATABASE_KEY) || "[]");

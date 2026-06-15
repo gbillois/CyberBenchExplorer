@@ -6,6 +6,12 @@
   <title>Wavestone Cyberbenchmark Workspace</title>
   <script src="vendor/xlsx.full.min.js"></script>
   <script src="vendor/pptxgen.bundle.js"></script>
+  <link rel="stylesheet" href="design-system/wavestone-theme.css">
+  <script>
+    try {
+      if (localStorage.getItem("cyberbench-design-system") === "wavestone") document.documentElement.dataset.designSystem = "wavestone";
+    } catch (error) {}
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -749,7 +755,7 @@
     }
   </style>
 </head>
-<body>
+<body data-design-system="">
   <div class="app">
     <aside>
       <div class="brand">
@@ -869,8 +875,10 @@
                   <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
                   <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
                     <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
-                    <div><label for="ingestAzureDeployment">Déploiement</label><input id="ingestAzureDeployment"></div>
+                    <div><label for="ingestAzureRegion">Région Azure</label><select id="ingestAzureRegion"><option value="westeurope">West Europe</option><option value="francecentral">France Central</option><option value="northeurope">North Europe</option><option value="uksouth">UK South</option><option value="eastus">East US</option><option value="eastus2">East US 2</option><option value="westus">West US</option><option value="swedencentral">Sweden Central</option></select></div>
+                    <div><label for="ingestAzureDeployment">Nom du déploiement Azure</label><input id="ingestAzureDeployment" placeholder="gpt-4o"></div>
                     <div><label for="ingestAzureKey">Clé Azure OpenAI</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
+                    <p class="muted wide">La région documente la zone Azure utilisée. L’endpoint HTTPS reste l’adresse effectivement appelée.</p>
                   </div></div>
                 </div>
                 <div class="ingest-actions"><button id="ingestTest">Tester la connexion LLM</button></div>
@@ -881,7 +889,7 @@
               <div class="card-body">
                 <div class="ingest-fields">
                   <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
-                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
+                  <div><label for="azureSpeechRegion">Région Azure Speech</label><select id="azureSpeechRegion"><option value="westeurope">West Europe</option><option value="francecentral">France Central</option><option value="northeurope">North Europe</option><option value="uksouth">UK South</option><option value="eastus">East US</option><option value="eastus2">East US 2</option><option value="westus">West US</option><option value="westus2">West US 2</option><option value="southeastasia">Southeast Asia</option><option value="eastasia">East Asia</option><option value="centralus">Central US</option><option value="germanywestcentral">Germany West Central</option><option value="japaneast">Japan East</option><option value="australiaeast">Australia East</option><option value="canadacentral">Canada Central</option></select></div>
                   <div><label for="azureSpeechLocale">Langue</label><input id="azureSpeechLocale" value="fr-FR"></div>
                 </div>
                 <p class="muted">Utilise l'API Fast Transcription Azure Speech. Les fichiers audio ou vidéo sont transmis directement à Microsoft Azure.</p>
@@ -2344,6 +2352,7 @@
         model: clean($("ingestModel").value),
         apiKey: $("ingestApiKey").value.trim(),
         azureEndpoint: $("ingestAzureEndpoint").value.trim(),
+        azureRegion: $("ingestAzureRegion").value,
         azureDeployment: $("ingestAzureDeployment").value.trim(),
         azureKey: $("ingestAzureKey").value.trim()
       };
@@ -2766,11 +2775,14 @@ Return strict JSON only:
       };
     }
 
-    function exportStandaloneHtml() {
+    async function exportStandaloneHtml() {
       if (!state.assessment) return;
       try {
         const payload = JSON.stringify(standaloneExportPayload()).replace(/</g, "\\u003c");
         const clientBootstrap = `<script>window.__CYBERBENCH_EXPORT__=${payload};<\/script>`;
+        const themeResponse = await fetch("design-system/wavestone-theme.css");
+        if (!themeResponse.ok) throw new Error(`Wavestone theme unavailable (${themeResponse.status})`);
+        const themeStyles = `<style id="wavestone-theme">${(await themeResponse.text()).replace(/<\/style/gi, "<\\/style")}</style>`;
         const clientStyles = `<style id="client-export-styles">
           body.client-export .workflow-nav,
           body.client-export #dummyNotice,
@@ -2789,6 +2801,8 @@ Return strict JSON only:
         </style>`;
         const documentHtml = `<!doctype html>\n${pristineDocumentHtml}`
           .replace(/<script[^>]+src=["'][^"']+["'][^>]*><\/script>\s*/gi, "")
+          .replace(/<link[^>]+href=["']design-system\/wavestone-theme\.css["'][^>]*>\s*/i, themeStyles)
+          .replace(/<html\b([^>]*)>/i, (match, attrs) => `<html${attrs.replace(/\sdata-design-system="[^"]*"/i, "")} data-design-system="${document.documentElement.dataset.designSystem || ""}">`)
           .replace("</head>", `${clientStyles}${clientBootstrap}</head>`);
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([documentHtml], { type: "text/html;charset=utf-8" }));
