@@ -2343,7 +2343,7 @@
       });
 
       const domainStats = buildDomainStats(questions);
-      const contextSheets = workbook.SheetNames.filter((name) => !domains.includes(name) && /(context|contexte|company|entreprise|information)/i.test(name));
+      const contextSheets = workbook.SheetNames.filter((name) => !domains.includes(name) && /(context|contexte|company|entreprise|information|scope|p.rim.tre|perimetre)/i.test(name));
       const contextFields = contextSheets.flatMap((name) => {
         const rows = sheetRows(workbook, name);
         return rows.filter((row) => clean(row?.[0]) && row.length > 1).map((row) => ({ sheet: name, field: clean(row[0]), complete: row.slice(1).some((value) => clean(value)) }));
@@ -3107,13 +3107,13 @@ Return strict JSON only:
       $("contextMissing").textContent = String(contextIssues.length);
       $("contextStatus").textContent = contextFields.length && !contextIssues.length ? "100 %" : (contextFields.length ? pct((contextFields.length - contextIssues.length) / contextFields.length * 100) : "-");
       $("contextStatus").className = `value ${contextFields.length && !contextIssues.length ? "check-ok" : "check-error"}`;
-      const contextMessages = {
-        fr: ["Toutes les informations détectées sont complètes.", "Aucun onglet d’informations entreprise détecté."],
-        en: ["All detected information is complete.", "No company-information sheet was detected."],
-        de: ["Alle erkannten Informationen sind vollständig.", "Kein Blatt mit Unternehmensinformationen wurde erkannt."]
-      }[lang] || [];
-      $("contextDetails").textContent = contextIssues.length ? contextIssues.map((issue) => `${issue.sheet}: ${issue.field}`).join(" · ") : (contextFields.length ? contextMessages[0] : contextMessages[1]);
-      $("emailChecks").disabled = !levelTotalsAreValid();
+      const noSheetMsg = { fr: "Aucun onglet Scope / informations entreprise détecté.", en: "No Scope / company-information sheet was detected.", de: "Kein Scope-Blatt mit Unternehmensinformationen wurde erkannt." }[lang] || "";
+      if (!contextFields.length) {
+        $("contextDetails").textContent = noSheetMsg;
+      } else {
+        $("contextDetails").innerHTML = contextFields.map((f) => `<span class="${f.complete ? "check-ok" : "check-error"}" style="display:inline-block;margin:2px 8px 2px 0;white-space:nowrap">${f.complete ? "✓" : "✗"} ${html(f.field)}</span>`).join("");
+      }
+      $("emailChecks").disabled = !levelTotalsAreValid() || contextIssues.length > 0;
       $("saveCheckedExcel").disabled = false;
       renderCheckEditor(results);
     }
@@ -5115,6 +5115,8 @@ Return strict JSON only:
     function emailChecks() {
       if (!state.assessment) return toast("Chargez d’abord le questionnaire.");
       if (!levelTotalsAreValid()) return toast("L’envoi reste désactivé tant que toutes les sommes L1 à L4 ne sont pas égales à 100 %.");
+      const contextIssues = state.assessment.contextIssues || [];
+      if (contextIssues.length) return toast(localText("Les informations de l’onglet Scope sont incomplètes. Complétez tous les champs avant l’envoi.", "Scope tab information is incomplete. Fill in all fields before sending.", "Die Scope-Informationen sind unvollständig. Füllen Sie alle Felder aus."));
       const checks = runBusinessChecks();
       const code = clean($("missionCode").value) || "mission";
       const report = ["Résultat du contrôle CyberBenchmark", `Mission: ${code}`, `Anomalies: ${checks.length}`, "", ...checks.map((row) => `${row.severity} | ${row.id} | ${row.rule} | ${row.detail}`)].join("\r\n");
