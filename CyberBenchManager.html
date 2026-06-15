@@ -225,6 +225,13 @@
     .export-card { padding: 20px; }
     .export-card h3 { margin: 0 0 8px; }
     .export-card p { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 58px; }
+    .database-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+    .database-actions > div { min-width: min(280px, 100%); flex: 1 1 280px; }
+    .database-review { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 12px; }
+    .database-review-actions { display: flex; gap: 10px; align-items: end; }
+    .database-alert { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #f0a3a6; border-radius: 10px; background: #fff1f1; color: #9f1c22; font-weight: 750; }
+    .variation-high { color: var(--red); font-weight: 800; }
+    .variation-medium { color: #9a6700; font-weight: 800; }
 
     .content { padding: 28px clamp(18px, 3vw, 36px) 44px; }
     .dummy-notice {
@@ -745,6 +752,7 @@
       .recommendation-toolbar, .recommendation-head { grid-template-columns: 1fr; }
       .ingest-grid, .ingest-fields { grid-template-columns: 1fr; }
       .workflow-steps, .source-grid, .check-summary, .export-grid { grid-template-columns: 1fr; }
+      .database-review { grid-template-columns: 1fr; }
       .ingest-fields .wide { grid-column: auto; }
       .scatter-stage { min-height: 380px; }
       .slide-chart { min-height: 320px; }
@@ -778,6 +786,10 @@
           <button data-workflow-tab="export" title="Export results">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9"></path><path d="m7 14 5-5 5 5"></path><path d="M5 3h14"></path></svg>
             Export results
+          </button>
+          <button data-workflow-tab="database" title="Database Management">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path><path d="M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"></path></svg>
+            Database Management
           </button>
           <button data-workflow-tab="configuration" title="Réglages">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>
@@ -834,11 +846,59 @@
           <div class="card" style="margin-bottom:16px;"><div class="card-body">
             <div class="export-actions">
               <button class="primary" id="exportStandaloneHtml">Générer l'HTML de résultat</button>
-              <button id="exportCentralCsv">CSV base centrale</button>
+              <button id="exportResultsExcel">Excel résultats &amp; comparaisons</button>
               <button class="pptx-export" id="exportPptx">PowerPoint résultats</button>
             </div>
             <p class="muted" style="margin:12px 0 0;"><span id="exportHtmlTitle"></span> — <span id="exportHtmlText"></span></p>
           </div></div>
+        </section>
+
+        <section id="database" class="workflow-panel hidden">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-head"><h3>Ajouter des questionnaires à la base locale</h3></div>
+            <div class="card-body">
+              <div class="database-actions">
+                <button class="primary" id="databasePrepareCurrent">Préparer le questionnaire courant</button>
+                <div><label for="databaseFile">Sélectionner un questionnaire à valider</label><input id="databaseFile" type="file" accept=".xls,.xlsx,.xlsm,.xlsb"></div>
+                <button id="databaseExport">Exporter la base en Excel</button>
+              </div>
+              <p class="muted">Chaque questionnaire doit être vérifié puis validé individuellement. Taille et secteur sont extraits des feuilles de contexte lorsque ces informations sont disponibles.</p>
+            </div>
+          </div>
+          <div class="card hidden" id="databaseReview" style="margin-bottom:16px;">
+            <div class="card-head"><h3>Valider l’ajout du questionnaire</h3><span class="muted" id="databaseReviewSource"></span></div>
+            <div class="card-body">
+              <div class="database-review">
+                <div><label for="databaseMissionCode">Code mission</label><input id="databaseMissionCode" placeholder="Obligatoire et unique"></div>
+                <div><label for="databaseOrganization">Organisation</label><input id="databaseOrganization" placeholder="Nom de l’organisation"></div>
+                <div><label for="databaseSector">Secteur</label><input id="databaseSector" placeholder="Secteur extrait ou à compléter"></div>
+                <div><label for="databaseSize">Taille</label><input id="databaseSize" placeholder="Taille extraite ou à compléter"></div>
+              </div>
+              <div id="databaseDuplicateAlert" class="database-alert hidden"></div>
+              <label id="databaseForceDuplicateWrap" class="hidden" style="margin-top:10px; text-transform:none; letter-spacing:0;"><input id="databaseForceDuplicate" type="checkbox" style="width:auto; min-height:auto; margin-right:8px;">J’ai vérifié le doublon et je souhaite forcer son ajout.</label>
+              <div class="database-review-actions" style="margin-top:14px;"><button class="primary" id="databaseValidate">Valider l’ajout</button><button class="ghost" id="databaseCancel">Annuler</button></div>
+            </div>
+          </div>
+          <div class="grid kpis">
+            <div class="card kpi"><div class="label">Questionnaires</div><div class="value" id="databaseCount">0</div><div class="sub">Dans la base locale</div></div>
+            <div class="card kpi"><div class="label">Note moyenne</div><div class="value" id="databaseAverage">-</div><div class="sub">Toutes organisations</div></div>
+            <div class="card kpi"><div class="label">Domaines suivis</div><div class="value" id="databaseDomains">0</div><div class="sub">Avec au moins une note</div></div>
+            <div class="card kpi"><div class="label">Variations fortes</div><div class="value" id="databaseVariations">0</div><div class="sub">Ecart absolu ≥ 15 points</div></div>
+          </div>
+          <div class="grid two">
+            <div class="card">
+              <div class="card-head"><h3>Moyenne des notes par domaine</h3></div>
+              <div class="card-body"><div class="bars" id="databaseDomainBars"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Organisations particulières</h3></div>
+              <div class="card-body"><div class="table-wrap"><table id="databaseVariationTable"><thead><tr><th>Organisation</th><th class="small">Domaine</th><th class="small">Note</th><th class="small">Moy. autres</th><th class="small">Variation</th></tr></thead><tbody></tbody></table></div></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px;">
+            <div class="card-head"><h3>Questionnaires enregistrés</h3></div>
+            <div class="card-body"><div class="table-wrap"><table id="databaseTable"><thead><tr><th>Code mission</th><th>Organisation</th><th>Secteur</th><th>Taille</th><th class="small">Note</th><th class="small">Ajout</th><th class="small">Action</th></tr></thead><tbody></tbody></table></div></div>
+          </div>
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
@@ -1539,7 +1599,9 @@
       filters: { search: "", domain: "", type: "", status: "", score: "" },
       dummyAssessment: false,
       dummyBenchmark: false,
-      checkResults: []
+      checkResults: [],
+      databaseEntries: [],
+      databasePending: null
     };
 
     const RECOMMENDATION_ENRICHMENT = {
@@ -1840,6 +1902,47 @@
       });
     }
 
+    function extractAssessmentMetadata(workbook) {
+      const fields = {
+        missionCode: ["code mission", "mission code", "engagement code", "code projet", "project code"],
+        organization: ["organisation", "organization", "nom organisation", "organization name", "company name", "nom entreprise", "client", "mission name", "nom mission"],
+        sector: ["secteur", "sector", "secteur d activite", "activity sector", "industry", "industrie"],
+        size: ["taille", "size", "taille entreprise", "company size", "organisation size", "organization size", "effectif", "employees", "nombre d employes", "chiffre d affaires", "revenue"]
+      };
+      const metadata = { missionCode: "", organization: "", sector: "", size: "" };
+      const matchesLabel = (value, candidates) => {
+        const label = normalize(value).replace(/[:?]+$/, "").trim();
+        return candidates.some((candidate) => label === normalize(candidate));
+      };
+      const nearbyValue = (rows, rowIndex, columnIndex) => {
+        for (let offset = 1; offset <= 4; offset++) {
+          const value = clean(rows[rowIndex]?.[columnIndex + offset]);
+          if (value) return value;
+        }
+        for (let offset = 1; offset <= 2; offset++) {
+          const value = clean(rows[rowIndex + offset]?.[columnIndex]);
+          if (value) return value;
+        }
+        return "";
+      };
+      const properties = { ...(workbook.Props || {}), ...(workbook.Custprops || {}) };
+      Object.entries(fields).forEach(([field, candidates]) => {
+        const property = Object.entries(properties).find(([key]) => matchesLabel(key, candidates));
+        if (property) metadata[field] = clean(property[1]);
+      });
+      const domainSheets = new Set(detectDomainSheets(workbook));
+      workbook.SheetNames.filter((name) => !domainSheets.has(name)).forEach((sheetName) => {
+        const rows = sheetRows(workbook, sheetName).slice(0, 150);
+        rows.forEach((row, rowIndex) => row.slice(0, 30).forEach((cell, columnIndex) => {
+          Object.entries(fields).forEach(([field, candidates]) => {
+            if (metadata[field] || !matchesLabel(cell, candidates)) return;
+            metadata[field] = nearbyValue(rows, rowIndex, columnIndex);
+          });
+        }));
+      });
+      return metadata;
+    }
+
     function parseAssessment(workbook) {
       const domains = detectDomainSheets(workbook);
       const questions = [];
@@ -1920,7 +2023,7 @@
         const rows = sheetRows(workbook, name);
         return rows.filter((row) => clean(row?.[0]) && row.slice(1).some((value) => value !== null && value !== undefined) && !row.slice(1).some((value) => clean(value))).map((row) => ({ sheet: name, field: clean(row[0]) }));
       });
-      return { questions, domainStats, sheetCount: domains.length, contextIssues };
+      return { questions, domainStats, sheetCount: domains.length, contextIssues, metadata: extractAssessmentMetadata(workbook) };
     }
 
     function buildDomainStats(questions) {
@@ -2207,6 +2310,7 @@
         const workbook = await readWorkbook(file);
         const assessment = parseAssessment(workbook);
         if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
+        assessment.sourceName = file.name;
         state.assessment = assessment;
         state.sourceWorkbook = workbook;
         state.sourceFileName = file.name;
@@ -2530,25 +2634,72 @@ Return strict JSON only:
       if (saveButton) saveButton.disabled = results.length > 0 || state.dummyAssessment;
     }
 
-    function exportCentralCsv() {
-      if (!state.assessment) return;
+    function comparisonReferenceValue(question, key) {
+      if (!state.benchmark) return null;
+      const questionRecord = state.benchmark.recordMap?.get(normalize(question.id));
+      const questionValue = benchmarkValue(questionRecord, key);
+      if (Number.isFinite(questionValue)) return questionValue;
+      return benchmarkValue(state.benchmark.domainStats?.find((domain) => domain.id === question.domain), key);
+    }
+
+    function exportResultsWorkbook() {
+      if (!state.assessment || !window.XLSX) return toast(t("missingSheetJs"));
       const checks = runBusinessChecks();
       const checksById = new Map();
       checks.forEach((check) => {
         if (!checksById.has(check.id)) checksById.set(check.id, []);
         checksById.get(check.id).push(`${check.rule}: ${check.detail}`);
       });
-      const headers = ["ID", "DOMAIN", "TYPE", "SUBTOPIC", "ASSESSMENT_POINT", "L1_PERCENT", "L2_PERCENT", "L3_PERCENT", "L4_PERCENT", "L5_PERCENT", "SCORE", "STATUS", "COMMENT", "ANSWER_RELIABILITY", "CONTROL", "CHECK_STATUS", "CHECK_ERRORS"];
-      const rows = state.assessment.questions.map((q) => {
-        const errors = checksById.get(q.id) || [];
-        return [q.id, q.domain, q.type, q.subtopic, q.question, ...normalizeLevels(q.levels).map((value) => Math.round(value * 10000) / 100), q.score ?? "", q.status, q.comment, q.reliability, q.control, errors.length ? "ERROR" : "OK", errors.join(" | ")];
+      const references = state.benchmark?.referenceOptions || [];
+      const comparisonHeaders = references.flatMap((reference) => [
+        `ECART_${reference.label}`,
+        `ECART_ABSOLU_${reference.label}`
+      ]);
+      const resultHeaders = ["ID", "DOMAIN", "TYPE", "SUBTOPIC", "ASSESSMENT_POINT", "L1_PERCENT", "L2_PERCENT", "L3_PERCENT", "L4_PERCENT", "L5_PERCENT", "SCORE", "STATUS", "COMMENT", "ANSWER_RELIABILITY", "CONTROL", "CHECK_STATUS", "CHECK_ERRORS"];
+      const resultRows = state.assessment.questions.map((question) => {
+        const errors = checksById.get(question.id) || [];
+        return [question.id, question.domain, question.type, question.subtopic, question.question, ...normalizeLevels(question.levels).map((value) => Math.round(value * 10000) / 100), question.score ?? "", question.status, question.comment, question.reliability, question.control, errors.length ? "ERROR" : "OK", errors.join(" | ")];
       });
-      const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
-      link.download = `CyberBenchmark-central-${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(link.href);
+      const questionRows = state.assessment.questions.map((question) => [
+        question.id,
+        question.domain,
+        question.score ?? "",
+        ...references.flatMap((reference) => {
+          const referenceValue = comparisonReferenceValue(question, reference.key);
+          const difference = question.status === "scored" && Number.isFinite(referenceValue) ? question.score - referenceValue : null;
+          return [difference ?? "", Number.isFinite(difference) ? Math.abs(difference) : ""];
+        })
+      ]);
+      const domainRows = state.assessment.domainStats.map((domain) => [
+        domain.id,
+        domain.name,
+        domain.score ?? "",
+        ...references.flatMap((reference) => {
+          const referenceValue = benchmarkValue(state.benchmark?.domainStats?.find((item) => item.id === domain.id), reference.key);
+          const difference = Number.isFinite(domain.score) && Number.isFinite(referenceValue) ? domain.score - referenceValue : null;
+          return [difference ?? "", Number.isFinite(difference) ? Math.abs(difference) : ""];
+        })
+      ]);
+      const metadataRows = [
+        ["Champ", "Valeur"],
+        ["Fichier source", state.assessment.sourceName || state.sourceFileName || ""],
+        ["Date export", new Date().toISOString()],
+        ["Questions", state.assessment.questions.length],
+        ["Domaines", state.assessment.domainStats.length],
+        ["Référentiels comparés", references.map((reference) => reference.label).join(" | ")],
+        ["Confidentialité", "Les valeurs des référentiels ne sont pas incluses. Seuls les écarts pré-calculés sont exportés."]
+      ];
+      const workbook = XLSX.utils.book_new();
+      const append = (name, rows, widths = []) => {
+        const sheet = XLSX.utils.aoa_to_sheet(rows);
+        if (widths.length) sheet["!cols"] = widths.map((wch) => ({ wch }));
+        XLSX.utils.book_append_sheet(workbook, sheet, name);
+      };
+      append("RESULTATS", [resultHeaders, ...resultRows], resultHeaders.map((header) => header === "ASSESSMENT_POINT" || header === "COMMENT" || header === "CHECK_ERRORS" ? 45 : 18));
+      append("COMPARAISONS_QUESTIONS", [["ID", "DOMAIN", "SCORE", ...comparisonHeaders], ...questionRows], [18, 14, 12, ...comparisonHeaders.map(() => 22)]);
+      append("COMPARAISONS_DOMAINES", [["DOMAIN", "DOMAIN_NAME", "SCORE", ...comparisonHeaders], ...domainRows], [14, 30, 12, ...comparisonHeaders.map(() => 22)]);
+      append("METADONNEES", metadataRows, [24, 90]);
+      XLSX.writeFile(workbook, `CyberBenchmark-results-${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
     function exportAssessmentWorkbook() {
@@ -2569,18 +2720,14 @@ Return strict JSON only:
       XLSX.writeFile(workbook, `CyberBenchmark-ingested-${new Date().toISOString().slice(0, 10)}.xlsx`);
     }
 
-    function varianceRange(value) {
+    function exactVariance(value) {
       if (!Number.isFinite(value)) return null;
-      const absolute = Math.abs(value);
-      const bucket = absolute < 3 ? { label: "0-3%", midpoint: 1.5 }
-        : absolute < 5 ? { label: "3-5%", midpoint: 4 }
-        : absolute < 10 ? { label: "5-10%", midpoint: 7.5 }
-        : absolute < 20 ? { label: "10-20%", midpoint: 15 }
-        : { label: "20%+", midpoint: 25 };
       return {
-        label: bucket.label,
+        value,
+        absolute: Math.abs(value),
+        label: signedPct(value),
         direction: value < 0 ? "below" : "above",
-        position: value < 0 ? -bucket.midpoint : bucket.midpoint
+        position: value
       };
     }
 
@@ -2597,7 +2744,7 @@ Return strict JSON only:
         status: question.status,
         comment: question.comment,
         reliability: question.reliability,
-        varianceRange: questionVariance,
+        variance: questionVariance,
         varianceByRef
       };
     }
@@ -2607,10 +2754,10 @@ Return strict JSON only:
         const scored = state.assessment.questions.filter((question) => question.domain === domain.id && question.status === "scored");
         return [domain.id, average(scored.map((question) => question.score))];
       }));
-      // Comparison bases available in the export (Top 10, large companies, ...) — labels only, no exact benchmark values.
+      // Comparison bases available in the export (Top 10, large companies, ...) — labels only, no benchmark values.
       const referenceOptions = (state.benchmark?.referenceOptions || []).map((option) => ({ key: option.key, label: option.label }));
       const benchmarkDomainStats = state.benchmark?.domainStats || [];
-      // For each base, the per-question reference score: question-level if available, else domain-level, else the internal domain average.
+      // For each base, the per-question reference score: question-level if available, otherwise domain-level.
       const referenceValueFor = (question, key) => {
         if (state.benchmark) {
           const record = state.benchmark.recordMap?.get(normalize(question.id));
@@ -2619,32 +2766,41 @@ Return strict JSON only:
           const domainRef = benchmarkValue(benchmarkDomainStats.find((domain) => domain.id === question.domain), key);
           if (Number.isFinite(domainRef)) return domainRef;
         }
-        return internalAverages.get(question.domain);
+        return null;
       };
       const questions = state.assessment.questions.map((question) => {
         const varianceByRef = referenceOptions.length ? Object.fromEntries(referenceOptions.map((option) => {
           const referenceValue = referenceValueFor(question, option.key);
           const difference = question.status === "scored" && Number.isFinite(referenceValue) ? question.score - referenceValue : null;
-          return [option.key, varianceRange(difference)];
+          return [option.key, exactVariance(difference)];
         })) : null;
         const defaultReference = questionReference(question);
         const defaultValue = defaultReference?.value ?? internalAverages.get(question.domain);
         const defaultDifference = question.status === "scored" && Number.isFinite(defaultValue) ? question.score - defaultValue : null;
-        return sanitizedClientQuestion(question, varianceRange(defaultDifference), varianceByRef);
+        return sanitizedClientQuestion(question, exactVariance(defaultDifference), varianceByRef);
       });
       const questionById = new Map(questions.map((question) => [question.id, question]));
-      const domains = state.assessment.domainStats.map((domain) => ({
-        id: domain.id,
-        name: domain.name,
-        total: domain.total,
-        scored: domain.scored,
-        na: domain.na,
-        missing: domain.missing,
-        orga: domain.orga,
-        tech: domain.tech,
-        score: domain.score,
-        coverage: domain.coverage
-      }));
+      const domains = state.assessment.domainStats.map((domain) => {
+        const varianceByRef = referenceOptions.length ? Object.fromEntries(referenceOptions.map((option) => {
+          const referenceValue = benchmarkValue(benchmarkDomainStats.find((benchmarkDomain) => benchmarkDomain.id === domain.id), option.key);
+          const difference = Number.isFinite(domain.score) && Number.isFinite(referenceValue) ? domain.score - referenceValue : null;
+          return [option.key, exactVariance(difference)];
+        })) : null;
+        return {
+          id: domain.id,
+          name: domain.name,
+          total: domain.total,
+          scored: domain.scored,
+          na: domain.na,
+          missing: domain.missing,
+          orga: domain.orga,
+          tech: domain.tech,
+          score: domain.score,
+          coverage: domain.coverage,
+          variance: varianceByRef?.[state.compareRef] || null,
+          varianceByRef
+        };
+      });
       const scored = questions.filter((question) => question.status === "scored");
       const covered = questions.filter((question) => question.status === "scored" || question.status === "na").length;
       const scoredDomains = domains.filter((domain) => Number.isFinite(domain.score));
@@ -2677,7 +2833,7 @@ Return strict JSON only:
         }];
       }));
       return {
-        version: 2,
+        version: 3,
         exportedAt: new Date().toISOString(),
         assessment: {
           sourceName: state.assessment.sourceName,
@@ -2685,7 +2841,7 @@ Return strict JSON only:
           questions,
           domainStats: domains
         },
-        // Comparison bases only (labels + keys), so the recipient can switch base without exposing exact benchmark values.
+        // Comparison bases only (labels + keys), so the recipient can switch base without exposing benchmark values.
         benchmark: referenceOptions.length ? {
           referenceOptions,
           preferredRef: state.benchmark?.preferredRef || referenceOptions[0].key,
@@ -2813,6 +2969,7 @@ Return strict JSON only:
       document.querySelectorAll("[data-workflow-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.workflowTab === state.workflowTab));
       document.querySelectorAll("[data-explore-tab]").forEach((btn) => btn.classList.toggle("active", btn.dataset.exploreTab === state.tab));
       updateTitle();
+      renderDatabase();
       if (!ready) return;
       renderFilters();
       renderHome();
@@ -2831,6 +2988,7 @@ Return strict JSON only:
         check: ["Import & Check", "Chargez un questionnaire reçu et vérifiez sa cohérence. La sauvegarde SharePoint s'active lorsque le fichier est conforme à 100 %."],
         explore: ["Export results", "Parcourez les analyses du questionnaire contrôlé."],
         export: ["Export results", "Générez l'HTML de résultat puis vérifiez le rendu avec les modules de visualisation ci-dessous."],
+        database: ["Database Management", "Ajoutez des questionnaires, suivez les moyennes et détectez les organisations qui s'écartent fortement de la base."],
         configuration: ["Réglages", "Configurez le répertoire SharePoint cible utilisé pour la sauvegarde."]
       };
       const [title, intro] = titles[state.workflowTab] || titles.check;
@@ -2917,13 +3075,19 @@ Return strict JSON only:
     // In a sanitized client export, the pre-calculated score difference depends on the chosen comparison base.
     function clientVariance(question) {
       if (!question) return null;
-      return (question.varianceByRef && question.varianceByRef[state.compareRef]) || question.varianceRange || null;
+      if (question.varianceByRef && Object.prototype.hasOwnProperty.call(question.varianceByRef, state.compareRef)) return question.varianceByRef[state.compareRef];
+      return question.variance || null;
+    }
+
+    function clientReferenceValue(point) {
+      const variance = clientVariance(point);
+      return Number.isFinite(point?.score) && Number.isFinite(variance?.value) ? point.score - variance.value : null;
     }
 
     function questionVarianceText(question) {
-      const range = clientVariance(question);
-      if (!range) return "";
-      return `${t("scoreVariance")} ${range.label} · ${t(range.direction === "below" ? "belowReference" : "aboveReference")}${state.benchmark?.referenceOptions?.length ? ` (${html(referenceLabel())})` : ""}`;
+      const variance = clientVariance(question);
+      if (!variance) return "";
+      return `${t("scoreVariance")} ${variance.label} · ${t(variance.direction === "below" ? "belowReference" : "aboveReference")}${state.benchmark?.referenceOptions?.length ? ` (${html(referenceLabel())})` : ""}`;
     }
 
     function pointDifferenceText(point) {
@@ -2963,6 +3127,15 @@ Return strict JSON only:
       const scored = state.assessment.domainStats.filter((d) => Number.isFinite(d.score));
       const internalAverage = average(scored.map((d) => d.score));
       return scored.map((d) => {
+        const variance = clientVariance(d);
+        if (state.clientReport?.sanitized && variance) {
+          return {
+            ...d,
+            ref: null,
+            gap: variance.position,
+            gapLabel: t("scoreVariance")
+          };
+        }
         const ref = benchmarkReference(d.id);
         const refValue = ref ? ref.value : internalAverage;
         return {
@@ -2989,7 +3162,7 @@ Return strict JSON only:
         : null;
       if (state.drill.questionId && !selectedQuestion) state.drill.questionId = "";
       $("dashboardBack").classList.toggle("hidden", !selectedDomain);
-      const refLabel = points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, "");
+      const refLabel = state.clientReport?.sanitized ? referenceLabel() : (points.find((d) => d.ref)?.ref?.label || t("gapInternalAverage").replace(/^gap to |^écart /, ""));
       $("bubbleTitle").textContent = selectedDomain
         ? (state.clientReport?.sanitized ? `${selectedDomain.id} · ${t("scoreVariance")}` : t("questionsVs", { domain: selectedDomain.id, ref: refLabel }))
         : t("maturityVs", { ref: refLabel });
@@ -3039,7 +3212,7 @@ Return strict JSON only:
         ${grid}
         <line class="slide-axis" x1="${pad.left}" y1="${h - pad.bottom}" x2="${w - pad.right}" y2="${h - pad.bottom}"></line>
         <line class="slide-axis" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${h - pad.bottom}"></line>
-        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${selectedDomain && state.clientReport?.sanitized ? t("scoreVariance") : t("gapWith", { ref: refLabel })}</text>
+        <text class="slide-label" x="${w / 2}" y="${h - 4}" text-anchor="middle">${state.clientReport?.sanitized ? `${t("scoreVariance")} · ${html(refLabel)}` : t("gapWith", { ref: refLabel })}</text>
         <text class="slide-label" x="18" y="${h / 2}" transform="rotate(-90 18 ${h / 2})" text-anchor="middle">${selectedDomain ? t("maturityQuestion") : t("maturityEnterprise")}</text>
         ${bubbles}
       </svg>`;
@@ -3277,7 +3450,7 @@ Return strict JSON only:
         state.overviewDomain = "";
         state.overviewQuestion = "";
       }
-      const hasBenchmark = Boolean(state.benchmark);
+      const hasBenchmark = Boolean(state.benchmark?.referenceOptions?.length);
       $("radarBenchmarkLegend").classList.toggle("hidden", !hasBenchmark);
       if (hasBenchmark) $("radarBenchmarkLegend").innerHTML = `<i style="background:var(--amber)"></i>${html(referenceLabel())}`;
 
@@ -3293,12 +3466,13 @@ Return strict JSON only:
         $("radarBack").textContent = selectedQuestion ? `← ${name}` : t("backToThemes");
         items = questions.map((q) => {
           const ref = benchMap ? benchMap.get(normalize(q.id)) : null;
-          const refVal = benchmarkValue(ref);
+          const refVal = state.clientReport?.sanitized ? clientReferenceValue(q) : benchmarkValue(ref);
+          const varianceText = clientVariance(q) ? ` · ${questionVarianceText(q)}` : "";
           return {
             label: q.id,
             value: Number.isFinite(q.score) ? q.score : 0,
             benchValue: Number.isFinite(refVal) ? refVal : null,
-            tooltip: `${q.id} · ${q.subtopic || q.question || ""} · ${pct(q.score)}`,
+            tooltip: `${q.id} · ${q.subtopic || q.question || ""} · ${pct(q.score)}${varianceText}`,
             overviewQuestion: q.id,
             active: q.id === state.overviewQuestion
           };
@@ -3310,12 +3484,13 @@ Return strict JSON only:
         $("radarBack").textContent = t("backToThemes");
         items = domains.map((d) => {
           const b = benchMap ? benchMap.get(d.id) : null;
-          const refVal = benchmarkValue(b);
+          const refVal = state.clientReport?.sanitized ? clientReferenceValue(d) : benchmarkValue(b);
+          const variance = clientVariance(d);
           return {
             label: d.id,
             value: Number.isFinite(d.score) ? d.score : 0,
             benchValue: Number.isFinite(refVal) ? refVal : null,
-            tooltip: `${d.name} · ${pct(d.score)}`,
+            tooltip: `${d.name} · ${pct(d.score)}${variance ? ` · ${variance.label}` : ""}`,
             drillDomain: d.id
           };
         });
@@ -3442,12 +3617,17 @@ Return strict JSON only:
       if (state.domainSort === "asc") domains.sort((a, b) => (a.score ?? 999) - (b.score ?? 999));
       if (state.domainSort === "desc") domains.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
       if (state.domainSort === "alpha") domains.sort((a, b) => a.id.localeCompare(b.id));
-      $("domainBars").innerHTML = domains.map((d) => `
-        <button class="bar-row" data-domain-focus="${html(d.id)}" title="${d.name}">
-          <div class="bar-label">${d.id}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${d.score ?? 0}%; background:${scoreColor(d.score)}"></div></div>
-          <div class="bar-value">${pct(d.score)}${benchmarkReference(d.id) ? `<br>${signedPct(d.score - benchmarkReference(d.id).value)}` : ""}</div>
-        </button>`).join("");
+      $("domainBars").innerHTML = domains.map((d) => {
+        const variance = clientVariance(d);
+        const reference = state.clientReport?.sanitized ? null : benchmarkReference(d.id);
+        const difference = variance?.value ?? (reference ? d.score - reference.value : null);
+        return `
+          <button class="bar-row" data-domain-focus="${html(d.id)}" title="${d.name}">
+            <div class="bar-label">${d.id}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${d.score ?? 0}%; background:${scoreColor(d.score)}"></div></div>
+            <div class="bar-value">${pct(d.score)}${Number.isFinite(difference) ? `<br>${signedPct(difference)}` : ""}</div>
+          </button>`;
+      }).join("");
       renderScatter(domains);
       bindDomainInteractions();
     }
@@ -3803,10 +3983,15 @@ Return strict JSON only:
     function exportCsv() {
       if (!state.assessment) return;
       const rows = filteredQuestions();
-      const headers = ["ID", t("domain"), t("topic"), t("question"), t("type"), "N1", "N2", "N3", "N4", "N5", referenceLabel(), `${referenceLabel()} maturity`, t("gap"), t("status"), t("reliability"), t("comment")];
+      const references = state.benchmark?.referenceOptions || [];
+      const headers = ["ID", t("domain"), t("topic"), t("question"), t("type"), "N1", "N2", "N3", "N4", "N5", t("status"), t("reliability"), t("comment"), ...references.flatMap((reference) => [`${t("gap")} ${reference.label}`, `${t("gap")} absolu ${reference.label}`])];
       const data = rows.map((q) => {
-        const top = questionGap(q);
-        return [q.id, q.domain, q.subtopic, q.question, q.type, ...[0, 1, 2, 3, 4].map((index) => Number.isFinite(q.levels?.[index]) ? q.levels[index] * 100 : ""), top.ref?.value ?? "", maturityLabel(top.ref?.maturityLevel), top.gap ?? "", q.status, q.reliability, q.comment];
+        const comparisons = references.flatMap((reference) => {
+          const referenceValue = comparisonReferenceValue(q, reference.key);
+          const difference = q.status === "scored" && Number.isFinite(referenceValue) ? q.score - referenceValue : null;
+          return [difference ?? "", Number.isFinite(difference) ? Math.abs(difference) : ""];
+        });
+        return [q.id, q.domain, q.subtopic, q.question, q.type, ...[0, 1, 2, 3, 4].map((index) => Number.isFinite(q.levels?.[index]) ? q.levels[index] * 100 : ""), q.status, q.reliability, q.comment, ...comparisons];
       });
       const csv = [headers, ...data].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
       const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
@@ -3941,7 +4126,164 @@ Return strict JSON only:
 
     const MANAGER_REGISTRY_KEY = "cyberbench-manager-missions-v1";
     const MANAGER_SETTINGS_KEY = "cyberbench-manager-settings-v1";
+    const MANAGER_DATABASE_KEY = "cyberbench-manager-assessments-v1";
     let missionRegistry = [];
+
+    function compactDatabaseEntry(assessment, metadata, sourceName) {
+      const scored = assessment.questions.filter((question) => question.status === "scored" && Number.isFinite(question.score));
+      const covered = assessment.questions.filter((question) => question.status === "scored" || question.status === "na").length;
+      return {
+        id: `assessment-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        missionCode: clean(metadata.missionCode),
+        organization: clean(metadata.organization) || clean(sourceName).replace(/\.[^.]+$/, "") || "Organisation sans nom",
+        sector: clean(metadata.sector),
+        size: clean(metadata.size),
+        sourceName: clean(sourceName) || assessment.sourceName || "",
+        addedAt: new Date().toISOString(),
+        score: average(scored.map((question) => question.score)),
+        coverage: assessment.questions.length ? covered / assessment.questions.length * 100 : 0,
+        domains: assessment.domainStats.filter((domain) => Number.isFinite(domain.score)).map((domain) => ({ id: domain.id, score: domain.score, coverage: domain.coverage })),
+        questions: scored.map((question) => ({ id: question.id, domain: question.domain, score: question.score }))
+      };
+    }
+
+    function saveDatabaseEntries() {
+      try {
+        localStorage.setItem(MANAGER_DATABASE_KEY, JSON.stringify(state.databaseEntries));
+      } catch (error) {
+        console.error(error);
+        toast("La base locale est pleine. Exportez-la puis supprimez des questionnaires.");
+      }
+    }
+
+    function databaseMissionDuplicate(missionCode) {
+      const code = normalize(missionCode);
+      return code ? state.databaseEntries.find((entry) => normalize(entry.missionCode) === code) || null : null;
+    }
+
+    function addAssessmentToDatabase(assessment, metadata, sourceName, forceDuplicate = false) {
+      if (!clean(metadata.missionCode)) return toast("Le code mission est obligatoire.");
+      const duplicate = databaseMissionDuplicate(metadata.missionCode);
+      if (duplicate && !forceDuplicate) return toast(`Doublon détecté : cochez l’option de forçage pour ajouter à nouveau le code mission ${metadata.missionCode}.`);
+      state.databaseEntries.unshift(compactDatabaseEntry(assessment, metadata, sourceName));
+      saveDatabaseEntries();
+      renderDatabase();
+      state.databasePending = null;
+      renderDatabaseReview();
+      toast("Questionnaire validé et ajouté à la base locale.");
+    }
+
+    function prepareDatabaseReview(assessment, sourceName) {
+      state.databasePending = { assessment, sourceName, metadata: { missionCode: "", organization: "", sector: "", size: "", ...(assessment.metadata || {}) } };
+      renderDatabaseReview();
+    }
+
+    function renderDatabaseReview() {
+      const pending = state.databasePending;
+      $("databaseReview").classList.toggle("hidden", !pending);
+      if (!pending) return;
+      $("databaseReviewSource").textContent = `${pending.sourceName || "-"} · ${pending.assessment.questions.length} questions`;
+      $("databaseMissionCode").value = pending.metadata.missionCode || "";
+      $("databaseOrganization").value = pending.metadata.organization || "";
+      $("databaseSector").value = pending.metadata.sector || "";
+      $("databaseSize").value = pending.metadata.size || "";
+      $("databaseForceDuplicate").checked = false;
+      renderDatabaseDuplicateAlert();
+    }
+
+    function renderDatabaseDuplicateAlert() {
+      const alert = $("databaseDuplicateAlert");
+      const duplicate = databaseMissionDuplicate($("databaseMissionCode").value);
+      alert.classList.toggle("hidden", !duplicate);
+      alert.textContent = duplicate ? `Doublon détecté : ce code mission est déjà enregistré pour ${duplicate.organization} (${duplicate.sourceName || "fichier inconnu"}).` : "";
+      $("databaseForceDuplicateWrap").classList.toggle("hidden", !duplicate);
+      if (!duplicate) $("databaseForceDuplicate").checked = false;
+      $("databaseValidate").disabled = Boolean(duplicate && !$("databaseForceDuplicate").checked);
+    }
+
+    function databaseVariations() {
+      return state.databaseEntries.flatMap((entry) => entry.domains.map((domain) => {
+        const peers = state.databaseEntries
+          .filter((candidate) => candidate.id !== entry.id)
+          .map((candidate) => candidate.domains.find((item) => item.id === domain.id)?.score)
+          .filter(Number.isFinite);
+        const peerAverage = average(peers);
+        const variation = Number.isFinite(peerAverage) ? domain.score - peerAverage : null;
+        return { entry, domain: domain.id, score: domain.score, peerAverage, variation };
+      })).filter((row) => Number.isFinite(row.variation)).sort((a, b) => Math.abs(b.variation) - Math.abs(a.variation));
+    }
+
+    function renderDatabase() {
+      const entries = state.databaseEntries;
+      const variations = databaseVariations();
+      const strongVariations = variations.filter((row) => Math.abs(row.variation) >= 15);
+      const domainIds = [...new Set(entries.flatMap((entry) => entry.domains.map((domain) => domain.id)))].sort();
+      const domainAverages = domainIds.map((id) => ({
+        id,
+        score: average(entries.map((entry) => entry.domains.find((domain) => domain.id === id)?.score).filter(Number.isFinite))
+      })).filter((domain) => Number.isFinite(domain.score)).sort((a, b) => a.score - b.score);
+      $("databaseCount").textContent = String(entries.length);
+      $("databaseAverage").textContent = pct(average(entries.map((entry) => entry.score).filter(Number.isFinite)));
+      $("databaseDomains").textContent = String(domainAverages.length);
+      $("databaseVariations").textContent = String(strongVariations.length);
+      $("databaseDomainBars").innerHTML = domainAverages.length ? domainAverages.map((domain) => `
+        <div class="bar-row">
+          <div class="bar-label">${html(domain.id)} · ${html(DOMAIN_NAMES[domain.id] || domain.id)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${clamp(domain.score, 0, 100)}%"></div></div>
+          <div class="bar-value">${pct(domain.score)}</div>
+        </div>`).join("") : '<p class="muted">Ajoutez au moins un questionnaire pour calculer les moyennes.</p>';
+      $("databaseVariationTable").querySelector("tbody").innerHTML = strongVariations.length ? strongVariations.slice(0, 50).map((row) => `
+        <tr>
+          <td>${html(row.entry.organization)}</td>
+          <td class="small">${html(row.domain)}</td>
+          <td class="small">${pct(row.score)}</td>
+          <td class="small">${pct(row.peerAverage)}</td>
+          <td class="small variation-high">${signedPct(row.variation)}</td>
+        </tr>`).join("") : '<tr><td colspan="5" class="muted">Aucune variation forte détectée. Deux questionnaires avec des domaines communs sont nécessaires au calcul.</td></tr>';
+      $("databaseTable").querySelector("tbody").innerHTML = entries.length ? entries.map((entry) => `
+        <tr>
+          <td><strong>${html(entry.missionCode || "-")}</strong></td>
+          <td><strong>${html(entry.organization)}</strong></td>
+          <td>${html(entry.sector || "-")}</td>
+          <td>${html(entry.size || "-")}</td>
+          <td class="small">${pct(entry.score)}</td>
+          <td class="small">${new Date(entry.addedAt).toLocaleDateString("fr-FR")}</td>
+          <td class="small"><button class="ghost database-delete" data-database-id="${entry.id}">Supprimer</button></td>
+        </tr>`).join("") : '<tr><td colspan="7" class="muted">Aucun questionnaire enregistré.</td></tr>';
+    }
+
+    async function prepareDatabaseFile(file) {
+      if (!file) return;
+      try {
+        const workbook = await readWorkbook(file);
+        const assessment = parseAssessment(workbook);
+        if (!assessment.questions.length) throw new Error(t("noDomainSheet"));
+        assessment.sourceName = file.name;
+        prepareDatabaseReview(assessment, file.name);
+      } catch (error) {
+        console.error(error);
+        toast(`Import impossible pour ${file.name} : ${error.message}`);
+      }
+    }
+
+    function exportDatabaseWorkbook() {
+      if (!state.databaseEntries.length || !window.XLSX) return toast("La base locale est vide.");
+      const variations = databaseVariations();
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([
+        ["CODE_MISSION", "ORGANISATION", "SECTEUR", "TAILLE", "FICHIER", "DATE_AJOUT", "SCORE_MOYEN", "COUVERTURE", "DOMAINES", "QUESTIONS_SCOREES"],
+        ...state.databaseEntries.map((entry) => [entry.missionCode, entry.organization, entry.sector, entry.size, entry.sourceName, entry.addedAt, entry.score, entry.coverage, entry.domains.length, entry.questions.length])
+      ]), "QUESTIONNAIRES");
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([
+        ["CODE_MISSION", "ORGANISATION", "SECTEUR", "TAILLE", "DOMAIN", "SCORE", "COUVERTURE"],
+        ...state.databaseEntries.flatMap((entry) => entry.domains.map((domain) => [entry.missionCode, entry.organization, entry.sector, entry.size, domain.id, domain.score, domain.coverage]))
+      ]), "NOTES_DOMAINES");
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([
+        ["CODE_MISSION", "ORGANISATION", "SECTEUR", "TAILLE", "DOMAIN", "SCORE", "MOYENNE_AUTRES", "VARIATION", "VARIATION_ABSOLUE", "ALERTE_FORTE"],
+        ...variations.map((row) => [row.entry.missionCode, row.entry.organization, row.entry.sector, row.entry.size, row.domain, row.score, row.peerAverage, row.variation, Math.abs(row.variation), Math.abs(row.variation) >= 15 ? "OUI" : "NON"])
+      ]), "VARIATIONS");
+      XLSX.writeFile(workbook, `CyberBenchmark-database-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
 
     function downloadBlob(name, blob) {
       const link = document.createElement("a");
@@ -4118,15 +4460,51 @@ Return strict JSON only:
       localStorage.setItem(MANAGER_SETTINGS_KEY, JSON.stringify({ sharePointPath: $("sharePointPath").value }));
       toast("Configuration Manager enregistrée.");
     });
-    $("exportCentralCsv").addEventListener("click", exportCentralCsv);
+    $("exportResultsExcel").addEventListener("click", exportResultsWorkbook);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     $("exportStandaloneHtml").addEventListener("click", exportStandaloneHtml);
     document.querySelectorAll(".png-export").forEach((button) => button.addEventListener("click", () => exportVisualPng(button)));
+    $("databasePrepareCurrent").addEventListener("click", () => {
+      if (!state.assessment) return toast("Chargez d'abord un questionnaire.");
+      prepareDatabaseReview(state.assessment, state.sourceFileName || state.assessment.sourceName || "Questionnaire courant");
+    });
+    $("databaseFile").addEventListener("change", (event) => {
+      const [file] = event.target.files;
+      prepareDatabaseFile(file).finally(() => { event.target.value = ""; });
+    });
+    $("databaseMissionCode").addEventListener("input", renderDatabaseDuplicateAlert);
+    $("databaseForceDuplicate").addEventListener("change", renderDatabaseDuplicateAlert);
+    $("databaseValidate").addEventListener("click", () => {
+      if (!state.databasePending) return;
+      const metadata = {
+        missionCode: $("databaseMissionCode").value,
+        organization: $("databaseOrganization").value,
+        sector: $("databaseSector").value,
+        size: $("databaseSize").value
+      };
+      addAssessmentToDatabase(state.databasePending.assessment, metadata, state.databasePending.sourceName, $("databaseForceDuplicate").checked);
+    });
+    $("databaseCancel").addEventListener("click", () => {
+      state.databasePending = null;
+      renderDatabaseReview();
+    });
+    $("databaseExport").addEventListener("click", exportDatabaseWorkbook);
+    $("databaseTable").addEventListener("click", (event) => {
+      const button = event.target.closest(".database-delete");
+      if (!button) return;
+      state.databaseEntries = state.databaseEntries.filter((entry) => entry.id !== button.dataset.databaseId);
+      saveDatabaseEntries();
+      renderDatabase();
+    });
 
     applyLocale();
     try {
       const managerSettings = JSON.parse(localStorage.getItem(MANAGER_SETTINGS_KEY) || "{}");
       $("sharePointPath").value = managerSettings.sharePointPath || "";
+    } catch (error) { console.warn(error); }
+    try {
+      const databaseEntries = JSON.parse(localStorage.getItem(MANAGER_DATABASE_KEY) || "[]");
+      state.databaseEntries = Array.isArray(databaseEntries) ? databaseEntries : [];
     } catch (error) { console.warn(error); }
     if (window.__CYBERBENCH_EXPORT__) {
       try {
