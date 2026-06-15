@@ -902,7 +902,37 @@
         </section>
 
         <section id="configuration" class="workflow-panel hidden">
-          <div class="card"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de la sauvegarde.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
+          <div class="card" style="margin-bottom:16px;"><div class="card-head"><h3>Répertoire SharePoint</h3></div><div class="card-body"><div class="ingest-fields"><div class="wide"><label for="sharePointPath">Arborescence cible / description</label><input id="sharePointPath" placeholder="CyberBenchmark / Missions / Questionnaires"></div></div><p class="muted">Le navigateur demandera de sélectionner le répertoire SharePoint synchronisé par OneDrive au moment de la sauvegarde.</p><button id="saveManagerSettings">Enregistrer la configuration</button></div></div>
+          <div class="grid two">
+            <div class="card">
+              <div class="card-head"><h3 id="ingestConfigTitle">Configuration du LLM</h3></div>
+              <div class="card-body">
+                <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés API restent uniquement en mémoire et ne sont jamais enregistrées.</div>
+                <div class="ingest-fields" style="margin-top:14px;">
+                  <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
+                  <div><label for="ingestModel">Modèle</label><input id="ingestModel" value="claude-sonnet-4-6"></div>
+                  <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
+                  <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
+                    <div class="wide"><label for="ingestAzureEndpoint">Endpoint Azure OpenAI</label><input id="ingestAzureEndpoint" type="url" placeholder="https://resource.openai.azure.com"></div>
+                    <div><label for="ingestAzureDeployment">Déploiement</label><input id="ingestAzureDeployment"></div>
+                    <div><label for="ingestAzureKey">Clé Azure OpenAI</label><input id="ingestAzureKey" type="password" autocomplete="off"></div>
+                  </div></div>
+                </div>
+                <div class="ingest-actions" style="margin-top:14px;"><button id="ingestTest">Tester la connexion LLM</button></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Azure Speech-to-Text</h3></div>
+              <div class="card-body">
+                <div class="ingest-fields">
+                  <div class="wide"><label for="azureSpeechKey">Clé Azure Speech</label><input id="azureSpeechKey" type="password" autocomplete="off"></div>
+                  <div><label for="azureSpeechRegion">Région</label><input id="azureSpeechRegion" value="westeurope"></div>
+                  <div><label for="azureSpeechLocale">Langue</label><input id="azureSpeechLocale" value="fr-FR"></div>
+                </div>
+                <p class="muted">Utilise l'API Fast Transcription Azure Speech. Les fichiers audio ou vidéo sont transmis directement à Microsoft Azure.</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section id="exploreToolbar" class="workflow-panel hidden">
@@ -4552,6 +4582,13 @@ Return strict JSON only:
       localStorage.setItem(MANAGER_SETTINGS_KEY, JSON.stringify({ sharePointPath: $("sharePointPath").value }));
       toast("Configuration Manager enregistrée.");
     });
+    $("ingestProvider").addEventListener("change", (event) => {
+      const defaults = { anthropic: "claude-sonnet-4-6", openai: "gpt-4.1", azure_openai: "", google_gemini: "gemini-2.5-pro" };
+      $("ingestModel").value = defaults[event.target.value];
+      $("ingestAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
+      $("ingestApiKeyField").classList.toggle("hidden", event.target.value === "azure_openai");
+    });
+    $("ingestTest").addEventListener("click", testIngestConnection);
     $("exportResultsExcel").addEventListener("click", exportResultsWorkbook);
     $("exportPptx").addEventListener("click", exportAllVisualsPptx);
     $("exportStandaloneHtml").addEventListener("click", exportStandaloneHtml);
