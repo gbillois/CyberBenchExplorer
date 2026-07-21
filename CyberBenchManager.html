@@ -2408,15 +2408,16 @@
         if (!response.ok) throw new Error(data.error?.message || `Anthropic HTTP ${response.status}`);
         return parseLLMJson(data.content?.map((part) => part.text || "").join("") || "");
       }
-      if (config.provider === "openai") {
-        if (!config.apiKey) throw new Error("OpenAI API key missing.");
-        response = await fetch("https://api.openai.com/v1/chat/completions", {
+      if (config.provider === "openai" || config.provider === "openrouter") {
+        const label = config.provider === "openrouter" ? "OpenRouter" : "OpenAI";
+        if (!config.apiKey) throw new Error(`${label} API key missing.`);
+        response = await fetch(config.provider === "openrouter" ? "https://openrouter.ai/api/v1/chat/completions" : "https://api.openai.com/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}` },
-          body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}`, ...(config.provider === "openrouter" ? { "HTTP-Referer": location.origin, "X-OpenRouter-Title": "CyberBench Manager" } : {}) },
+          body: JSON.stringify({ model: config.model, response_format: { type: "json_object" }, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
         });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error?.message || `OpenAI HTTP ${response.status}`);
+        if (!response.ok) throw new Error(data.error?.message || `${label} HTTP ${response.status}`);
         return parseLLMJson(data.choices?.[0]?.message?.content || "");
       }
       if (config.provider === "azure_openai") {

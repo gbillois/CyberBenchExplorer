@@ -870,7 +870,7 @@
               <div class="card-body">
                 <div class="ingest-warning" id="ingestWarning">Les données sont envoyées au fournisseur configuré. Les clés restent uniquement en mémoire.</div>
                 <div class="ingest-fields" style="margin-top:14px;">
-                  <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
+                  <div><label for="ingestProvider">Fournisseur</label><select id="ingestProvider"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option><option value="azure_openai">Azure OpenAI</option><option value="google_gemini">Google Gemini</option></select></div>
                   <div><label for="ingestModel">Modèle</label><input id="ingestModel" value="claude-sonnet-4-20250514"></div>
                   <div class="wide" id="ingestApiKeyField"><label for="ingestApiKey">Clé API</label><input id="ingestApiKey" type="password" autocomplete="off"></div>
                   <div class="wide hidden" id="ingestAzureFields"><div class="ingest-fields">
@@ -2383,15 +2383,16 @@
         if (!response.ok) throw new Error(data.error?.message || `Anthropic HTTP ${response.status}`);
         return parseLLMJson(data.content?.map((part) => part.text || "").join("") || "");
       }
-      if (config.provider === "openai") {
-        if (!config.apiKey) throw new Error("OpenAI API key missing.");
-        response = await fetch("https://api.openai.com/v1/chat/completions", {
+      if (config.provider === "openai" || config.provider === "openrouter") {
+        const label = config.provider === "openrouter" ? "OpenRouter" : "OpenAI";
+        if (!config.apiKey) throw new Error(`${label} API key missing.`);
+        response = await fetch(config.provider === "openrouter" ? "https://openrouter.ai/api/v1/chat/completions" : "https://api.openai.com/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}` },
-          body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}`, ...(config.provider === "openrouter" ? { "HTTP-Referer": location.origin, "X-OpenRouter-Title": "CyberBench Explorer" } : {}) },
+          body: JSON.stringify({ model: config.model, response_format: { type: "json_object" }, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
         });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error?.message || `OpenAI HTTP ${response.status}`);
+        if (!response.ok) throw new Error(data.error?.message || `${label} HTTP ${response.status}`);
         return parseLLMJson(data.choices?.[0]?.message?.content || "");
       }
       if (config.provider === "azure_openai") {
@@ -4037,7 +4038,7 @@ Return strict JSON only:
       if (state.assessment) renderRecommendations();
     });
     $("ingestProvider").addEventListener("change", (event) => {
-      const defaults = { anthropic: "claude-sonnet-4-20250514", openai: "gpt-4.1", azure_openai: "", google_gemini: "gemini-2.5-pro" };
+      const defaults = { anthropic: "claude-sonnet-4-20250514", openai: "gpt-4.1", openrouter: "openrouter/auto", azure_openai: "", google_gemini: "gemini-2.5-pro" };
       state.ingest.provider = event.target.value;
       $("ingestModel").value = defaults[event.target.value];
       $("ingestAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");

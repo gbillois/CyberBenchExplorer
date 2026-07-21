@@ -2607,15 +2607,16 @@
         if (!response.ok) throw new Error(data.error?.message || `Anthropic HTTP ${response.status}`);
         return parseLLMJson(data.content?.map((part) => part.text || "").join("") || "");
       }
-      if (config.provider === "openai") {
-        if (!config.apiKey) throw new Error("OpenAI API key missing.");
-        response = await apiFetch("https://api.openai.com/v1/chat/completions", {
+      if (config.provider === "openai" || config.provider === "openrouter") {
+        const label = config.provider === "openrouter" ? "OpenRouter" : "OpenAI";
+        if (!config.apiKey) throw new Error(`${label} API key missing.`);
+        response = await apiFetch(config.provider === "openrouter" ? "https://openrouter.ai/api/v1/chat/completions" : "https://api.openai.com/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}` },
-          body: JSON.stringify({ model: config.model, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
-        }, localText("Analyse OpenAI en cours…", "OpenAI analysis in progress…", "OpenAI-Analyse läuft…"));
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}`, ...(config.provider === "openrouter" ? { "HTTP-Referer": location.origin, "X-OpenRouter-Title": "CyberBench Helper" } : {}) },
+          body: JSON.stringify({ model: config.model, response_format: { type: "json_object" }, messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }] })
+        }, localText(`Analyse ${label} en cours…`, `${label} analysis in progress…`, `${label}-Analyse läuft…`));
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error?.message || `OpenAI HTTP ${response.status}`);
+        if (!response.ok) throw new Error(data.error?.message || `${label} HTTP ${response.status}`);
         return parseLLMJson(data.choices?.[0]?.message?.content || "");
       }
       if (config.provider === "azure_openai") {
@@ -4875,9 +4876,16 @@ Return strict JSON only:
     const DEFAULT_MODEL_OPTIONS = {
       anthropic: ["claude-opus-4-6", "claude-sonnet-4-20250514"],
       openai: ["gpt-5.5", "gpt-4.1"],
+      openrouter: ["openrouter/auto", "~openai/gpt-latest", "anthropic/claude-sonnet-4.6"],
       azure_openai: [],
       google_gemini: ["gemini-2.5-pro", "gemini-2.5-flash"]
     };
+    ["ingestProvider", "challengeProvider"].forEach((id) => {
+      const select = $(id);
+      if (select && !select.querySelector('option[value="openrouter"]')) {
+        select.add(new Option("OpenRouter", "openrouter"), select.querySelector('option[value="azure_openai"]'));
+      }
+    });
 
     function applyDesignSystem(value) {
       const designSystem = value === "wavestone" ? "wavestone" : "current";
@@ -4939,9 +4947,10 @@ Return strict JSON only:
       setCatalogState(kind, "loading", localText("Chargement des modèles depuis le fournisseur…", "Loading models from the provider…", "Modelle werden vom Anbieter geladen…"));
       try {
         let response;
-        if (provider === "openai") {
-          if (!key) throw new Error(localText("Clé OpenAI manquante.", "OpenAI key missing.", "OpenAI-Schlüssel fehlt."));
-          response = await apiFetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` } }, localText("Chargement des modèles OpenAI…", "Loading OpenAI models…", "OpenAI-Modelle werden geladen…"));
+        if (provider === "openai" || provider === "openrouter") {
+          const label = provider === "openrouter" ? "OpenRouter" : "OpenAI";
+          if (!key) throw new Error(localText(`Clé ${label} manquante.`, `${label} key missing.`, `${label}-Schlüssel fehlt.`));
+          response = await apiFetch(provider === "openrouter" ? "https://openrouter.ai/api/v1/models" : "https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` } }, localText(`Chargement des modèles ${label}…`, `Loading ${label} models…`, `${label}-Modelle werden geladen…`));
         } else if (provider === "anthropic") {
           if (!key) throw new Error(localText("Clé Anthropic manquante.", "Anthropic key missing.", "Anthropic-Schlüssel fehlt."));
           response = await apiFetch("https://api.anthropic.com/v1/models?limit=100", { headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" } }, localText("Chargement des modèles Anthropic…", "Loading Anthropic models…", "Anthropic-Modelle werden geladen…"));
@@ -4959,6 +4968,7 @@ Return strict JSON only:
         if (!response.ok) throw new Error(data.error?.message || `HTTP ${response.status}`);
         let source = data.data || data.value || data.models || [];
         if (provider === "google_gemini") source = source.filter((item) => !item.supportedGenerationMethods || item.supportedGenerationMethods.includes("generateContent"));
+        if (provider === "openrouter") source = source.filter((item) => !item.architecture?.output_modalities || item.architecture.output_modalities.includes("text"));
         let models = source.map((item) => item.id || item.name || item.model).filter(Boolean);
         if (provider === "openai") models = models.filter((model) => /^(gpt-|o[1-9]|chatgpt-)/i.test(model) && !/(audio|transcribe|tts|realtime|image|embedding|moderation|search|instruct)/i.test(model));
         if (provider === "google_gemini") models = models.map((model) => model.replace(/^models\//, "")).filter((model) => /gemini/i.test(model));
@@ -5230,7 +5240,7 @@ Return strict JSON only:
       if (state.assessment) renderRecommendations();
     });
     $("ingestProvider").addEventListener("change", (event) => {
-      const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "", google_gemini: "gemini-2.5-pro" };
+      const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", openrouter: "openrouter/auto", azure_openai: "", google_gemini: "gemini-2.5-pro" };
       state.ingest.provider = event.target.value;
       populateModelSelect("analysis", DEFAULT_MODEL_OPTIONS[event.target.value], defaults[event.target.value]);
       resetAIState("analysis");
@@ -5239,7 +5249,7 @@ Return strict JSON only:
       scheduleModelRefresh("analysis");
     });
     $("challengeProvider").addEventListener("change", (event) => {
-      const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", azure_openai: "" };
+      const defaults = { anthropic: "claude-opus-4-6", openai: "gpt-5.5", openrouter: "openrouter/auto", azure_openai: "" };
       populateModelSelect("challenge", DEFAULT_MODEL_OPTIONS[event.target.value], defaults[event.target.value]);
       resetAIState("challenge");
       $("challengeAzureFields").classList.toggle("hidden", event.target.value !== "azure_openai");
